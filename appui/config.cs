@@ -18,7 +18,7 @@ namespace appui
         public static int TimeputOpenConnection { get; set; }
         public static string SqlUname { get; set; }
         public static string SqlPwd { get; set; }
-
+        public static bool Offline { get; set; }
 
         static Config()
         {
@@ -27,34 +27,33 @@ namespace appui
 
             var root = jsonDoc.RootElement;
 
-            Url = geString(root, "url");
-            ConnectionTemplate = geString(root, "connection_template");
-            OfflineFilePath = geString(root, "offline_path");
-            TimeputOpenConnection = getInt32(root, "timeputOpenConnection");
-            SqlUname = geString(root, "sql_uname");
-            SqlPwd = geString(root, "sql_pwd");
+            Url = getValue<string>(root, "url");
+            ConnectionTemplate = getValue<string>(root, "connection_template");
+            OfflineFilePath = getValue<string>(root, "offline_path");
+            TimeputOpenConnection = getValue<int>(root, "timeputOpenConnection");
+            SqlUname = getValue<string>(root, "sql_uname");
+            SqlPwd = getValue<string>(root, "sql_pwd");
+            Offline = getValue<bool>(root, "offline") || false;
         }
 
-        static int getInt32(JsonElement element, string key)
+        static T getValue<T>(JsonElement element, string key)
+            where T : IConvertible
         {
-            int res = 100;
+            T res = default(T);
             try
             {
-                res = element.GetProperty(key).GetInt32();
+                var tmp = element.GetProperty(key);
+
+                if (typeof(T) == typeof(bool))
+                    res = (T)(object)tmp.GetBoolean();
+                else if (typeof(T) == typeof(int) || typeof(T) == typeof(Int32))
+                    res = (T)(object)tmp.GetInt32();
+                else if (typeof(T) == typeof(string))
+                    res = (T)(object)tmp.GetString();
             }
-            catch { }
-
-            return res;
-        }
-
-        static string geString(JsonElement element, string key)
-        {
-            string res = "";
-            try
+            catch
             {
-                res = element.GetProperty(key).GetString();
             }
-            catch { }
 
             return res;
         }

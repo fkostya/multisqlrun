@@ -3,5 +3,6 @@
   "offline_path": "page_template/Test Infrastructure.html",
   "timeputOpenConnection": 20,
   "sql_uname": "",
-  "sql_pwd":  ""
+  "sql_pwd": "",
+  "offline": true
 }

@@ -23,7 +23,7 @@ namespace appui
 {
     public partial class Form1 : Form
     {
-        private bool offline = false;
+        private bool offline = Config.Offline;
         private Dictionary<string, List<PageRow>> parsedDoc;
         private bool openConnectionProcess;
         public Form1()
@@ -63,6 +63,8 @@ namespace appui
         }
         private async Task<HtmlDocument> loadHtml(string url)
         {
+            this.Text = url;
+
             IPageReader loader = null;
             if (offline == true)
             {
