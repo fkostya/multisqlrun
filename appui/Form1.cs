@@ -93,7 +93,7 @@ namespace appui
             {
                 try
                 {
-                    var branch = ucb_branch.SelectedItem.ToString();
+                    var branch = ucb_branch.SelectedItem?.ToString();
 
                     var clients = new List<PageRow>();
 
@@ -105,7 +105,7 @@ namespace appui
 
                         if (ulv_clients.SelectedItems.Count != 0)
                         {
-                            var selected = ulv_clients.SelectedItems.Cast<string>().ToList();
+                            var selected = ulv_clients.SelectedItems?.Cast<string>().ToList();
 
                             clients = clients.Where(f => selected.Any(f1 => f1 == f.client)).ToList();
                         }
@@ -354,7 +354,7 @@ namespace appui
 
             ulv_clients.Items.Clear();
 
-            var branch = ucb_branch.SelectedItem.ToString();
+            var branch = ucb_branch.SelectedItem?.ToString();
 
             if (parsedDoc.ContainsKey(branch))
             {
@@ -368,7 +368,7 @@ namespace appui
             {
                 var index = 0;
                 clients.ToList()
-                    .Where(f => string.IsNullOrWhiteSpace(filterName) || f.client.Contains(filterName))
+                    .Where(f => string.IsNullOrWhiteSpace(filterName) || f.client.Contains(filterName, StringComparison.OrdinalIgnoreCase))
                     .Select(f => f.client)
                         .ToList().ForEach(f =>
                         {
@@ -381,6 +381,7 @@ namespace appui
             ulv_clients.BeginUpdate();
 
             ulv_clients.Items.Clear();
+            _changeClientSection(null);
 
             showAllClients(this.parsedDoc[ucb_branch.SelectedItem.ToString()], utx_search.Text);
 
@@ -389,17 +390,20 @@ namespace appui
 
         private void ulv_clients_SelectedIndexChanged(object sender, EventArgs e)
         {
-            utx_clientname.Text = "";
-            utx_servername.Text = "";
+            PageRow client = null;
 
             if (!string.IsNullOrWhiteSpace(((ListBox)sender).SelectedItem?.ToString()))
             {
-                var client = this.parsedDoc[ucb_branch.SelectedItem.ToString()].FirstOrDefault(f => f.client == ((ListBox)sender).SelectedItem.ToString());
-
-                utx_clientname.Text = client.id;
-                utx_servername.Text = client.server;
+                client = this.parsedDoc[ucb_branch.SelectedItem.ToString()].FirstOrDefault(f => f.client.Equals(((ListBox)sender).SelectedItem.ToString(), StringComparison.OrdinalIgnoreCase));
             }
+            _changeClientSection(client);
+        }
 
+        private void _changeClientSection(PageRow client)
+        {
+            utx_dbname.Text = client?.database;
+            utx_clientname.Text = client?.id;
+            utx_servername.Text = client?.server;
         }
 
         private void utx_outputpath_MouseClick(object sender, MouseEventArgs e)

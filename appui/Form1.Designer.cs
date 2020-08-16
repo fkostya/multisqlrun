@@ -38,6 +38,7 @@
             this.utx_clientname = new System.Windows.Forms.TextBox();
             this.utx_servername = new System.Windows.Forms.TextBox();
             this.utx_outputpath = new System.Windows.Forms.TextBox();
+            this.utx_dbname = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // ubt_connect
@@ -131,9 +132,8 @@
             // 
             // utx_clientname
             // 
-            this.utx_clientname.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.utx_clientname.Location = new System.Drawing.Point(1257, 812);
+            this.utx_clientname.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.utx_clientname.Location = new System.Drawing.Point(1256, 856);
             this.utx_clientname.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
             this.utx_clientname.Name = "utx_clientname";
             this.utx_clientname.ReadOnly = true;
@@ -143,7 +143,7 @@
             // utx_servername
             // 
             this.utx_servername.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.utx_servername.Location = new System.Drawing.Point(1253, 872);
+            this.utx_servername.Location = new System.Drawing.Point(1252, 903);
             this.utx_servername.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
             this.utx_servername.Name = "utx_servername";
             this.utx_servername.ReadOnly = true;
@@ -164,11 +164,22 @@
             this.utx_outputpath.TabStop = false;
             this.utx_outputpath.MouseClick += new System.Windows.Forms.MouseEventHandler(this.utx_outputpath_MouseClick);
             // 
+            // utx_dbname
+            // 
+            this.utx_dbname.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.utx_dbname.Location = new System.Drawing.Point(1256, 809);
+            this.utx_dbname.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
+            this.utx_dbname.Name = "utx_dbname";
+            this.utx_dbname.ReadOnly = true;
+            this.utx_dbname.Size = new System.Drawing.Size(321, 35);
+            this.utx_dbname.TabIndex = 8;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 30F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1584, 1020);
+            this.Controls.Add(this.utx_dbname);
             this.Controls.Add(this.utx_outputpath);
             this.Controls.Add(this.utx_servername);
             this.Controls.Add(this.utx_clientname);
@@ -199,6 +210,7 @@
         private System.Windows.Forms.TextBox utx_clientname;
         private System.Windows.Forms.TextBox utx_servername;
         private System.Windows.Forms.TextBox utx_outputpath;
+        private System.Windows.Forms.TextBox utx_dbname;
     }
 }
 
