@@ -79,7 +79,8 @@ namespace appui
 
         private async void ubt_run_Click(object sender, EventArgs e)
         {
-            if(offline) {
+            if (offline)
+            {
                 return;
             }
 
@@ -145,13 +146,10 @@ namespace appui
                                 initDbConnectionProcess(token);
                             });
 
-                            using (SqlConnection connection = new SqlConnection(sConnB?.ConnectionString))
+                            try
                             {
-                                try
+                                using (SqlConnection connection = new SqlConnection(sConnB?.ConnectionString))
                                 {
-                                    if (changeDatabase)
-                                        connection.ChangeDatabase(item.database);
-
                                     await connection.OpenAsync();
                                     stopDbConnectionProcess(source);
 
@@ -161,14 +159,14 @@ namespace appui
 
                                     result[item.client] = output;
                                 }
-                                catch
-                                {
-                                    stopDbConnectionProcess(source);
-                                }
-                                finally
-                                {
-                                    updateClientProgress(clients.Count, current);
-                                }
+                            }
+                            catch
+                            {
+                                stopDbConnectionProcess(source);
+                            }
+                            finally
+                            {
+                                updateClientProgress(clients.Count, current);
                             }
                         }
                         sConnB = null;
@@ -274,9 +272,15 @@ namespace appui
                     var dictionary = (IDictionary<string, object>)record;
                     dictionary.Add("client", item.Key);
 
+                    var column_index = 0;
                     foreach (var item2 in item.Value)
                     {
-                        dictionary.Add(item2.Item1, item2.Item2);
+                        var uniqueColumnKey = item2.Item1;
+                        if (dictionary.ContainsKey(item2.Item1))
+                        {
+                            uniqueColumnKey = $"{uniqueColumnKey}_{column_index++}";
+                        }
+                        dictionary[uniqueColumnKey] = item2.Item2;
                     }
                     if (dictionary.Count > 1)
                         records.Add(dictionary);
@@ -370,7 +374,7 @@ namespace appui
             {
                 var index = 0;
                 clients.ToList()
-                    .Where(f => string.IsNullOrWhiteSpace(filterName) || 
+                    .Where(f => string.IsNullOrWhiteSpace(filterName) ||
                     f.client.Contains(filterName, StringComparison.OrdinalIgnoreCase) ||
                     f.database.Contains(filterName, StringComparison.OrdinalIgnoreCase))
                     .Select(f => f.client)
