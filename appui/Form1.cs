@@ -42,7 +42,6 @@ namespace appui
 
                 ucb_branch.SelectedIndex = 0;
 
-
                 utx_search.Enabled = true;
                 utx_sqlquery.Enabled = true;
                 ucb_branch.Enabled = true;
@@ -80,11 +79,14 @@ namespace appui
 
         private async void ubt_run_Click(object sender, EventArgs e)
         {
+            if(offline) {
+                return;
+            }
+
             ubt_run.Enabled = false;
             utx_outputpath.Text = "";
 
             Dictionary<string, List<Tuple<string, string>>> result = new Dictionary<string, List<Tuple<string, string>>>();
-
 
             CancellationTokenSource source = new CancellationTokenSource();
             CancellationToken token;
@@ -368,7 +370,9 @@ namespace appui
             {
                 var index = 0;
                 clients.ToList()
-                    .Where(f => string.IsNullOrWhiteSpace(filterName) || f.client.Contains(filterName, StringComparison.OrdinalIgnoreCase))
+                    .Where(f => string.IsNullOrWhiteSpace(filterName) || 
+                    f.client.Contains(filterName, StringComparison.OrdinalIgnoreCase) ||
+                    f.database.Contains(filterName, StringComparison.OrdinalIgnoreCase))
                     .Select(f => f.client)
                         .ToList().ForEach(f =>
                         {
