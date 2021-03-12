@@ -1,9 +1,15 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net5.0-windows</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
+    <RootNamespace>appui</RootNamespace>
+    <ApplicationIcon>assets\AppIcon.ico</ApplicationIcon>
+    <PackageId>multi run sql</PackageId>
+    <Authors>KF</Authors>
+    <Company>KF</Company>
+    <Product>multi run sql</Product>
   </PropertyGroup>
 
   <ItemGroup>

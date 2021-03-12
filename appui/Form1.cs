@@ -26,6 +26,7 @@ namespace appui
         private bool offline = Config.Offline;
         private Dictionary<string, List<PageRow>> parsedDoc;
         private bool openConnectionProcess;
+        
         public Form1()
         {
             InitializeComponent();
@@ -60,19 +61,12 @@ namespace appui
 
             parsed.Keys.ToList().OrderByDescending(k => k).ToList().ForEach(k => ucb_branch.Items.Insert(index++, k));
         }
+
         private async Task<HtmlDocument> loadHtml(string url)
         {
             this.Text = url;
 
-            IPageReader loader = null;
-            if (offline == true)
-            {
-                loader = new OfflineFilePageReader();
-            }
-            else
-            {
-                loader = new WebPageReader();
-            }
+            IPageReader loader = PageReaderFactory.CreatePageReader(offline);
 
             return await PageReader.GetPageAsync(loader, url);
         }
@@ -116,35 +110,29 @@ namespace appui
 
                     var current = 0;
 
-                    foreach (var client in clients?.GroupBy(f => f.server))
+                    foreach (var clientGroup in clients?.GroupBy(f => f.server))
                     {
                         SqlConnectionStringBuilder sConnB = null;
 
-                        foreach (var item in client)
+                        foreach (var singleClient in clientGroup)
                         {
                             current++;
-                            bool changeDatabase = false;
 
                             if (sConnB == null)
                             {
                                 sConnB = new SqlConnectionStringBuilder()
                                 {
-                                    DataSource = item.server,
-                                    InitialCatalog = item.database,
+                                    DataSource = singleClient.server,
+                                    InitialCatalog = singleClient.database,
                                     UserID = Config.SqlUname,
                                     Password = Config.SqlPwd,
                                     ConnectTimeout = Config.TimeputOpenConnection
                                 };
                             }
-                            else
-                                changeDatabase = true;
 
                             token = source.Token;
 
-                            Parallel.Invoke(() =>
-                            {
-                                initDbConnectionProcess(token);
-                            });
+                            initDbConnectionProcess(token);
 
                             try
                             {
@@ -156,8 +144,11 @@ namespace appui
                                     updateClientProgress(clients.Count, current);
 
                                     var output = await runQueryAsync(connection);
-
-                                    result[item.client] = output;
+                                    
+                                    lock (this)
+                                    {
+                                        result[connection.Database] = output;
+                                    }
                                 }
                             }
                             catch
@@ -252,19 +243,24 @@ namespace appui
             }
         }
 
+        public string path { get; set; }
+
+        private void createFolderName()
+        {
+            var uniqueFolderName = $"{DateTime.Now.Year}_{DateTime.Now.Month}_{DateTime.Now.Day}_{DateTime.Now.Hour}_{DateTime.Now.Minute}";
+
+            this.path = $".\\output\\{uniqueFolderName}";
+
+            new DirectoryInfo(path).Create();
+        }
+
         private async Task<string> saveOutputToCsv(Dictionary<string, List<Tuple<string, string>>> output)
         {
             try
             {
-                var tick = $"{DateTime.Now.Year}_{DateTime.Now.Month}_{DateTime.Now.Day}_{DateTime.Now.Hour}_{DateTime.Now.Minute}";
-
-                var path = $".\\output\\{tick}";
-
-                new DirectoryInfo(path).Create();
-
+                createFolderName();
 
                 var records = new List<dynamic>();
-
 
                 foreach (var item in output)
                 {
@@ -286,7 +282,7 @@ namespace appui
                         records.Add(dictionary);
                 }
 
-                using (var writer = new StreamWriter($"{path}\\output.csv"))
+                using (var writer = new StreamWriter($"{this.path}\\output.csv"))
                 using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
                 {
                     await csv.WriteRecordsAsync(records);

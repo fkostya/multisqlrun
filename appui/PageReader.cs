@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace appui
 {
-    interface IPageReader
+    public interface IPageReader
     {
         Task<HtmlDocument> GetPageAsync(string path);
     }
