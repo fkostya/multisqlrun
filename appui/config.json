@@ -4,5 +4,6 @@
   "timeputOpenConnection": 20,
   "sql_uname": "",
   "sql_pwd": "",
-  "offline": true
+  "offline": false,
+  "StopAfterMilliseconds":  10000
 }

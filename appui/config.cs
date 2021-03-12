@@ -20,6 +20,8 @@ namespace appui
         public static string SqlPwd { get; set; }
         public static bool Offline { get; set; }
 
+        public static long? StopAfterMilliseconds { get;set;}
+
         static Config()
         {
             var jsonBytes = File.ReadAllBytes("config.json");
@@ -34,6 +36,7 @@ namespace appui
             SqlUname = getValue<string>(root, "sql_uname");
             SqlPwd = getValue<string>(root, "sql_pwd");
             Offline = getValue<bool>(root, "offline") || false;
+            StopAfterMilliseconds = getValue<long>(root, "StopAfterMilliseconds");
         }
 
         static T getValue<T>(JsonElement element, string key)
@@ -50,6 +53,8 @@ namespace appui
                     res = (T)(object)tmp.GetInt32();
                 else if (typeof(T) == typeof(string))
                     res = (T)(object)tmp.GetString();
+                else if (typeof(T) == typeof(long) || typeof(T) == typeof(Int64))
+                    res = (T)(object)tmp.GetInt64();
             }
             catch
             {

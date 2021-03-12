@@ -88,79 +88,62 @@ namespace appui
 
             if (!string.IsNullOrWhiteSpace(utx_sqlquery.Text))
             {
+                var processed = 0;
+                int? totalToProcess = 0;
                 try
                 {
-                    var branch = ucb_branch.SelectedItem?.ToString();
+                    var clients = getAllClientsOrSelected(parsedDoc, ucb_branch.SelectedItem?.ToString());
 
-                    var clients = new List<PageRow>();
-
-                    if (this.parsedDoc.ContainsKey(branch))
+                    var connections = new List<SqlConnectionStringBuilder>();
+                    foreach (var singleClient in clients)
                     {
-                        clients = parsedDoc[branch]
-                            .Where(f => ulv_clients.Items.Cast<string>().Any(f1 => f1 == f.client))
-                            .ToList(); ;
-
-                        if (ulv_clients.SelectedItems.Count != 0)
-                        {
-                            var selected = ulv_clients.SelectedItems?.Cast<string>().ToList();
-
-                            clients = clients.Where(f => selected.Any(f1 => f1 == f.client)).ToList();
-                        }
+                        connections.Add(
+                            new SqlConnectionStringBuilder()
+                            {
+                                DataSource = singleClient.server,
+                                InitialCatalog = singleClient.database,
+                                UserID = Config.SqlUname,
+                                Password = Config.SqlPwd,
+                                ConnectTimeout = Config.TimeputOpenConnection
+                            });
                     }
 
                     var current = 0;
+                    totalToProcess = clients?.Count();
 
-                    foreach (var clientGroup in clients?.GroupBy(f => f.server))
+                    foreach (var clientConnection in connections)
                     {
-                        SqlConnectionStringBuilder sConnB = null;
+                        Interlocked.Increment(ref current);
 
-                        foreach (var singleClient in clientGroup)
+                        token = source.Token;
+                        initDbConnectionProcess(token);
+
+                        try
                         {
-                            current++;
-
-                            if (sConnB == null)
+                            using (SqlConnection connection = new SqlConnection(clientConnection.ConnectionString))
                             {
-                                sConnB = new SqlConnectionStringBuilder()
-                                {
-                                    DataSource = singleClient.server,
-                                    InitialCatalog = singleClient.database,
-                                    UserID = Config.SqlUname,
-                                    Password = Config.SqlPwd,
-                                    ConnectTimeout = Config.TimeputOpenConnection
-                                };
-                            }
+                                await connection.OpenAsync();
+                                stopDbConnectionProcess(source);
 
-                            token = source.Token;
+                                updateClientProgress(clients.Count, current);
 
-                            initDbConnectionProcess(token);
-
-                            try
-                            {
-                                using (SqlConnection connection = new SqlConnection(sConnB?.ConnectionString))
-                                {
-                                    await connection.OpenAsync();
-                                    stopDbConnectionProcess(source);
-
-                                    updateClientProgress(clients.Count, current);
-
-                                    var output = await runQueryAsync(connection);
+                                var output = await runQueryAsync(connection);
                                     
-                                    lock (this)
-                                    {
-                                        result[connection.Database] = output;
-                                    }
+                                lock (this)
+                                {
+                                    result[connection.Database] = output;
+                                    Interlocked.Increment(ref processed);
                                 }
                             }
-                            catch
-                            {
-                                stopDbConnectionProcess(source);
-                            }
-                            finally
-                            {
-                                updateClientProgress(clients.Count, current);
-                            }
                         }
-                        sConnB = null;
+                        catch
+                        {
+                            stopDbConnectionProcess(source);
+                        }
+                        finally
+                        {
+                            updateClientProgress(clients.Count, current);
+                        }
                     }
                 }
                 catch (Exception ex)
@@ -177,6 +160,19 @@ namespace appui
                     var path = "error";
                     try
                     {
+                        var waitingTime = 0;
+                        while(result.Count != totalToProcess && waitingTime <= Config.StopAfterMilliseconds)
+                        {
+                            waitingTime += 1000;
+                            await Task.Delay(1000);
+                            updateClientProgress(1, 1);
+                        }
+
+                        if(waitingTime == Config.StopAfterMilliseconds)
+                        {
+                            MessageBox.Show(string.Format("processed {0} out of total {1}", result.Count, totalToProcess));
+                        }
+
                         path = await saveOutputToCsv(result);
                     }
                     catch { }
@@ -185,6 +181,27 @@ namespace appui
                     ubt_run.Enabled = true;
                 }
             }
+        }
+
+        private List<PageRow> getAllClientsOrSelected(Dictionary<string, List<PageRow>> parsedDoc, string branch)
+        {
+            if (this.parsedDoc.ContainsKey(branch))
+            {
+                var clients = parsedDoc[branch]
+                                .Where(f => ulv_clients.Items.Cast<string>().Any(f1 => f1 == f.client))
+                                .ToList();
+
+                if (ulv_clients.SelectedItems.Count != 0)
+                {
+                    var selected = ulv_clients.SelectedItems?.Cast<string>().ToList();
+
+                    clients = clients.Where(f => selected.Any(f1 => f1 == f.client)).ToList();
+                }
+
+            return clients;
+            }
+
+            return new List<PageRow>();
         }
 
         private Dictionary<string, List<Tuple<string, string>>> getFakeOutput()
