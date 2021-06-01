@@ -1,22 +1,16 @@
 ﻿using CsvHelper;
-using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
-using System.Drawing;
 using System.Dynamic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Windows.Forms.VisualStyles;
 using HtmlDocument = HtmlAgilityPack.HtmlDocument;
 
 namespace appui
@@ -83,9 +77,6 @@ namespace appui
 
             Dictionary<string, List<Tuple<string, string>>> result = new Dictionary<string, List<Tuple<string, string>>>();
 
-            CancellationTokenSource source = new CancellationTokenSource();
-            CancellationToken token;
-
             if (!string.IsNullOrWhiteSpace(utx_sqlquery.Text))
             {
                 var processed = 0;
@@ -94,10 +85,10 @@ namespace appui
                 {
                     var clients = getAllClientsOrSelected(parsedDoc, ucb_branch.SelectedItem?.ToString());
 
-                    var connections = new List<SqlConnectionStringBuilder>();
+                    var connections = new List<Tuple<SqlConnectionStringBuilder, CancellationTokenSource>>();
                     foreach (var singleClient in clients)
                     {
-                        connections.Add(
+                        connections.Add(new Tuple<SqlConnectionStringBuilder, CancellationTokenSource>(
                             new SqlConnectionStringBuilder()
                             {
                                 DataSource = singleClient.server,
@@ -105,7 +96,9 @@ namespace appui
                                 UserID = Config.SqlUname,
                                 Password = Config.SqlPwd,
                                 ConnectTimeout = Config.TimeputOpenConnection
-                            });
+                            },
+                            new CancellationTokenSource()
+                        ));
                     }
 
                     var current = 0;
@@ -115,15 +108,14 @@ namespace appui
                     {
                         Interlocked.Increment(ref current);
 
-                        token = source.Token;
-                        initDbConnectionProcess(token);
+                        var source = clientConnection.Item2;
+                        initDbConnectionProcess(source.Token);
 
                         try
                         {
-                            using (SqlConnection connection = new SqlConnection(clientConnection.ConnectionString))
+                            using (SqlConnection connection = new SqlConnection(clientConnection.Item1.ConnectionString))
                             {
                                 await connection.OpenAsync();
-                                stopDbConnectionProcess(source);
 
                                 updateClientProgress(clients.Count, current);
 
@@ -148,12 +140,12 @@ namespace appui
                 }
                 catch (Exception ex)
                 {
-                    stopDbConnectionProcess(source);
+                    stopDbConnectionProcess(null);
                     MessageBox.Show(ex.Message);
                 }
                 finally
                 {
-                    stopDbConnectionProcess(source);
+                    stopDbConnectionProcess(null);
 
                     //result = getFakeOutput();
 
@@ -231,7 +223,7 @@ namespace appui
         {
             upb_progress.Maximum = Config.TimeputOpenConnection;
 
-            var progress = new Progress<int>(value => upb_progress.Value = value);
+            var progress = new Progress<int>(value => upb_progress.Value = value < upb_progress.Maximum ? value : upb_progress.Maximum);
             openConnectionProcess = true;
 
             Task.Run(() =>

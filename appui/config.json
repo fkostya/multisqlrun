@@ -1,9 +1,9 @@
 {
-  "url": "",
+  "url": "http://torsvcmtool01/testInfrastructure/Default.aspx",
   "offline_path": "page_template/Test Infrastructure.html",
   "timeputOpenConnection": 20,
-  "sql_uname": "",
-  "sql_pwd": "",
+  "sql_uname": "wbpoc",
+  "sql_pwd": "sql@tfs2008",
   "offline": false,
-  "StopAfterMilliseconds":  10000
+  "StopAfterMilliseconds": 10000
 }
