@@ -30,10 +30,24 @@ namespace appui
         {
             try
             {
+                upb_progress.Style = ProgressBarStyle.Marquee;
+                upb_progress.MarqueeAnimationSpeed = 30;
+
+                utx_search.Enabled = false;
+                utx_sqlquery.Enabled = false;
+                ucb_branch.Enabled = false;
+                ubt_run.Enabled = false;
+
+                clear();
+
+                
+
                 var doc = await this.loadHtml(offline ? Config.OfflineFilePath : Config.Url);
                 this.parsedDoc = PageParser.Parse(doc);
 
                 refresh(this.parsedDoc);
+
+                openConnectionProcess = false;
 
                 ucb_branch.SelectedIndex = 0;
 
@@ -41,6 +55,9 @@ namespace appui
                 utx_sqlquery.Enabled = true;
                 ucb_branch.Enabled = true;
                 ubt_run.Enabled = true;
+
+                upb_progress.Style = ProgressBarStyle.Blocks;
+                upb_progress.MarqueeAnimationSpeed = 0;
             }
             catch (Exception ex)
             {
@@ -48,12 +65,21 @@ namespace appui
             }
         }
 
-        private void refresh(Dictionary<string, List<PageRow>> parsed)
+
+
+        private void clear()
         {
             ucb_branch.Items.Clear();
+            ulv_clients.Items.Clear();
+        }
+
+        private void refresh(Dictionary<string, List<PageRow>> parsed)
+        {
             var index = 0;
 
             parsed.Keys.ToList().OrderByDescending(k => k).ToList().ForEach(k => ucb_branch.Items.Insert(index++, k));
+
+            updateClientList();
         }
 
         private async Task<HtmlDocument> loadHtml(string url)
@@ -359,7 +385,7 @@ namespace appui
             }
         }
 
-        private void ucb_branch_SelectedIndexChanged(object sender, EventArgs e)
+        private void updateClientList()
         {
             ulv_clients.BeginUpdate();
 
@@ -367,12 +393,18 @@ namespace appui
 
             var branch = ucb_branch.SelectedItem?.ToString();
 
-            if (parsedDoc.ContainsKey(branch))
+            if (branch!= null && parsedDoc.ContainsKey(branch))
             {
                 showAllClients(parsedDoc[ucb_branch.SelectedItem.ToString()], utx_search.Text);
             }
             ulv_clients.EndUpdate();
         }
+
+        private void ucb_branch_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            updateClientList();
+        }
+
         private void showAllClients(List<PageRow> clients, string filterName = "")
         {
             if (clients.Count > 0)

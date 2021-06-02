@@ -45,7 +45,7 @@
             // ubt_connect
             // 
             this.ubt_connect.Location = new System.Drawing.Point(7, 6);
-            this.ubt_connect.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.ubt_connect.Margin = new System.Windows.Forms.Padding(2);
             this.ubt_connect.Name = "ubt_connect";
             this.ubt_connect.Size = new System.Drawing.Size(183, 36);
             this.ubt_connect.TabIndex = 0;
@@ -60,7 +60,7 @@
             this.ulv_clients.FormattingEnabled = true;
             this.ulv_clients.ItemHeight = 15;
             this.ulv_clients.Location = new System.Drawing.Point(731, 6);
-            this.ulv_clients.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.ulv_clients.Margin = new System.Windows.Forms.Padding(2);
             this.ulv_clients.Name = "ulv_clients";
             this.ulv_clients.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
             this.ulv_clients.Size = new System.Drawing.Size(191, 394);
@@ -151,7 +151,7 @@
             this.utx_outputpath.Cursor = System.Windows.Forms.Cursors.Hand;
             this.utx_outputpath.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point);
             this.utx_outputpath.Location = new System.Drawing.Point(7, 453);
-            this.utx_outputpath.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.utx_outputpath.Margin = new System.Windows.Forms.Padding(2);
             this.utx_outputpath.Name = "utx_outputpath";
             this.utx_outputpath.ReadOnly = true;
             this.utx_outputpath.Size = new System.Drawing.Size(719, 23);
@@ -185,7 +185,7 @@
             this.Controls.Add(this.ulv_clients);
             this.Controls.Add(this.ubt_connect);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "Form1";
             this.Text = "Form1";
             this.ResumeLayout(false);
