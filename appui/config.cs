@@ -34,9 +34,15 @@ namespace appui
             OfflineFilePath = getValue<string>(root, "offline_path");
             TimeputOpenConnection = getValue<int>(root, "timeputOpenConnection");
             SqlUname = getValue<string>(root, "sql_uname");
-            SqlPwd = getValue<string>(root, "sql_pwd");
+            SqlPwd = decode(getValue<string>(root, "sql_pwd"));
             Offline = getValue<bool>(root, "offline") || false;
             StopAfterMilliseconds = getValue<long>(root, "StopAfterMilliseconds");
+        }
+
+        static string decode(string value)
+        {
+            byte[] data = Convert.FromBase64String(value);
+            return Encoding.UTF8.GetString(data);
         }
 
         static T getValue<T>(JsonElement element, string key)

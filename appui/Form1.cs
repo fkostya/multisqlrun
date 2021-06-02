@@ -223,7 +223,7 @@ namespace appui
         {
             upb_progress.Maximum = Config.TimeputOpenConnection;
 
-            var progress = new Progress<int>(value => upb_progress.Value = value < upb_progress.Maximum ? value : upb_progress.Maximum);
+            var progress = new Progress<int>(value => upb_progress.Value = Math.Max(0, Math.Min(upb_progress.Maximum, value - 1)));
             openConnectionProcess = true;
 
             Task.Run(() =>
