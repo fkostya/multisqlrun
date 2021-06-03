@@ -90,7 +90,7 @@
             this.utx_sqlquery.ScrollBars = System.Windows.Forms.ScrollBars.Both;
             this.utx_sqlquery.Size = new System.Drawing.Size(719, 398);
             this.utx_sqlquery.TabIndex = 2;
-            this.utx_sqlquery.Text = "select max(featureid) as featureid from feature";
+            this.utx_sqlquery.Text = "select max(featureid) as featureid from feature with(nolock)";
             // 
             // ucb_branch
             // 

@@ -40,8 +40,6 @@ namespace appui
 
                 clear();
 
-                
-
                 var doc = await this.loadHtml(offline ? Config.OfflineFilePath : Config.Url);
                 this.parsedDoc = PageParser.Parse(doc);
 
@@ -64,8 +62,6 @@ namespace appui
                 MessageBox.Show(ex.Message);
             }
         }
-
-
 
         private void clear()
         {
@@ -192,6 +188,8 @@ namespace appui
                         }
 
                         path = await saveOutputToCsv(result);
+
+                        upb_progress.Value = upb_progress.Maximum;
                     }
                     catch { }
 
@@ -249,7 +247,7 @@ namespace appui
         {
             upb_progress.Maximum = Config.TimeputOpenConnection;
 
-            var progress = new Progress<int>(value => upb_progress.Value = Math.Max(0, Math.Min(upb_progress.Maximum, value - 1)));
+            var progress = new Progress<int>(value => upb_progress.Value = Math.Max(0, Math.Min(upb_progress.Maximum, value)));
             openConnectionProcess = true;
 
             Task.Run(() =>
