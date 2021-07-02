@@ -130,6 +130,8 @@ namespace appui
                     {
                         Interlocked.Increment(ref current);
 
+                        lblProgress.Text = $"{current} of {totalToProcess}";
+
                         var source = clientConnection.Item2;
                         initDbConnectionProcess(source.Token);
 

@@ -40,6 +40,7 @@
             this.utx_servername = new System.Windows.Forms.TextBox();
             this.utx_outputpath = new System.Windows.Forms.TextBox();
             this.utx_dbname = new System.Windows.Forms.TextBox();
+            this.lblProgress = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // ubt_connect
@@ -150,7 +151,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.utx_outputpath.Cursor = System.Windows.Forms.Cursors.Hand;
             this.utx_outputpath.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point);
-            this.utx_outputpath.Location = new System.Drawing.Point(7, 453);
+            this.utx_outputpath.Location = new System.Drawing.Point(6, 452);
             this.utx_outputpath.Margin = new System.Windows.Forms.Padding(2);
             this.utx_outputpath.Name = "utx_outputpath";
             this.utx_outputpath.ReadOnly = true;
@@ -168,11 +169,24 @@
             this.utx_dbname.Size = new System.Drawing.Size(189, 23);
             this.utx_dbname.TabIndex = 8;
             // 
+            // lblProgress
+            // 
+            this.lblProgress.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.lblProgress.AutoSize = true;
+            this.lblProgress.BackColor = System.Drawing.Color.Transparent;
+            this.lblProgress.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.lblProgress.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.lblProgress.Location = new System.Drawing.Point(7, 475);
+            this.lblProgress.Name = "lblProgress";
+            this.lblProgress.Size = new System.Drawing.Size(0, 21);
+            this.lblProgress.TabIndex = 11;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(924, 510);
+            this.Controls.Add(this.lblProgress);
             this.Controls.Add(this.utx_dbname);
             this.Controls.Add(this.utx_outputpath);
             this.Controls.Add(this.utx_servername);
@@ -206,6 +220,7 @@
         private System.Windows.Forms.TextBox utx_servername;
         private System.Windows.Forms.TextBox utx_outputpath;
         private System.Windows.Forms.TextBox utx_dbname;
+        private System.Windows.Forms.Label lblProgress;
     }
 }
 
