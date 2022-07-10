@@ -30,7 +30,7 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.ubt_connect = new System.Windows.Forms.Button();
-            this.ulv_clients = new System.Windows.Forms.ListBox();
+            this.ulv_clients = new System.Windows.Forms.CheckedListBox();
             this.upb_progress = new System.Windows.Forms.ProgressBar();
             this.utx_sqlquery = new System.Windows.Forms.TextBox();
             this.ucb_branch = new System.Windows.Forms.ComboBox();
@@ -41,6 +41,7 @@
             this.utx_outputpath = new System.Windows.Forms.TextBox();
             this.utx_dbname = new System.Windows.Forms.TextBox();
             this.lblProgress = new System.Windows.Forms.Label();
+            this.btn_selectall = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // ubt_connect
@@ -59,12 +60,10 @@
             this.ulv_clients.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.ulv_clients.FormattingEnabled = true;
-            this.ulv_clients.ItemHeight = 15;
-            this.ulv_clients.Location = new System.Drawing.Point(731, 6);
+            this.ulv_clients.Location = new System.Drawing.Point(731, 42);
             this.ulv_clients.Margin = new System.Windows.Forms.Padding(2);
             this.ulv_clients.Name = "ulv_clients";
-            this.ulv_clients.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.ulv_clients.Size = new System.Drawing.Size(191, 394);
+            this.ulv_clients.Size = new System.Drawing.Size(191, 346);
             this.ulv_clients.Sorted = true;
             this.ulv_clients.TabIndex = 4;
             this.ulv_clients.UseTabStops = false;
@@ -85,7 +84,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.utx_sqlquery.Enabled = false;
-            this.utx_sqlquery.Location = new System.Drawing.Point(7, 58);
+            this.utx_sqlquery.Location = new System.Drawing.Point(12, 41);
             this.utx_sqlquery.Multiline = true;
             this.utx_sqlquery.Name = "utx_sqlquery";
             this.utx_sqlquery.ScrollBars = System.Windows.Forms.ScrollBars.Both;
@@ -181,11 +180,25 @@
             this.lblProgress.Size = new System.Drawing.Size(0, 21);
             this.lblProgress.TabIndex = 11;
             // 
-            // Form1
+            // btn_selectall
+            // 
+            this.btn_selectall.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.btn_selectall.Enabled = false;
+            this.btn_selectall.Location = new System.Drawing.Point(730, 12);
+            this.btn_selectall.Name = "btn_selectall";
+            this.btn_selectall.Size = new System.Drawing.Size(75, 23);
+            this.btn_selectall.TabIndex = 12;
+            this.btn_selectall.Text = "select all";
+            this.btn_selectall.UseVisualStyleBackColor = true;
+            this.btn_selectall.Click += new System.EventHandler(this.btn_selectall_Click);
+            // 
+            // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(924, 510);
+            this.Controls.Add(this.btn_selectall);
             this.Controls.Add(this.lblProgress);
             this.Controls.Add(this.utx_dbname);
             this.Controls.Add(this.utx_outputpath);
@@ -200,7 +213,7 @@
             this.Controls.Add(this.ubt_connect);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(2);
-            this.Name = "Form1";
+            this.Name = "MainForm";
             this.Text = "Form1";
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -210,7 +223,7 @@
         #endregion
 
         private System.Windows.Forms.Button ubt_connect;
-        private System.Windows.Forms.ListBox ulv_clients;
+        private System.Windows.Forms.CheckedListBox ulv_clients;
         private System.Windows.Forms.ProgressBar upb_progress;
         private System.Windows.Forms.TextBox utx_sqlquery;
         private System.Windows.Forms.ComboBox ucb_branch;
@@ -221,6 +234,7 @@
         private System.Windows.Forms.TextBox utx_outputpath;
         private System.Windows.Forms.TextBox utx_dbname;
         private System.Windows.Forms.Label lblProgress;
+        private System.Windows.Forms.Button btn_selectall;
     }
 }
 

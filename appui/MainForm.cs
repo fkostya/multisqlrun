@@ -37,6 +37,7 @@ namespace appui
                 utx_sqlquery.Enabled = false;
                 ucb_branch.Enabled = false;
                 ubt_run.Enabled = false;
+                btn_selectall.Enabled = false;
 
                 clear();
 
@@ -53,6 +54,7 @@ namespace appui
                 utx_sqlquery.Enabled = true;
                 ucb_branch.Enabled = true;
                 ubt_run.Enabled = true;
+                btn_selectall.Enabled = true;
 
                 upb_progress.Style = ProgressBarStyle.Blocks;
                 upb_progress.MarqueeAnimationSpeed = 0;
@@ -439,9 +441,9 @@ namespace appui
         {
             PageRow client = null;
 
-            if (!string.IsNullOrWhiteSpace(((ListBox)sender).SelectedItem?.ToString()))
+            if (!string.IsNullOrWhiteSpace(((CheckedListBox)sender).SelectedItem?.ToString()))
             {
-                client = this.parsedDoc[ucb_branch.SelectedItem.ToString()].FirstOrDefault(f => f.client.Equals(((ListBox)sender).SelectedItem.ToString(), StringComparison.OrdinalIgnoreCase));
+                client = this.parsedDoc[ucb_branch.SelectedItem.ToString()].FirstOrDefault(f => f.client.Equals(((CheckedListBox)sender).SelectedItem.ToString(), StringComparison.OrdinalIgnoreCase));
             }
             _changeClientSection(client);
         }
@@ -456,6 +458,19 @@ namespace appui
         private void utx_outputpath_MouseClick(object sender, MouseEventArgs e)
         {
             Process.Start("explorer.exe", utx_outputpath.Text);
+        }
+
+        private void btn_selectall_Click(object sender, EventArgs e)
+        {
+            ulv_clients.BeginUpdate();
+            if (ulv_clients.Items.Count != 0)
+            {
+                for (int i = 0; i < ulv_clients.Items.Count; i++)
+                {
+                    ulv_clients.SetItemChecked(i, true);
+                }
+            }
+            ulv_clients.EndUpdate();
         }
     }
 }
