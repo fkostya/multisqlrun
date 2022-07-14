@@ -32,7 +32,6 @@ namespace appui
             services
                 .AddLogging(configure => configure.AddConsole())
                 .AddTransient<MainForm>()
-                .AddScoped<IPageRow, PageRow>()
                 .AddSingleton<IPageParser, PageParser>();
 
             if (Config.Offline)

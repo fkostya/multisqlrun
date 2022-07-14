@@ -20,7 +20,6 @@ namespace appui
         private bool offline = Config.Offline;
         private IList<IPageRow> parsedDoc;
         private bool openConnectionProcess;
-
         private IPageParser pageParser;
 
         public MainForm(IPageParser parser)
@@ -43,9 +42,7 @@ namespace appui
                 btn_selectall.Enabled = false;
 
                 clear();
-
                 this.parsedDoc = await this.pageParser.Parse();
-
                 refresh();
 
                 openConnectionProcess = false;
@@ -66,6 +63,7 @@ namespace appui
                 MessageBox.Show(ex.Message);
                 upb_progress.Value = 0;
                 upb_progress.MarqueeAnimationSpeed = 0;
+                upb_progress.Update();
             }
         }
 
@@ -73,6 +71,7 @@ namespace appui
         {
             ucb_branch.Items.Clear();
             ulv_clients.Items.Clear();
+            _changeClientSection(null);
         }
         private void refresh()
         {
@@ -258,7 +257,7 @@ namespace appui
                 while (openConnectionProcess)
                 {
                     ((IProgress<int>)progress).Report(i++);
-                    Thread.Sleep(100);
+                    Task.Delay(100);
 
                     if (i == Config.TimeputOpenConnection)
                         i = 0;
@@ -427,7 +426,12 @@ namespace appui
             ulv_clients.Items.Clear();
             _changeClientSection(null);
 
-            //showAllClients(this.parsedDoc[ucb_branch.SelectedItem.ToString()], utx_search.Text);
+            var version = ucb_branch.SelectedItem?.ToString();
+
+            if (version != null)
+            {
+                showAllClients(parsedDoc.Where(f => f.Version == version).ToList(), utx_search.Text);
+            }
 
             ulv_clients.EndUpdate();
         }
