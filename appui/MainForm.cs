@@ -103,7 +103,7 @@ namespace appui
                 int? totalToProcess = 0;
                 try
                 {
-                    var clients = getAllClientsOrSelected(parsedDoc, ucb_branch.SelectedItem?.ToString());
+                    var clients = getAllClientsOrSelected(ucb_branch.SelectedItem?.ToString());
 
                     var connections = new List<Tuple<SqlConnectionStringBuilder, CancellationTokenSource>>();
                     foreach (var singleClient in clients)
@@ -142,7 +142,7 @@ namespace appui
                                 updateClientProgress(clients.Count, current);
 
                                 var output = await runQueryAsync(connection);
-                                    
+
                                 lock (this)
                                 {
                                     result[connection.Database] = output;
@@ -175,14 +175,14 @@ namespace appui
                     try
                     {
                         var waitingTime = 0;
-                        while(result.Count != totalToProcess && waitingTime <= Config.StopAfterMilliseconds)
+                        while (result.Count != totalToProcess && waitingTime <= Config.StopAfterMilliseconds)
                         {
                             waitingTime += 1000;
                             await Task.Delay(1000);
                             updateClientProgress(1, 1);
                         }
 
-                        if(waitingTime == Config.StopAfterMilliseconds)
+                        if (waitingTime == Config.StopAfterMilliseconds)
                         {
                             MessageBox.Show(string.Format("processed {0} out of total {1}", result.Count, totalToProcess));
                         }
@@ -199,25 +199,13 @@ namespace appui
             }
         }
 
-        private List<PageRow> getAllClientsOrSelected(IList<IPageRow> parsedDoc, string branch)
+        private IList<IPageRow> getAllClientsOrSelected(string version)
         {
-            //if (this.parsedDoc.ContainsKey(branch))
-            //{
-            //    var clients = parsedDoc[branch]
-            //                    .Where(f => ulv_clients.Items.Cast<string>().Any(f1 => f1 == f.client))
-            //                    .ToList();
+            var selected = new HashSet<string>(ulv_clients.SelectedItems.Count != 0
+                ? ulv_clients.SelectedItems?.Cast<string>().ToList()
+                : ulv_clients.Items.Cast<string>());
 
-            //    if (ulv_clients.SelectedItems.Count != 0)
-            //    {
-            //        var selected = ulv_clients.SelectedItems?.Cast<string>().ToList();
-
-            //        clients = clients.Where(f => selected.Any(f1 => f1 == f.client)).ToList();
-            //    }
-
-            //return clients;
-            //}
-
-            return new List<PageRow>();
+            return this.parsedDoc.Where(f => selected.Contains(f.key)).ToList();
         }
 
         private Dictionary<string, List<Tuple<string, string>>> getFakeOutput()
@@ -393,7 +381,7 @@ namespace appui
 
             if (version != null)
             {
-                showAllClients(parsedDoc.Where(f=>f.Version == version).ToList(), utx_search.Text);
+                showAllClients(parsedDoc.Where(f => f.Version == version).ToList(), utx_search.Text);
             }
             ulv_clients.EndUpdate();
         }
@@ -444,9 +432,9 @@ namespace appui
             {
                 var version = ucb_branch.SelectedItem?.ToString();
                 var client = this.parsedDoc
-                    .Where(f=>f.Version == version && f.key == name)
+                    .Where(f => f.Version == version && f.key == name)
                     .FirstOrDefault();
-            
+
                 _changeClientSection(client);
             }
         }
