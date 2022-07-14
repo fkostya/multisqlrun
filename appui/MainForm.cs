@@ -400,6 +400,7 @@ namespace appui
 
         private void ucb_branch_SelectedIndexChanged(object sender, EventArgs e)
         {
+            _changeClientSection(null);
             updateClientList();
         }
 
