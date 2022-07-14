@@ -4,6 +4,6 @@
   "timeputOpenConnection": 20,
   "sql_uname": "wbpoc",
   "sql_pwd": "c3FsQHRmczIwMDg=",
-  "offline": false,
+  "offline": true,
   "StopAfterMilliseconds": 10000
 }

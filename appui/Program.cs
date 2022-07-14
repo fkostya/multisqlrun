@@ -1,7 +1,6 @@
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace appui
@@ -17,7 +16,33 @@ namespace appui
             Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainForm());
+
+            var services = new ServiceCollection();
+            ConfigureServices(services);
+
+            using (ServiceProvider serviceProvider = services.BuildServiceProvider())
+            {
+                var form1 = serviceProvider.GetRequiredService<MainForm>();
+                Application.Run(form1);
+            }
+        }
+
+        private static void ConfigureServices(ServiceCollection services)
+        {
+            services
+                .AddLogging(configure => configure.AddConsole())
+                .AddTransient<MainForm>()
+                .AddScoped<IPageRow, PageRow>()
+                .AddSingleton<IPageParser, PageParser>();
+
+            if (Config.Offline)
+            {
+                services.AddScoped<IPageReader, OfflineFilePageReader>();
+            }
+            else
+            {
+                services.AddScoped<IPageReader, WebPageReader>();
+            }
         }
     }
 }

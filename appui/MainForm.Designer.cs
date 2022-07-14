@@ -49,9 +49,9 @@
             this.ubt_connect.Location = new System.Drawing.Point(7, 6);
             this.ubt_connect.Margin = new System.Windows.Forms.Padding(2);
             this.ubt_connect.Name = "ubt_connect";
-            this.ubt_connect.Size = new System.Drawing.Size(183, 36);
+            this.ubt_connect.Size = new System.Drawing.Size(119, 36);
             this.ubt_connect.TabIndex = 0;
-            this.ubt_connect.Text = "connect";
+            this.ubt_connect.Text = "load";
             this.ubt_connect.UseVisualStyleBackColor = true;
             this.ubt_connect.Click += new System.EventHandler(this.ubt_connect_Click);
             // 
@@ -98,7 +98,7 @@
             this.ucb_branch.Font = new System.Drawing.Font("Segoe UI", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.ucb_branch.FormattingEnabled = true;
             this.ucb_branch.ItemHeight = 28;
-            this.ucb_branch.Location = new System.Drawing.Point(196, 6);
+            this.ucb_branch.Location = new System.Drawing.Point(131, 8);
             this.ucb_branch.Name = "ucb_branch";
             this.ucb_branch.Size = new System.Drawing.Size(122, 36);
             this.ucb_branch.TabIndex = 1;

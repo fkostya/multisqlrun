@@ -3,84 +3,105 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace appui
 {
-    public class PageRow
+    public interface IPageRow
+    {
+        public string key { get; set; }
+        public string database { get; set; }
+        public string Version { get; set; }
+    }
+    public class PageRow : IPageRow
     {
         public string id { get; set; }
-
-        public string client { get; set; }
-
+        public string key { get; set; }
         public string database { get; set; }
-
         public string server { get; set; }
+        public string UserName { get; set; }
+        public string Password { get; set; }
+        public string Version { get; set; }
     }
 
-    public static class PageParser
+    public interface IPageParser
     {
-        public static Dictionary<string, List<PageRow>> Parse(HtmlDocument htmlDoc)
+        Task<IList<IPageRow>> Parse();
+    }
+
+    public class PageParser : IPageParser
+    {
+        public IPageReader reader;
+        public PageParser(IPageReader reader)
         {
-            var parsed = new Dictionary<string, List<PageRow>>();
+            this.reader = reader;
+        }
 
-            var nodes = htmlDoc.DocumentNode.SelectNodes("//div[@id='divContent']");
+        public async Task<IList<IPageRow>> Parse() {
+            var htmlDoc = await this.reader.GetPageAsync();
 
-            if (nodes != null && nodes.Count != 0)
+            var list = new List<IPageRow>();
+
+            var content = htmlDoc.DocumentNode.SelectNodes("//div[@id='divContent']");
+
+            if (content != null && content.Count != 0)
             {
-                parseQAEnvironments(nodes[0], parsed);
+                var versions = parseQAEnvironments(content[0]);
 
-                var _nodes = nodes[0].SelectNodes("//table[@id='TestInfrastructure']//tbody//tr");
+                var trs = content[0].SelectNodes("//table[@id='TestInfrastructure']//tbody//tr");
 
-                if (_nodes == null || _nodes.Count == 0)
-                    return parsed;
+                if (trs == null || trs.Count == 0)
+                    return list;
 
-                foreach (var node in _nodes)
+                foreach (var node in trs)
                 {
-                    var id = node.Id;
-                    var name = node.ChildNodes.Count > 0 ? node.ChildNodes[0].InnerHtml : "";
-
+                    
                     var memberNodes = node.SelectNodes(".//td[@data-site='sitename']");
-
                     var index = 0;
                     foreach (var mem in memberNodes)
                     {
-                        var database = mem.SelectSingleNode(".//font[@data-client-id=\'" + id + "\']")?.InnerHtml;
+                        var database = mem.SelectSingleNode(".//font[@data-client-id=\'" + node.Id + "\']")?.InnerHtml;
                         var server = mem.SelectSingleNode(".//small[@class='dbServerVersion']")?.InnerHtml.Split("-")?[0]?.Trim().Replace("[", "");
 
                         if (!string.IsNullOrWhiteSpace(database) && database.Length > 3 && !string.IsNullOrWhiteSpace(server) && server.Length > 3)
                         {
                             var row = new PageRow()
                             {
-                                id = id,
-                                client = name,
+                                id = node.Id,
+                                key = node.ChildNodes.Count > 0 ? node.ChildNodes[0].InnerHtml : "",
                                 database = database,
-                                server = server
+                                server = server,
+                                Version= versions[index]
                             };
-
-                            if(index < parsed.Keys.Count)
-                                parsed[parsed.Keys.ElementAt(index)].Add(row);
+                            
+                            list.Add(row);
                         }
-
                         index++;
                     }
                 }
             }
 
-            return parsed;
+            return list;
         }
 
-        private static void parseQAEnvironments(HtmlNode root, Dictionary<string, List<PageRow>> parsed)
+        public Task<string> Save(List<IPageRow> list, string filepath)
         {
-            if (root == null || string.IsNullOrWhiteSpace(root.InnerHtml))
-                return;
+            return Task.FromResult<string>("foo");
+        }
 
-            var nodes = root.SelectNodes("//a[@class='toggle-vis']");
+        private IList<string> parseQAEnvironments(HtmlNode header)
+        {
+            if (header  == null || string.IsNullOrWhiteSpace(header.InnerHtml))
+                return null;
 
+            var nodes = header.SelectNodes("//a[@class='toggle-vis']");
+
+            var list = new List<string>();
             foreach (var _ in nodes)
             {
-                parsed[_.InnerText] = new List<PageRow>();
+                list.Add(_.InnerText);
             }
-
+            return list;
         }
     }
 }

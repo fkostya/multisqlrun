@@ -11,24 +11,17 @@ namespace appui
 {
     public interface IPageReader
     {
-        Task<HtmlDocument> GetPageAsync(string path);
+        Task<HtmlDocument> GetPageAsync();
     }
-
-    static class PageReader
-    {
-        public static async Task<HtmlDocument> GetPageAsync(IPageReader reader, string path)
-        {
-            return await reader.GetPageAsync(path);
-        }
-    }
-
 
     public class WebPageReader : IPageReader
     {
-        public async Task<HtmlDocument> GetPageAsync(string url)
+        private string _url = Config.Url;
+
+        public async Task<HtmlDocument> GetPageAsync()
         {
             var web = new HtmlWeb();
-            var doc = await web.LoadFromWebAsync(url);
+            var doc = await web.LoadFromWebAsync(_url);
 
             return doc;
         }
@@ -36,10 +29,12 @@ namespace appui
 
     public class OfflineFilePageReader : IPageReader
     {
-        public async Task<HtmlDocument> GetPageAsync(string path)
+        private string _offlineFilePath = Config.OfflineFilePath;
+
+        public async Task<HtmlDocument> GetPageAsync()
         {
             var doc = new HtmlDocument();
-            doc.Load(path);
+            doc.Load(_offlineFilePath);
 
             return await Task.FromResult(doc);
         }

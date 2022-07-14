@@ -18,12 +18,15 @@ namespace appui
     public partial class MainForm : Form
     {
         private bool offline = Config.Offline;
-        private Dictionary<string, List<PageRow>> parsedDoc;
+        private IList<IPageRow> parsedDoc;
         private bool openConnectionProcess;
-        
-        public MainForm()
+
+        private IPageParser pageParser;
+
+        public MainForm(IPageParser parser)
         {
             InitializeComponent();
+            this.pageParser = parser;
         }
 
         private async void ubt_connect_Click(object sender, EventArgs e)
@@ -41,10 +44,9 @@ namespace appui
 
                 clear();
 
-                var doc = await this.loadHtml(offline ? Config.OfflineFilePath : Config.Url);
-                this.parsedDoc = PageParser.Parse(doc);
+                this.parsedDoc = await this.pageParser.Parse();
 
-                refresh(this.parsedDoc);
+                refresh();
 
                 openConnectionProcess = false;
 
@@ -72,25 +74,18 @@ namespace appui
             ucb_branch.Items.Clear();
             ulv_clients.Items.Clear();
         }
-
-        private void refresh(Dictionary<string, List<PageRow>> parsed)
+        private void refresh()
         {
             var index = 0;
 
-            parsed.Keys.ToList().OrderByDescending(k => k).ToList().ForEach(k => ucb_branch.Items.Insert(index++, k));
+            this.parsedDoc
+                .DistinctBy(f => f.Version)
+                .Select(f => f.Version)
+                .ToList()
+                .ForEach(f => ucb_branch.Items.Insert(index++, f));
 
             updateClientList();
         }
-
-        private async Task<HtmlDocument> loadHtml(string url)
-        {
-            this.Text = url;
-
-            IPageReader loader = PageReaderFactory.CreatePageReader(offline);
-
-            return await PageReader.GetPageAsync(loader, url);
-        }
-
         private async void ubt_run_Click(object sender, EventArgs e)
         {
             if (offline)
@@ -205,23 +200,23 @@ namespace appui
             }
         }
 
-        private List<PageRow> getAllClientsOrSelected(Dictionary<string, List<PageRow>> parsedDoc, string branch)
+        private List<PageRow> getAllClientsOrSelected(IList<IPageRow> parsedDoc, string branch)
         {
-            if (this.parsedDoc.ContainsKey(branch))
-            {
-                var clients = parsedDoc[branch]
-                                .Where(f => ulv_clients.Items.Cast<string>().Any(f1 => f1 == f.client))
-                                .ToList();
+            //if (this.parsedDoc.ContainsKey(branch))
+            //{
+            //    var clients = parsedDoc[branch]
+            //                    .Where(f => ulv_clients.Items.Cast<string>().Any(f1 => f1 == f.client))
+            //                    .ToList();
 
-                if (ulv_clients.SelectedItems.Count != 0)
-                {
-                    var selected = ulv_clients.SelectedItems?.Cast<string>().ToList();
+            //    if (ulv_clients.SelectedItems.Count != 0)
+            //    {
+            //        var selected = ulv_clients.SelectedItems?.Cast<string>().ToList();
 
-                    clients = clients.Where(f => selected.Any(f1 => f1 == f.client)).ToList();
-                }
+            //        clients = clients.Where(f => selected.Any(f1 => f1 == f.client)).ToList();
+            //    }
 
-            return clients;
-            }
+            //return clients;
+            //}
 
             return new List<PageRow>();
         }
@@ -395,11 +390,11 @@ namespace appui
 
             ulv_clients.Items.Clear();
 
-            var branch = ucb_branch.SelectedItem?.ToString();
+            var version = ucb_branch.SelectedItem?.ToString();
 
-            if (branch!= null && parsedDoc.ContainsKey(branch))
+            if (version != null)
             {
-                showAllClients(parsedDoc[ucb_branch.SelectedItem.ToString()], utx_search.Text);
+                showAllClients(parsedDoc.Where(f=>f.Version == version).ToList(), utx_search.Text);
             }
             ulv_clients.EndUpdate();
         }
@@ -409,16 +404,16 @@ namespace appui
             updateClientList();
         }
 
-        private void showAllClients(List<PageRow> clients, string filterName = "")
+        private void showAllClients(IList<IPageRow> clients, string filterName = "")
         {
             if (clients.Count > 0)
             {
                 var index = 0;
                 clients.ToList()
                     .Where(f => string.IsNullOrWhiteSpace(filterName) ||
-                    f.client.Contains(filterName, StringComparison.OrdinalIgnoreCase) ||
+                    f.key.Contains(filterName, StringComparison.OrdinalIgnoreCase) ||
                     f.database.Contains(filterName, StringComparison.OrdinalIgnoreCase))
-                    .Select(f => f.client)
+                    .Select(f => f.key)
                         .ToList().ForEach(f =>
                         {
                             ulv_clients.Items.Insert(index++, f);
@@ -432,7 +427,7 @@ namespace appui
             ulv_clients.Items.Clear();
             _changeClientSection(null);
 
-            showAllClients(this.parsedDoc[ucb_branch.SelectedItem.ToString()], utx_search.Text);
+            //showAllClients(this.parsedDoc[ucb_branch.SelectedItem.ToString()], utx_search.Text);
 
             ulv_clients.EndUpdate();
         }
@@ -443,7 +438,7 @@ namespace appui
 
             if (!string.IsNullOrWhiteSpace(((CheckedListBox)sender).SelectedItem?.ToString()))
             {
-                client = this.parsedDoc[ucb_branch.SelectedItem.ToString()].FirstOrDefault(f => f.client.Equals(((CheckedListBox)sender).SelectedItem.ToString(), StringComparison.OrdinalIgnoreCase));
+                //client = this.parsedDoc[ucb_branch.SelectedItem.ToString()].FirstOrDefault(f => f.client.Equals(((CheckedListBox)sender).SelectedItem.ToString(), StringComparison.OrdinalIgnoreCase));
             }
             _changeClientSection(client);
         }
