@@ -434,16 +434,19 @@ namespace appui
 
         private void ulv_clients_SelectedIndexChanged(object sender, EventArgs e)
         {
-            PageRow client = null;
-
-            if (!string.IsNullOrWhiteSpace(((CheckedListBox)sender).SelectedItem?.ToString()))
+            string name = ((CheckedListBox)sender).SelectedItem?.ToString();
+            if (!string.IsNullOrWhiteSpace(name))
             {
-                //client = this.parsedDoc[ucb_branch.SelectedItem.ToString()].FirstOrDefault(f => f.client.Equals(((CheckedListBox)sender).SelectedItem.ToString(), StringComparison.OrdinalIgnoreCase));
+                var version = ucb_branch.SelectedItem?.ToString();
+                var client = this.parsedDoc
+                    .Where(f=>f.Version == version && f.key == name)
+                    .FirstOrDefault();
+            
+                _changeClientSection(client);
             }
-            _changeClientSection(client);
         }
 
-        private void _changeClientSection(PageRow client)
+        private void _changeClientSection(IPageRow client)
         {
             utx_dbname.Text = client?.database;
             utx_clientname.Text = client?.id;

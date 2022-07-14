@@ -9,8 +9,12 @@ namespace appui
 {
     public interface IPageRow
     {
+        public string id { get; set; }
         public string key { get; set; }
         public string database { get; set; }
+        public string server { get; set; }
+        public string UserName { get; set; }
+        public string Password { get; set; }
         public string Version { get; set; }
     }
     public class PageRow : IPageRow
