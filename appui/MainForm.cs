@@ -97,7 +97,8 @@ namespace appui
 
             Dictionary<string, List<Tuple<string, string>>> result = new Dictionary<string, List<Tuple<string, string>>>();
 
-            if (!string.IsNullOrWhiteSpace(utx_sqlquery.Text))
+            var query  = utx_sqlquery.Text;
+            if (!string.IsNullOrWhiteSpace(query))
             {
                 var processed = 0;
                 int? totalToProcess = 0;
