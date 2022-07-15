@@ -24,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ClassLibrary1\appui.shared.csproj" />
+    <ProjectReference Include="..\appui.shared\appui.shared.csproj" />
   </ItemGroup>
 
   <ItemGroup>
