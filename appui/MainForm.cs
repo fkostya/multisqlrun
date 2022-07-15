@@ -122,30 +122,27 @@ namespace appui
                     }
 
                     var current = 0;
-                    totalToProcess = clients?.Count();
 
                     foreach (var clientConnection in connections)
                     {
                         Interlocked.Increment(ref current);
 
-                        lblProgress.Text = $"{current} of {totalToProcess}";
+                        lblProgress.Text = $"{current} of {clients?.Count()}";
 
                         var source = clientConnection.Item2;
                         initDbConnectionProcess(source.Token);
 
                         try
                         {
-                            using (SqlConnection connection = new SqlConnection(clientConnection.Item1.ConnectionString))
+                            using (SqlRunCommand cmd = new SqlRunCommand(clientConnection.Item1.ConnectionString))
                             {
-                                await connection.OpenAsync();
-
                                 updateClientProgress(clients.Count, current);
 
-                                var output = await runQueryAsync(connection);
+                                var output = await cmd.RunQuery(utx_sqlquery.Text);
 
                                 lock (this)
                                 {
-                                    result[connection.Database] = output;
+                                    result[cmd.Database] = output;
                                     Interlocked.Increment(ref processed);
                                 }
                             }
@@ -316,59 +313,6 @@ namespace appui
             }
 
             return null;
-        }
-
-        private async Task<List<Tuple<string, string>>> runQueryAsync(SqlConnection connection)
-        {
-            var output = new List<Tuple<string, string>>();
-            try
-            {
-
-                var reader = await runCommandAsync(utx_sqlquery.Text, connection);
-
-                try
-                {
-                    DataTable schemaTable = reader.GetSchemaTable();
-
-                    while (reader.Read())
-                    {
-                        if (reader.HasRows)
-                        {
-                            foreach (DataRow row in schemaTable.Rows)
-                            {
-                                foreach (DataColumn column in schemaTable.Columns)
-                                {
-                                    var colname = row[column].ToString();
-
-                                    output.Add(new Tuple<string, string>(colname, reader[colname].ToString()));
-
-                                }
-                            }
-                        }
-                    }
-                }
-                finally
-                {
-                    // Always call Close when done reading.
-                    reader.Close();
-                }
-            }
-            catch
-            {
-            }
-
-            return await Task.FromResult(output);
-        }
-
-
-        private async Task<SqlDataReader> runCommandAsync(string query, SqlConnection dbc)
-        {
-            using (SqlCommand cmd = new SqlCommand(query, dbc))
-            {
-                cmd.CommandTimeout = Config.TimeputOpenConnection;
-
-                return await cmd.ExecuteReaderAsync();
-            }
         }
 
         private void updateClientList()
