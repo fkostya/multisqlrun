@@ -11,6 +11,7 @@ namespace appui.shared
     public class PageParser : IPageParser
     {
         public IPageReader reader;
+
         public PageParser(IPageReader reader)
         {
             this.reader = reader;
@@ -21,61 +22,14 @@ namespace appui.shared
             var htmlDoc = await this.reader.GetPageAsync(url);
 
             var list = new List<IPageRow>();
+            var doc = new WebDocument(htmlDoc);
 
-            var content = htmlDoc.DocumentNode.SelectNodes("//div[@id='divContent']");
-
-            if (content != null && content.Count != 0)
+            IEnumerable<IPageRow> sites = doc.GetSites();
+            foreach (IPageRow site in sites)
             {
-                var versions = parseQAEnvironments(content[0]);
-
-                var trs = content[0].SelectNodes("//table[@id='TestInfrastructure']//tbody//tr");
-
-                if (trs == null || trs.Count == 0)
-                    return list;
-
-                foreach (var node in trs)
-                {
-
-                    var memberNodes = node.SelectNodes(".//td[@data-site='sitename']");
-                    var index = 0;
-                    foreach (var mem in memberNodes)
-                    {
-                        var database = mem.SelectSingleNode(".//font[@data-client-id=\'" + node.Id + "\']")?.InnerHtml;
-                        var server = mem.SelectSingleNode(".//small[@class='dbServerVersion']")?.InnerHtml.Split("-")?[0]?.Trim().Replace("[", "");
-
-                        if (!string.IsNullOrWhiteSpace(database) && database.Length > 3 && !string.IsNullOrWhiteSpace(server) && server.Length > 3)
-                        {
-                            var row = new PageRow()
-                            {
-                                id = node.Id,
-                                key = node.ChildNodes.Count > 0 ? node.ChildNodes[0].InnerHtml : "",
-                                database = database,
-                                server = server,
-                                Version = versions[index]
-                            };
-
-                            list.Add(row);
-                        }
-                        index++;
-                    }
-                }
+                list.Add(site);
             }
 
-            return list;
-        }
-
-        private IList<string> parseQAEnvironments(HtmlNode header)
-        {
-            if (header == null || string.IsNullOrWhiteSpace(header.InnerHtml))
-                return null;
-
-            var nodes = header.SelectNodes("//a[@class='toggle-vis']");
-
-            var list = new List<string>();
-            foreach (var _ in nodes)
-            {
-                list.Add(_.InnerText);
-            }
             return list;
         }
     }
