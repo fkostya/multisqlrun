@@ -1,4 +1,5 @@
-﻿using CsvHelper;
+﻿using appui.shared.Interfaces;
+using CsvHelper;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -42,7 +43,7 @@ namespace appui
                 btn_selectall.Enabled = false;
 
                 clear();
-                this.parsedDoc = await this.pageParser.Parse();
+                this.parsedDoc = await this.pageParser.Parse(this.offline ? Config.OfflineFilePath : Config.Url);
                 refresh();
 
                 openConnectionProcess = false;

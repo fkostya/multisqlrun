@@ -1,9 +1,18 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30330.147
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32630.192
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "appui", "appui\appui.csproj", "{3860EB04-4D7A-47DF-BE06-9026573EC439}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "appui", "appui\appui.csproj", "{3860EB04-4D7A-47DF-BE06-9026573EC439}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "appui.tests", "appui.tests\appui.tests.csproj", "{E8652202-9DB8-4065-A932-345BAF947492}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "doc", "doc", "{FD15FD9B-A9CC-4484-B3B4-581ADCB4A48E}"
+	ProjectSection(SolutionItems) = preProject
+		appui\assets\diagram.drawio = appui\assets\diagram.drawio
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "appui.shared", "ClassLibrary1\appui.shared.csproj", "{92DF6C9E-0BD6-4555-85A0-250E0DD3ED16}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +24,14 @@ Global
 		{3860EB04-4D7A-47DF-BE06-9026573EC439}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3860EB04-4D7A-47DF-BE06-9026573EC439}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3860EB04-4D7A-47DF-BE06-9026573EC439}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E8652202-9DB8-4065-A932-345BAF947492}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E8652202-9DB8-4065-A932-345BAF947492}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E8652202-9DB8-4065-A932-345BAF947492}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E8652202-9DB8-4065-A932-345BAF947492}.Release|Any CPU.Build.0 = Release|Any CPU
+		{92DF6C9E-0BD6-4555-85A0-250E0DD3ED16}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{92DF6C9E-0BD6-4555-85A0-250E0DD3ED16}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{92DF6C9E-0BD6-4555-85A0-250E0DD3ED16}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{92DF6C9E-0BD6-4555-85A0-250E0DD3ED16}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
