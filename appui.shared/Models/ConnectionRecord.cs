@@ -1,12 +1,13 @@
-﻿using System;
+﻿using appui.shared.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace appui.shared.Interfaces
+namespace appui.shared.Models
 {
-    public interface IPageRow
+    public class ConnectionRecord : IConnectionRecord
     {
         public string id { get; set; }
         public string key { get; set; }

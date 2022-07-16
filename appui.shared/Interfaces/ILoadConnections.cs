@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace appui.shared.Interfaces
 {
-    public interface IPageParser
+    public interface ILoadConnections
     {
-        Task<IList<IPageRow>> Parse(string url);
+        Task<IList<IConnectionRecord>> Load();
     }
 }

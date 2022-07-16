@@ -3,7 +3,7 @@ using HtmlAgilityPack;
 
 namespace appui.tests
 {
-    public class PageParserTests
+    public class LoadConnectionTests
     {
         class FakePageReader : IPageReader
         {
@@ -13,7 +13,7 @@ namespace appui.tests
             }
         }
         [Fact]
-        public void Parse()
+        public void Load()
         {
             Assert.False(1 == 0);
         }

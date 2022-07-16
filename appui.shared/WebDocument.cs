@@ -1,4 +1,5 @@
 ﻿using appui.shared.Interfaces;
+using appui.shared.Models;
 using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace appui.shared
 {
-    internal class WebDocument
+    internal class WebDocument : ILoadSource
     {
         private readonly HtmlNode content;
 
@@ -38,11 +39,11 @@ namespace appui.shared
             return list;
         }
 
-        public IEnumerable<IPageRow> GetSites()
+        public IEnumerable<IConnectionRecord> GetConnections()
         {
             var trs = content.SelectNodes("//table[@id='TestInfrastructure']//tbody//tr");
 
-            var list = new List<IPageRow>();
+            var list = new List<IConnectionRecord>();
 
             var versions = this.GetVersions();
 
@@ -58,7 +59,7 @@ namespace appui.shared
 
                     if (!string.IsNullOrWhiteSpace(database) && database.Length > 3 && !string.IsNullOrWhiteSpace(server) && server.Length > 3)
                     {
-                        yield return new PageRow()
+                        yield return new ConnectionRecord()
                         {
                             id = node.Id,
                             key = node.ChildNodes.Count > 0 ? node.ChildNodes[0].InnerHtml : "",

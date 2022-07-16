@@ -1,5 +1,7 @@
-﻿using appui.shared.Interfaces;
+﻿using appui.shared;
+using appui.shared.Interfaces;
 using CsvHelper;
+using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -12,21 +14,20 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using HtmlDocument = HtmlAgilityPack.HtmlDocument;
 
 namespace appui
 {
     public partial class MainForm : Form
     {
         private bool offline = Config.Offline;
-        private IList<IPageRow> parsedDoc;
+        private IList<IConnectionRecord> parsedDoc;
         private bool openConnectionProcess;
-        private IPageParser pageParser;
+        private ILoadConnections connectins;
 
-        public MainForm(IPageParser parser)
+        public MainForm(IPageReader reader)
         {
             InitializeComponent();
-            this.pageParser = parser;
+            this.connectins = new LoadConnections(reader, offline ? Config.OfflineFilePath : Config.Url);
         }
 
         private async void ubt_connect_Click(object sender, EventArgs e)
@@ -43,7 +44,7 @@ namespace appui
                 btn_selectall.Enabled = false;
 
                 clear();
-                this.parsedDoc = await this.pageParser.Parse(this.offline ? Config.OfflineFilePath : Config.Url);
+                this.parsedDoc = await this.connectins.Load();
                 refresh();
 
                 openConnectionProcess = false;
@@ -198,7 +199,7 @@ namespace appui
             }
         }
 
-        private IList<IPageRow> getAllClientsOrSelected(string version)
+        private IList<IConnectionRecord> getAllClientsOrSelected(string version)
         {
             var selected = new HashSet<string>(ulv_clients.SelectedItems.Count != 0
                 ? ulv_clients.SelectedItems?.Cast<string>().ToList()
@@ -338,7 +339,7 @@ namespace appui
             updateClientList();
         }
 
-        private void showAllClients(IList<IPageRow> clients, string filterName = "")
+        private void showAllClients(IList<IConnectionRecord> clients, string filterName = "")
         {
             if (clients.Count > 0)
             {
@@ -385,7 +386,7 @@ namespace appui
             }
         }
 
-        private void _changeClientSection(IPageRow client)
+        private void _changeClientSection(IConnectionRecord client)
         {
             utx_dbname.Text = client?.database;
             utx_clientname.Text = client?.id;

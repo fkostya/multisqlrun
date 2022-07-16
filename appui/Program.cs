@@ -3,6 +3,7 @@ using appui.shared.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Configuration;
 using System.Windows.Forms;
 
 namespace appui
@@ -33,8 +34,10 @@ namespace appui
         {
             services
                 .AddLogging(configure => configure.AddConsole())
-                .AddTransient<MainForm>()
-                .AddSingleton<IPageParser, PageParser>();
+                .AddTransient<MainForm>();
+            //.AddSingleton<ILoadConnections, LoadConnections>();
+
+            //services.Configure<Config>(Configuration.GetSection(nameof(Config)));
 
             if (Config.Offline)
             {
