@@ -7,9 +7,9 @@ namespace appui.shared
     {
         private readonly IPageReader reader;
 
-        public LoadConnections(IPageReader reader)
+        public LoadConnections(IPageReaderFactory pageReaderFactory)
         {
-            this.reader = reader;
+            this.reader = pageReaderFactory.CreatePageReader();
         }
 
         public async Task<IList<IConnectionRecord>> Load()

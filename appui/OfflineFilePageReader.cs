@@ -1,6 +1,7 @@
 ﻿using appui.shared.Interfaces;
 using appui.shared.Models;
 using HtmlAgilityPack;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -18,7 +19,7 @@ namespace appui
 
         public OfflineFilePageReader(IOptions<ConnectionSourceOption> options)
         {
-            config = options.Value;
+            config = options?.Value;
         }
 
         public async Task<HtmlDocument> GetPageAsync()

@@ -3,6 +3,7 @@ using appui.shared.Interfaces;
 using appui.shared.Models;
 using CsvHelper;
 using HtmlAgilityPack;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -24,15 +25,19 @@ namespace appui
     {
         private IList<IConnectionRecord> parsedDoc;
         private bool openConnectionProcess;
-        private ILoadConnections connectins;
-        private readonly GeneralOption config;
+        private readonly ILoadConnections connection;
+        private readonly AppSettings config;
+        private readonly ILogger logger;
 
-        public MainForm(IPageReader reader, IOptions<GeneralOption> options)
+        public MainForm(IOptions<AppSettings> options, ILoadConnections connection, ILogger<AppErrorLog> logger)
         {
             InitializeComponent();
-            this.config = options.Value;
 
-            this.connectins = new LoadConnections(reader);
+            this.config = options.Value;
+            this.connection = connection;
+            this.logger = logger;
+
+            logger.LogInformation($"start app {DateTime.Now}");
         }
 
         private async void ubt_connect_Click(object sender, EventArgs e)
@@ -49,7 +54,7 @@ namespace appui
                 btn_selectall.Enabled = false;
 
                 clear();
-                this.parsedDoc = await this.connectins.Load();
+                this.parsedDoc = await this.connection.Load();
                 refresh();
 
                 openConnectionProcess = false;
@@ -86,6 +91,7 @@ namespace appui
             ulv_clients.Items.Clear();
             _changeClientSection(null);
         }
+
         private void refresh()
         {
             var index = 0;
@@ -98,6 +104,7 @@ namespace appui
 
             updateClientList();
         }
+
         private async void ubt_run_Click(object sender, EventArgs e)
         {
             ubt_run.Enabled = false;
@@ -204,6 +211,7 @@ namespace appui
                 }
             }
         }
+     
         private string decode(string value)
         {
             byte[] data = Convert.FromBase64String(value);

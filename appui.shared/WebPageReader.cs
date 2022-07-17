@@ -16,8 +16,9 @@ namespace appui.shared
 
         public WebPageReader(IOptions<ConnectionSourceOption> options)
         {
-            this.config = options.Value;
+            this.config = options?.Value;
         }
+
         public async Task<HtmlDocument> GetPageAsync()
         {
             var web = new HtmlWeb();

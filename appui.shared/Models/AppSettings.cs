@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace appui.shared.Models
 {
-    public class GeneralOption
+    public class AppSettings
     {
         public int TimeputOpenConnection { get; set; }
 

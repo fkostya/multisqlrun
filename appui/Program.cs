@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System;
 using System.Configuration;
 using System.Windows.Forms;
@@ -45,19 +46,13 @@ namespace appui
             services
                 .AddLogging(configure => configure.AddConsole())
                 .AddTransient<MainForm>()
+                .AddScoped<IServiceProvider, ServiceProvider>()
                 .Configure<ConnectionSourceOption>(Configuration.GetSection("connectionSource"))
-                .Configure<GeneralOption>(Configuration.GetSection("general"));
-            
-            //.AddSingleton<ILoadConnections, LoadConnections>();
-
-            if (true)
-            {
-                services.AddScoped<IPageReader, OfflineFilePageReader>();
-            }
-            else
-            {
-                services.AddScoped<IPageReader, WebPageReader>();
-            }
+                .Configure<AppSettings>(Configuration.GetSection("appSettings"))
+                .AddSingleton<ILoadConnections, LoadConnections>()
+                .AddTransient<WebPageReader>()
+                .AddTransient<OfflineFilePageReader>()
+                .AddSingleton<IPageReaderFactory, PageReaderFactory>();
         }
     }
 }
