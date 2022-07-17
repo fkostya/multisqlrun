@@ -5,18 +5,16 @@ namespace appui.shared
 {
     public class LoadConnections : ILoadConnections
     {
-        private readonly string url;
         private readonly IPageReader reader;
 
-        public LoadConnections(IPageReader reader, string url)
+        public LoadConnections(IPageReader reader)
         {
             this.reader = reader;
-            this.url = url;
         }
 
         public async Task<IList<IConnectionRecord>> Load()
         {
-            var htmlDoc = await this.reader.GetPageAsync(this.url);
+            var htmlDoc = await this.reader.GetPageAsync();
 
             var list = new List<IConnectionRecord>();
             var doc = new WebDocument(htmlDoc);

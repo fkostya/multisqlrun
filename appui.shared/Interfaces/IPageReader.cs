@@ -9,6 +9,6 @@ namespace appui.shared.Interfaces
 {
     public interface IPageReader
     {
-        Task<HtmlDocument> GetPageAsync(string url);
+        Task<HtmlDocument> GetPageAsync();
     }
 }

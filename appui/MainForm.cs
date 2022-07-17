@@ -1,7 +1,9 @@
 ﻿using appui.shared;
 using appui.shared.Interfaces;
+using appui.shared.Models;
 using CsvHelper;
 using HtmlAgilityPack;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -11,6 +13,7 @@ using System.Dynamic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -19,15 +22,17 @@ namespace appui
 {
     public partial class MainForm : Form
     {
-        private bool offline = Config.Offline;
         private IList<IConnectionRecord> parsedDoc;
         private bool openConnectionProcess;
         private ILoadConnections connectins;
+        private readonly GeneralOption config;
 
-        public MainForm(IPageReader reader)
+        public MainForm(IPageReader reader, IOptions<GeneralOption> options)
         {
             InitializeComponent();
-            this.connectins = new LoadConnections(reader, offline ? Config.OfflineFilePath : Config.Url);
+            this.config = options.Value;
+
+            this.connectins = new LoadConnections(reader);
         }
 
         private async void ubt_connect_Click(object sender, EventArgs e)
@@ -59,6 +64,12 @@ namespace appui
 
                 upb_progress.Style = ProgressBarStyle.Blocks;
                 upb_progress.MarqueeAnimationSpeed = 0;
+
+                if (this.config.Offline)
+                {
+                    ubt_run.Enabled = false;
+                    utx_sqlquery.Enabled= false;
+                }
             }
             catch (Exception ex)
             {
@@ -89,11 +100,6 @@ namespace appui
         }
         private async void ubt_run_Click(object sender, EventArgs e)
         {
-            if (offline)
-            {
-                return;
-            }
-
             ubt_run.Enabled = false;
             utx_outputpath.Text = "";
 
@@ -116,9 +122,9 @@ namespace appui
                             {
                                 DataSource = singleClient.server,
                                 InitialCatalog = singleClient.database,
-                                UserID = Config.SqlUname,
-                                Password = Config.SqlPwd,
-                                ConnectTimeout = Config.TimeputOpenConnection
+                                UserID = this.config.DefaultSqlUserName,
+                                Password = decode(this.config.DefaultSqlUserPwd),
+                                ConnectTimeout = this.config.TimeputOpenConnection
                             },
                             new CancellationTokenSource()
                         ));
@@ -137,7 +143,7 @@ namespace appui
 
                         try
                         {
-                            using (SqlRunCommand cmd = new SqlRunCommand(clientConnection.Item1.ConnectionString))
+                            using (SqlRunCommand cmd = new SqlRunCommand(clientConnection.Item1))
                             {
                                 updateClientProgress(clients.Count, current);
 
@@ -175,14 +181,14 @@ namespace appui
                     try
                     {
                         var waitingTime = 0;
-                        while (result.Count != totalToProcess && waitingTime <= Config.StopAfterMilliseconds)
+                        while (result.Count != totalToProcess && waitingTime <= this.config.StopAfterMilliseconds)
                         {
                             waitingTime += 1000;
                             await Task.Delay(1000);
                             updateClientProgress(1, 1);
                         }
 
-                        if (waitingTime == Config.StopAfterMilliseconds)
+                        if (waitingTime == this.config.StopAfterMilliseconds)
                         {
                             MessageBox.Show(string.Format("processed {0} out of total {1}", result.Count, totalToProcess));
                         }
@@ -197,6 +203,11 @@ namespace appui
                     ubt_run.Enabled = true;
                 }
             }
+        }
+        private string decode(string value)
+        {
+            byte[] data = Convert.FromBase64String(value);
+            return Encoding.UTF8.GetString(data);
         }
 
         private IList<IConnectionRecord> getAllClientsOrSelected(string version)
@@ -233,7 +244,7 @@ namespace appui
 
         private void initDbConnectionProcess(CancellationToken token)
         {
-            upb_progress.Maximum = Config.TimeputOpenConnection;
+            upb_progress.Maximum = config.TimeputOpenConnection;
 
             var progress = new Progress<int>(value => upb_progress.Value = Math.Max(0, Math.Min(upb_progress.Maximum, value)));
             openConnectionProcess = true;
@@ -247,7 +258,7 @@ namespace appui
                     ((IProgress<int>)progress).Report(i++);
                     Task.Delay(100);
 
-                    if (i == Config.TimeputOpenConnection)
+                    if (i == config.TimeputOpenConnection)
                         i = 0;
                 }
             }, token);

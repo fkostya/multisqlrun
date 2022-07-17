@@ -7,7 +7,7 @@ namespace appui.tests
     {
         class FakePageReader : IPageReader
         {
-            public Task<HtmlDocument> GetPageAsync(string url)
+            public Task<HtmlDocument> GetPageAsync()
             {
                 throw new NotImplementedException();
             }

@@ -1,4 +1,5 @@
 ﻿using appui.shared.Interfaces;
+using appui.shared.Models;
 using HtmlAgilityPack;
 using Microsoft.Extensions.Options;
 using System;
@@ -11,16 +12,16 @@ namespace appui.shared
 {
     public class WebPageReader : IPageReader
     {
-        private readonly string _url;
+        private readonly ConnectionSourceOption config;
 
-        public WebPageReader()
+        public WebPageReader(IOptions<ConnectionSourceOption> options)
         {
-
+            this.config = options.Value;
         }
-        public async Task<HtmlDocument> GetPageAsync(string url)
+        public async Task<HtmlDocument> GetPageAsync()
         {
             var web = new HtmlWeb();
-            var doc = await web.LoadFromWebAsync(url);
+            var doc = await web.LoadFromWebAsync(config.WebConnectionSource);
 
             return doc;
         }

@@ -1,6 +1,9 @@
 using appui.shared;
 using appui.shared.Interfaces;
+using appui.shared.Models;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Configuration;
@@ -10,6 +13,8 @@ namespace appui
 {
     static class Program
     {
+        public static IConfiguration Configuration;
+
         /// <summary>
         ///  The main entry point for the application.
         /// </summary>
@@ -30,16 +35,22 @@ namespace appui
             }
         }
 
-        private static void ConfigureServices(ServiceCollection services)
+        private static void ConfigureServices(IServiceCollection services)
         {
+            var builder = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: false);
+
+            Configuration = builder.Build();
+
             services
                 .AddLogging(configure => configure.AddConsole())
-                .AddTransient<MainForm>();
+                .AddTransient<MainForm>()
+                .Configure<ConnectionSourceOption>(Configuration.GetSection("connectionSource"))
+                .Configure<GeneralOption>(Configuration.GetSection("general"));
+            
             //.AddSingleton<ILoadConnections, LoadConnections>();
 
-            //services.Configure<Config>(Configuration.GetSection(nameof(Config)));
-
-            if (Config.Offline)
+            if (true)
             {
                 services.AddScoped<IPageReader, OfflineFilePageReader>();
             }

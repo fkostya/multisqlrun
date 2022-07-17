@@ -1,4 +1,6 @@
-﻿using System;
+﻿using appui.shared.Models;
+using Microsoft.Extensions.Options;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -15,16 +17,17 @@ namespace appui
 
     internal class SqlRunCommand : IRunCommand, IDisposable
     {
-        private SqlConnection _connection;
-
+        private readonly SqlConnection _connection;
+        private readonly SqlConnectionStringBuilder _connectionBuilder;
         public string Database
         {
             get { return _connection.Database; }
         }
 
-        public SqlRunCommand(string connectionString)
+        public SqlRunCommand(SqlConnectionStringBuilder connection)
         {
-            _connection = new SqlConnection(connectionString);
+            _connection = new SqlConnection(connection.ConnectionString);
+            _connectionBuilder = connection;
         }
 
         public void Dispose()
@@ -80,7 +83,7 @@ namespace appui
             await _connection.OpenAsync();
             using (SqlCommand cmd = new SqlCommand(query, this._connection))
             {
-                cmd.CommandTimeout = Config.TimeputOpenConnection;
+                cmd.CommandTimeout = _connectionBuilder.ConnectTimeout;
 
                 await _connection.CloseAsync();
                 
