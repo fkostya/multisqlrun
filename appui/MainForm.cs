@@ -1,8 +1,6 @@
-﻿using appui.shared;
-using appui.shared.Interfaces;
+﻿using appui.shared.Interfaces;
 using appui.shared.Models;
 using CsvHelper;
-using HtmlAgilityPack;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
@@ -27,7 +25,7 @@ namespace appui
         private bool openConnectionProcess;
         private readonly ILoadConnections connection;
         private readonly AppSettings config;
-        private readonly ILogger logger;
+        private readonly ILogger Logger;
 
         public MainForm(IOptions<AppSettings> options, ILoadConnections connection, ILogger<AppErrorLog> logger)
         {
@@ -35,9 +33,9 @@ namespace appui
 
             this.config = options.Value;
             this.connection = connection;
-            this.logger = logger;
+            this.Logger = logger;
 
-            logger.LogInformation($"start app {DateTime.Now}");
+            Logger.LogInformation($"starting app at:{DateTime.Now}");
         }
 
         private async void ubt_connect_Click(object sender, EventArgs e)

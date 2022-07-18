@@ -3,11 +3,8 @@ using appui.shared.Interfaces;
 using appui.shared.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using System;
-using System.Configuration;
 using System.Windows.Forms;
 
 namespace appui
@@ -38,20 +35,20 @@ namespace appui
 
         private static void ConfigureServices(IServiceCollection services)
         {
-            var builder = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: false);
-
-            Configuration = builder.Build();
+            Configuration  = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: false)
+                .Build();
 
             services
                 .AddLogging(configure => configure.AddConsole())
+                .AddLogging(configure => configure.())
                 .AddTransient<MainForm>()
+                .AddTransient<WebPageReader>()
+                .AddTransient<OfflineFilePageReader>()
                 .AddScoped<IServiceProvider, ServiceProvider>()
                 .Configure<ConnectionSourceOption>(Configuration.GetSection("connectionSource"))
                 .Configure<AppSettings>(Configuration.GetSection("appSettings"))
                 .AddSingleton<ILoadConnections, LoadConnections>()
-                .AddTransient<WebPageReader>()
-                .AddTransient<OfflineFilePageReader>()
                 .AddSingleton<IPageReaderFactory, PageReaderFactory>();
         }
     }
