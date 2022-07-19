@@ -41,7 +41,6 @@ namespace appui
 
             services
                 .AddLogging(configure => configure.AddConsole())
-                .AddLogging(configure => configure.())
                 .AddTransient<MainForm>()
                 .AddTransient<WebPageReader>()
                 .AddTransient<OfflineFilePageReader>()
