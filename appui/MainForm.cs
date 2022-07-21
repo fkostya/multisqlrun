@@ -76,10 +76,10 @@ namespace appui
             }
             catch (Exception ex)
             {
+                this.Logger.LogError(ex, ex.Message);
+                upb_progress.Style = ProgressBarStyle.Blocks;
+                updateClientProgress(0, 0);
                 MessageBox.Show(ex.Message);
-                upb_progress.Value = 0;
-                upb_progress.MarqueeAnimationSpeed = 0;
-                upb_progress.Update();
             }
         }
 
