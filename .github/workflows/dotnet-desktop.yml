@@ -57,7 +57,7 @@ jobs:
 
     env:
       Solution_Name: multirun.sln                               # Replace with your solution name, i.e. MyWpfApp.sln.
-      Test_Project_Path: appui.tests\  appui.tests.csproj       # Replace with the path to your test project, i.e. MyWpfApp.Tests\MyWpfApp.Tests.csproj.
+      Test_Project_Path: appui.tests\appui.tests.csproj         # Replace with the path to your test project, i.e. MyWpfApp.Tests\MyWpfApp.Tests.csproj.
 
     steps:
     - name: Checkout
@@ -88,12 +88,14 @@ jobs:
     - name: Codecov
       uses: codecov/codecov-action@v3.1.0
 
-    - name: InferSharp
+    - name: Run Infer#      
       uses: microsoft/infersharpaction@v1.3.1
-
-    # Upload the MSIX package: https://github.com/marketplace/actions/upload-a-build-artifact
-    - name: Upload build artifacts
-      uses: actions/upload-artifact@v3
+      id: runinfersharp
       with:
-        name: MSIX Package
-        path: ${{ env.Wap_Project_Directory }}\AppPackages
+        binary-path: multisqlrun\appui\bin\Release\net6.0-windows
+
+    - name: Upload Infer# report as an artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: report
+        path: infer-out/report.txt
