@@ -85,6 +85,9 @@ jobs:
       env:
         Configuration: ${{ matrix.configuration }}
 
+    - name: SonarCloud Scan
+      uses: SonarSource/sonarcloud-github-action@v1.6
+
     # Upload the MSIX package: https://github.com/marketplace/actions/upload-a-build-artifact
     - name: Upload build artifacts
       uses: actions/upload-artifact@v3
