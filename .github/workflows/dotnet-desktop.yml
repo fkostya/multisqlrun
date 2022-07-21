@@ -87,15 +87,3 @@ jobs:
 
     - name: Codecov
       uses: codecov/codecov-action@v3.1.0
-
-    - name: Run Infer#      
-      uses: microsoft/infersharpaction@v1.3.1
-      id: runinfersharp
-      with:
-        binary-path: multisqlrun\appui\bin\Release\net6.0-windows
-
-    - name: Upload Infer# report as an artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: report
-        path: infer-out/report.txt
