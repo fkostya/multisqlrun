@@ -88,6 +88,9 @@ jobs:
     - name: Codecov
       uses: codecov/codecov-action@v3.1.0
 
+    - name: InferSharp
+      uses: microsoft/infersharpaction@v1.3.1
+
     # Upload the MSIX package: https://github.com/marketplace/actions/upload-a-build-artifact
     - name: Upload build artifacts
       uses: actions/upload-artifact@v3
