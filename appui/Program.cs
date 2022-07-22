@@ -4,7 +4,9 @@ using appui.shared.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using NLog.Extensions.Logging;
 using System;
+using System.IO;
 using System.Windows.Forms;
 
 namespace appui
@@ -36,12 +38,13 @@ namespace appui
         private static void ConfigureServices(IServiceCollection services)
         {
             Configuration  = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: false)
                 .Build();
 
             services
                 .AddLogging(configure => configure.AddConsole())
-                .AddLogging(configure => configure.AddFile("logs/log.txt"))
+                .AddLogging(configure => configure.AddNLog())
                 .AddTransient<MainForm>()
                 .AddTransient<WebPageReader>()
                 .AddTransient<OfflineFilePageReader>()

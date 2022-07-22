@@ -13,13 +13,6 @@ namespace appui.tests
         {
 
         }
-        class FakePageReader : IPageReader
-        {
-            public Task<HtmlDocument> GetPageAsync()
-            {
-                throw new NotImplementedException();
-            }
-        }
 
         [Test]
         [Category("Shared")]
