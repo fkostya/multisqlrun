@@ -71,7 +71,7 @@ namespace appui
                 if (this.config.Offline)
                 {
                     ubt_run.Enabled = false;
-                    utx_sqlquery.Enabled= false;
+                    utx_sqlquery.Enabled = false;
                 }
             }
             catch (Exception ex)
@@ -110,7 +110,7 @@ namespace appui
 
             Dictionary<string, List<Tuple<string, string>>> result = new Dictionary<string, List<Tuple<string, string>>>();
 
-            var query  = utx_sqlquery.Text;
+            var query = utx_sqlquery.Text;
             if (!string.IsNullOrWhiteSpace(query))
             {
                 var processed = 0;
@@ -119,46 +119,27 @@ namespace appui
                 {
                     var clients = getAllClientsOrSelected(ucb_branch.SelectedItem?.ToString());
 
-                    var connections = new List<Tuple<SqlConnectionStringBuilder, CancellationTokenSource>>();
-                    foreach (var singleClient in clients)
-                    {
-                        connections.Add(new Tuple<SqlConnectionStringBuilder, CancellationTokenSource>(
-                            new SqlConnectionStringBuilder()
-                            {
-                                DataSource = singleClient.server,
-                                InitialCatalog = singleClient.database,
-                                UserID = this.config.DefaultSqlUserName,
-                                Password = decode(this.config.DefaultSqlUserPwd),
-                                ConnectTimeout = this.config.TimeputOpenConnection
-                            },
-                            new CancellationTokenSource()
-                        ));
-                    }
-
                     var current = 0;
 
-                    foreach (var clientConnection in connections)
+                    foreach (var cc in clients)
                     {
                         Interlocked.Increment(ref current);
 
                         lblProgress.Text = $"{current} of {clients?.Count()}";
 
-                        var source = clientConnection.Item2;
+                        var source = new CancellationTokenSource();
                         initDbConnectionProcess(source.Token);
 
                         try
                         {
-                            using (SqlRunCommand cmd = new SqlRunCommand(clientConnection.Item1))
+                            var cmd = new SqlRunCommand();
+                            var output = await cmd.RunQuery(utx_sqlquery.Text, cc.server, cc.database, config.DefaultSqlUserName, decode(config.DefaultSqlUserPwd), config.TimeputOpenConnection);
+                            updateClientProgress(clients.Count, current);
+
+                            lock (this)
                             {
-                                updateClientProgress(clients.Count, current);
-
-                                var output = await cmd.RunQuery(utx_sqlquery.Text);
-
-                                lock (this)
-                                {
-                                    result[cmd.Database] = output;
-                                    Interlocked.Increment(ref processed);
-                                }
+                                result[cc.database] = output;
+                                Interlocked.Increment(ref processed);
                             }
                         }
                         catch
@@ -209,7 +190,7 @@ namespace appui
                 }
             }
         }
-     
+
         private string decode(string value)
         {
             byte[] data = Convert.FromBase64String(value);
