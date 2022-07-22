@@ -35,7 +35,7 @@ namespace appui
             this.connection = connection;
             this.Logger = logger;
 
-            Logger.LogInformation($"starting app at:{DateTime.Now}");
+            Logger.LogInformation($"Starting app at: {DateTime.Now}");
         }
 
         private async void ubt_connect_Click(object sender, EventArgs e)

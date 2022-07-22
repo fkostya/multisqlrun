@@ -3,8 +3,14 @@ using HtmlAgilityPack;
 
 namespace appui.tests
 {
+    //UnitIfWork_InitialCondition_ExpectedResult
+    //Example: UserLogsIn_WithValidCredetntials_RedirectsToHome
     public class LoadConnectionTests
     {
+        public LoadConnectionTests()
+        {
+
+        }
         class FakePageReader : IPageReader
         {
             public Task<HtmlDocument> GetPageAsync()
@@ -12,10 +18,14 @@ namespace appui.tests
                 throw new NotImplementedException();
             }
         }
+
         [Fact]
-        public void Load()
+        [Trait("Category", "Shared")]
+        public void UnitIfWork_InitialCondition_ExpectedResult()
         {
-            Assert.False(1 == 0);
+            //Arrange
+            //Act
+
         }
     }
 }
