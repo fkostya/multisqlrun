@@ -1,5 +1,7 @@
 using appui.shared.Interfaces;
 using HtmlAgilityPack;
+using NUnit.Framework;
+using Telerik.JustMock;
 
 namespace appui.tests
 {
@@ -19,13 +21,10 @@ namespace appui.tests
             }
         }
 
-        [Fact]
-        [Trait("Category", "Shared")]
+        [Test]
+        [Category("Shared")]
         public void UnitIfWork_InitialCondition_ExpectedResult()
         {
-            //Arrange
-            //Act
-
         }
     }
 }
