@@ -1,12 +1,14 @@
 using appui.shared;
 using appui.shared.Interfaces;
 using appui.shared.Models;
+using HtmlAgilityPack;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using System;
 using System.IO;
+using System.Net;
 using System.Windows.Forms;
 
 namespace appui
@@ -53,7 +55,9 @@ namespace appui
                 .Configure<AppSettings>(Configuration.GetSection("appSettings"))
                 .Configure<SqlSettings>(Configuration.GetSection("sqlSettings"))
                 .AddSingleton<ILoadConnections, LoadConnections>()
-                .AddSingleton<IPageReaderFactory, PageReaderFactory>();
+                .AddSingleton<IPageReaderFactory, PageReaderFactory>()
+                .AddSingleton<CredentialCache>()
+                .AddSingleton<HtmlWeb>();
         }
     }
 }

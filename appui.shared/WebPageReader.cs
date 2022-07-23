@@ -12,14 +12,11 @@ namespace appui.shared
         private readonly NetworkCredential credential;
         private readonly HtmlWeb web;
 
-        public WebPageReader(IOptions<ConnectionSourceOption> options)
+        public WebPageReader(IOptions<ConnectionSourceOption> options, CredentialCache credentialCache, HtmlWeb htmlWeb)
         {
             config = options?.Value;
-         
-            ICredentials credentials = CredentialCache.DefaultCredentials;
-            credential = credentials.GetCredential(new Uri(config.WebConnectionSource), "Basic");
-
-            web = new HtmlWeb();
+            credential = credentialCache.GetCredential(new Uri(config.WebConnectionSource), "Basic"); ;
+            web = htmlWeb;
         }
 
         public async Task<HtmlDocument> GetPageAsync()
