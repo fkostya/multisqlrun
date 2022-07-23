@@ -37,7 +37,7 @@ namespace appui
 
         private static void ConfigureServices(IServiceCollection services)
         {
-            Configuration  = new ConfigurationBuilder()
+            Configuration = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: false)
                 .Build();
@@ -51,6 +51,7 @@ namespace appui
                 .AddScoped<IServiceProvider, ServiceProvider>()
                 .Configure<ConnectionSourceOption>(Configuration.GetSection("connectionSource"))
                 .Configure<AppSettings>(Configuration.GetSection("appSettings"))
+                .Configure<SqlSettings>(Configuration.GetSection("sqlSettings"))
                 .AddSingleton<ILoadConnections, LoadConnections>()
                 .AddSingleton<IPageReaderFactory, PageReaderFactory>();
         }

@@ -25,13 +25,15 @@ namespace appui
         private bool openConnectionProcess;
         private readonly ILoadConnections connection;
         private readonly AppSettings config;
+        private readonly SqlSettings sqlSettings;
         private readonly ILogger Logger;
 
-        public MainForm(IOptions<AppSettings> options, ILoadConnections connection, ILogger<AppErrorLog> logger)
+        public MainForm(IOptions<AppSettings> options, IOptions<SqlSettings> sqlSettings, ILoadConnections connection, ILogger<AppErrorLog> logger)
         {
             InitializeComponent();
 
             this.config = options.Value;
+            this.sqlSettings = sqlSettings.Value;
             this.connection = connection;
             this.Logger = logger;
 
@@ -133,7 +135,7 @@ namespace appui
                         try
                         {
                             var cmd = new SqlRunCommand();
-                            var output = await cmd.RunQuery(utx_sqlquery.Text, cc.server, cc.database, config.DefaultSqlUserName, decode(config.DefaultSqlUserPwd), config.TimeputOpenConnection);
+                            var output = await cmd.RunQuery(utx_sqlquery.Text, cc.server, cc.database, sqlSettings.Credential.UserId, decode(sqlSettings.Credential.Password), sqlSettings.ConnectionTimeout);
                             updateClientProgress(clients.Count, current);
 
                             lock (this)
@@ -229,14 +231,14 @@ namespace appui
             upb_progress.Value = current;
         }
 
-        private void initDbConnectionProcess(CancellationToken token)
+        private async void initDbConnectionProcess(CancellationToken token)
         {
-            upb_progress.Maximum = config.TimeputOpenConnection;
+            upb_progress.Maximum = sqlSettings.ConnectionTimeout;
 
             var progress = new Progress<int>(value => upb_progress.Value = Math.Max(0, Math.Min(upb_progress.Maximum, value)));
             openConnectionProcess = true;
 
-            Task.Run(() =>
+            await Task.Run(() =>
             {
                 var i = 0;
 
@@ -245,7 +247,7 @@ namespace appui
                     ((IProgress<int>)progress).Report(i++);
                     Task.Delay(100);
 
-                    if (i == config.TimeputOpenConnection)
+                    if (i == sqlSettings.ConnectionTimeout)
                         i = 0;
                 }
             }, token);
