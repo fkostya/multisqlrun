@@ -10,7 +10,7 @@ namespace appui.shared.Models
     {
         public int StopAfterMilliseconds { get; set; }
 
-       
+        public string OutputFolder { get; set; }
 
         public bool Offline { get; set; }
     }

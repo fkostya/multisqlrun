@@ -54,8 +54,7 @@ namespace appui
                 btn_selectall.Enabled = false;
 
                 clear();
-                this.parsedDoc = await this.connection.Load();
-                refresh();
+                await refresh();
 
                 openConnectionProcess = false;
 
@@ -92,17 +91,21 @@ namespace appui
             _changeClientSection(null);
         }
 
-        private void refresh()
+        private async Task<int> refresh()
         {
-            var index = 0;
+            var connections = await this.connection.Load();
 
-            this.parsedDoc
+            connections
                 .DistinctBy(f => f.Version)
-                .Select(f => f.Version)
+                .Select((f, i) => new { f.Version, i })
                 .ToList()
-                .ForEach(f => ucb_branch.Items.Insert(index++, f));
+                .ForEach(f => ucb_branch.Items.Insert(f.i, f.Version));
 
-            updateClientList();
+            ucb_branch.SelectedIndex = 0;
+
+            updateListOfClients();
+
+            return await Task.FromResult(0);
         }
 
         private async void ubt_run_Click(object sender, EventArgs e)
@@ -120,6 +123,8 @@ namespace appui
                 try
                 {
                     var clients = getAllClientsOrSelected(ucb_branch.SelectedItem?.ToString());
+
+                    //new SqlRunCommand().Run(utx_sqlquery.Text, clients, (current) => { updateClientProgress(clients.Count, current); });
 
                     var current = 0;
 
@@ -205,7 +210,7 @@ namespace appui
                 ? ulv_clients.SelectedItems?.Cast<string>().ToList()
                 : ulv_clients.Items.Cast<string>());
 
-            return this.parsedDoc.Where(f => selected.Contains(f.key)).ToList();
+            return this.parsedDoc.Where(f => selected.Contains(f.client)).ToList();
         }
 
         private Dictionary<string, List<Tuple<string, string>>> getFakeOutput()
@@ -318,43 +323,29 @@ namespace appui
             return null;
         }
 
-        private void updateClientList()
+        private void updateListOfClients()
         {
             ulv_clients.BeginUpdate();
-
             ulv_clients.Items.Clear();
 
-            var version = ucb_branch.SelectedItem?.ToString();
+            connection
+               .Find(ucb_branch.SelectedItem?.ToString(), utx_search.Text)
+               .Select((item, index) => new { item = item, index = index })
+               .ToList()
+               .ForEach(f =>
+               {
+                   ulv_clients.Items.Insert(f.index, f.item.client);
+               });
 
-            if (version != null)
-            {
-                showAllClients(parsedDoc.Where(f => f.Version == version).ToList(), utx_search.Text);
-            }
             ulv_clients.EndUpdate();
         }
 
         private void ucb_branch_SelectedIndexChanged(object sender, EventArgs e)
         {
             _changeClientSection(null);
-            updateClientList();
+            updateListOfClients();
         }
 
-        private void showAllClients(IList<IConnectionRecord> clients, string filterName = "")
-        {
-            if (clients.Count > 0)
-            {
-                var index = 0;
-                clients.ToList()
-                    .Where(f => string.IsNullOrWhiteSpace(filterName) ||
-                    f.key.Contains(filterName, StringComparison.OrdinalIgnoreCase) ||
-                    f.database.Contains(filterName, StringComparison.OrdinalIgnoreCase))
-                    .Select(f => f.key)
-                        .ToList().ForEach(f =>
-                        {
-                            ulv_clients.Items.Insert(index++, f);
-                        });
-            }
-        }
         private void utb_search_TextChanged(object sender, EventArgs e)
         {
             ulv_clients.BeginUpdate();
@@ -362,28 +353,26 @@ namespace appui
             ulv_clients.Items.Clear();
             _changeClientSection(null);
 
-            var version = ucb_branch.SelectedItem?.ToString();
-
-            if (version != null)
-            {
-                showAllClients(parsedDoc.Where(f => f.Version == version).ToList(), utx_search.Text);
-            }
+            connection
+                .Find(ucb_branch.SelectedItem?.ToString(), utx_search.Text)
+                .Select((item, index) => new { item = item, index = index })
+                .ToList()
+                .ForEach(f =>
+                {
+                    ulv_clients.Items.Insert(f.index, f.item.client);
+                });
 
             ulv_clients.EndUpdate();
         }
 
         private void ulv_clients_SelectedIndexChanged(object sender, EventArgs e)
         {
-            string name = ((CheckedListBox)sender).SelectedItem?.ToString();
-            if (!string.IsNullOrWhiteSpace(name))
-            {
-                var version = ucb_branch.SelectedItem?.ToString();
-                var client = this.parsedDoc
-                    .Where(f => f.Version == version && f.key == name)
-                    .FirstOrDefault();
+            var client = connection
+                .Find(ucb_branch.SelectedItem?.ToString(), ((CheckedListBox)sender).SelectedItem?.ToString())
+                .Where(f => f.client == ((CheckedListBox)sender).SelectedItem?.ToString())
+                .FirstOrDefault();
 
-                _changeClientSection(client);
-            }
+            _changeClientSection(client);
         }
 
         private void _changeClientSection(IConnectionRecord client)

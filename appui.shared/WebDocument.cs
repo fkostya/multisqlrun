@@ -62,7 +62,7 @@ namespace appui.shared
                         yield return new ConnectionRecord()
                         {
                             id = node.Id,
-                            key = node.ChildNodes.Count > 0 ? node.ChildNodes[0].InnerHtml : "",
+                            client = node.ChildNodes.Count > 0 ? node.ChildNodes[0].InnerHtml : "",
                             database = database,
                             server = server,
                             Version = versions[index]

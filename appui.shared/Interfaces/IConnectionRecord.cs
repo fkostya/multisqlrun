@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace appui.shared.Interfaces
+﻿namespace appui.shared.Interfaces
 {
     public interface IConnectionRecord
     {
         public string id { get; set; }
-        public string key { get; set; }
+        public string client { get; set; }
         public string database { get; set; }
         public string server { get; set; }
         public string UserName { get; set; }

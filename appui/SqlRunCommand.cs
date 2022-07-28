@@ -1,4 +1,5 @@
-﻿using appui.shared.Models;
+﻿using appui.shared.Interfaces;
+using appui.shared.Models;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -11,6 +12,17 @@ using System.Threading.Tasks;
 
 namespace appui
 {
+    public interface II
+    {
+        void open(IList<IConnectionRecord> dbs);
+
+        void run(string sqlquery, Action<object> progress);
+
+        void save(string filepath);
+    }
+
+
+
     public interface IRunCommand
     {
         Task<List<Tuple<string, string>>> RunQuery(string query, string server, string db, string user, string pwd, int timeout);
@@ -18,6 +30,17 @@ namespace appui
 
     internal class SqlRunCommand : IRunCommand
     {
+        public void Run(string sql, IList<IConnectionRecord> dbs, Action<int> notify)
+        {
+            foreach (var db in dbs)
+            {
+                var i = 0;
+
+                notify?.Invoke(i);
+                i++;
+            }
+        }
+
         public async Task<Tuple<string, string>> RunQueryFromFile(string filePath, string server, string db, string user, string pwd, int timeout = 300)
         {
             await Task.Delay(1);

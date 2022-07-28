@@ -9,5 +9,7 @@ namespace appui.shared.Interfaces
     public interface ILoadConnections
     {
         Task<IList<IConnectionRecord>> Load();
+
+        IList<IConnectionRecord> Find(string version, string key = "");
     }
 }
