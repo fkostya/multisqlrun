@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Windows.Forms;
@@ -51,13 +52,14 @@ namespace appui
                 .AddTransient<WebPageReader>()
                 .AddTransient<OfflineFilePageReader>()
                 .AddScoped<IServiceProvider, ServiceProvider>()
-                .Configure<ConnectionSourceOption>(Configuration.GetSection("connectionSource"))
+                .Configure<List<CatalogConnection>>(Configuration.GetSection("catalogSourceSettings:catalogConnections"))
                 .Configure<AppSettings>(Configuration.GetSection("appSettings"))
                 .Configure<SqlSettings>(Configuration.GetSection("sqlSettings"))
                 .AddSingleton<ILoadConnections, LoadConnections>()
                 .AddSingleton<IPageReaderFactory, PageReaderFactory>()
                 .AddSingleton<CredentialCache>()
-                .AddSingleton<HtmlWeb>();
+                .AddSingleton<HtmlWeb>()
+                .AddSingleton<ITenantManager, TenantManager>();
         }
     }
 }

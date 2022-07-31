@@ -31,7 +31,7 @@ namespace appui.shared
             this.logger = logger;
         }
 
-        public void Open(IList<IConnectionRecord> dbs)
+        public void Initialize(IList<IConnectionRecord> dbs)
         {
             Databases = dbs;
         }

@@ -24,15 +24,15 @@ namespace appui
         private IList<IConnectionRecord> parsedDoc;
         private bool openConnectionProcess;
         private readonly ILoadConnections connection;
-        private readonly AppSettings config;
+        private readonly AppSettings appSetting;
         private readonly SqlSettings sqlSettings;
         private readonly ILogger Logger;
 
-        public MainForm(IOptions<AppSettings> options, IOptions<SqlSettings> sqlSettings, ILoadConnections connection, ILogger<AppErrorLog> logger)
+        public MainForm(IOptions<AppSettings> appSettings, IOptions<SqlSettings> sqlSettings, ILoadConnections connection, ILogger<AppErrorLog> logger)
         {
             InitializeComponent();
 
-            this.config = options.Value;
+            this.appSetting = appSettings.Value;
             this.sqlSettings = sqlSettings.Value;
             this.connection = connection;
             this.Logger = logger;
@@ -69,7 +69,7 @@ namespace appui
                 upb_progress.Style = ProgressBarStyle.Blocks;
                 upb_progress.MarqueeAnimationSpeed = 0;
 
-                if (this.config.Offline)
+                if (this.appSetting.Offline)
                 {
                     ubt_run.Enabled = false;
                     utx_sqlquery.Enabled = false;
@@ -174,14 +174,14 @@ namespace appui
                     try
                     {
                         var waitingTime = 0;
-                        while (result.Count != totalToProcess && waitingTime <= this.config.StopAfterMilliseconds)
+                        while (result.Count != totalToProcess && waitingTime <= this.appSetting.StopAfterMilliseconds)
                         {
                             waitingTime += 1000;
                             await Task.Delay(1000);
                             updateClientProgress(1, 1);
                         }
 
-                        if (waitingTime == this.config.StopAfterMilliseconds)
+                        if (waitingTime == this.appSetting.StopAfterMilliseconds)
                         {
                             MessageBox.Show(string.Format("processed {0} out of total {1}", result.Count, totalToProcess));
                         }

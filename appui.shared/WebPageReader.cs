@@ -8,20 +8,24 @@ namespace appui.shared
 {
     public class WebPageReader : IPageReader
     {
-        private readonly ConnectionSourceOption config;
+        private readonly CatalogConnection config;
         private readonly NetworkCredential credential;
         private readonly HtmlWeb web;
+        private const string support_type = "web";
 
-        public WebPageReader(IOptions<ConnectionSourceOption> options, CredentialCache credentialCache, HtmlWeb htmlWeb)
+        public WebPageReader(IOptions<List<CatalogConnection>> options, CredentialCache credentialCache, HtmlWeb htmlWeb)
         {
-            config = options?.Value;
-            credential = credentialCache.GetCredential(new Uri(config.WebConnectionSource), "Basic"); ;
+            config = options?.Value?
+                .Where(f => f.Type == support_type)
+                .FirstOrDefault();
+
+            credential = credentialCache.GetCredential(new Uri(this.config?.ConnectionString), "Basic");
             web = htmlWeb;
         }
 
         public async Task<HtmlDocument> GetPageAsync()
         {
-            var doc = await web.LoadFromWebAsync(config.WebConnectionSource, credential);
+            var doc = await web.LoadFromWebAsync(config.ConnectionString, credential);
 
             return doc;
         }

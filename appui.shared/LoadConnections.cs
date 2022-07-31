@@ -2,6 +2,11 @@
 
 namespace appui.shared
 {
+    /// <summary>
+    /// Database connections storage class.
+    /// Load connections from sigle HTML file with server, database, user name and password or 
+    /// load HTML page from server.
+    /// </summary>
     public class LoadConnections : ILoadConnections
     {
         private readonly IPageReader reader;

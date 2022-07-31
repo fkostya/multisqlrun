@@ -1,31 +1,30 @@
 ﻿using appui.shared.Interfaces;
 using appui.shared.Models;
 using HtmlAgilityPack;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
-using System;
 using System.Collections.Generic;
-using System.Net;
-using System.Net.NetworkInformation;
-using System.Text;
-using System.Text.Json;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace appui
 {
     public class OfflineFilePageReader : IPageReader
     {
-        private readonly ConnectionSourceOption config;
+        private readonly CatalogConnection config;
+        private const string support_type = "offline";
 
-        public OfflineFilePageReader(IOptions<ConnectionSourceOption> options)
+
+        public OfflineFilePageReader(IOptions<List<CatalogConnection>> options)
         {
-            config = options?.Value;
+            config = options?.Value?
+               .Where(f => f.Type == support_type)
+               .FirstOrDefault();
         }
 
         public async Task<HtmlDocument> GetPageAsync()
         {
             var doc = new HtmlDocument();
-            doc.Load(config.FileConnectionSource);
+            doc.Load(config.ConnectionString);
 
             return await Task.FromResult(doc);
         }
