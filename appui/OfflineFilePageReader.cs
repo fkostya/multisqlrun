@@ -17,7 +17,7 @@ namespace appui
         public OfflineFilePageReader(IOptions<List<CatalogConnection>> options)
         {
             config = options?.Value?
-               .Where(f => f.Type == support_type)
+               .Where(f => f.Name == support_type)
                .FirstOrDefault();
         }
 

@@ -16,7 +16,7 @@ namespace appui.shared
         public WebPageReader(IOptions<List<CatalogConnection>> options, CredentialCache credentialCache, HtmlWeb htmlWeb)
         {
             config = options?.Value?
-                .Where(f => f.Type == support_type)
+                .Where(f => f.Name == support_type)
                 .FirstOrDefault();
 
             credential = credentialCache.GetCredential(new Uri(this.config?.ConnectionString), "Basic");

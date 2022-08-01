@@ -59,7 +59,8 @@ namespace appui
                 .AddSingleton<IPageReaderFactory, PageReaderFactory>()
                 .AddSingleton<CredentialCache>()
                 .AddSingleton<HtmlWeb>()
-                .AddSingleton<ITenantManager, TenantManager>();
+                .AddSingleton<ITenantManager, TenantManager>()
+                .AddSingleton<DefaultConnectorFactory>();
         }
     }
 }

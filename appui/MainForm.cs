@@ -1,4 +1,5 @@
-﻿using appui.shared.Interfaces;
+﻿using appui.shared;
+using appui.shared.Interfaces;
 using appui.shared.Models;
 using CsvHelper;
 using Microsoft.Extensions.Logging;
@@ -27,8 +28,9 @@ namespace appui
         private readonly AppSettings appSetting;
         private readonly SqlSettings sqlSettings;
         private readonly ILogger Logger;
+        private readonly IConnector defaultConnector;
 
-        public MainForm(IOptions<AppSettings> appSettings, IOptions<SqlSettings> sqlSettings, ILoadConnections connection, ILogger<AppErrorLog> logger)
+        public MainForm(IOptions<AppSettings> appSettings, IOptions<SqlSettings> sqlSettings, ILoadConnections connection, ILogger<AppErrorLog> logger, DefaultConnectorFactory defaultConnector)
         {
             InitializeComponent();
 
@@ -37,6 +39,7 @@ namespace appui
             this.connection = connection;
             this.Logger = logger;
 
+            this.defaultConnector = defaultConnector.CreateDefaultConnector();
             Logger.LogInformation($"App started");
         }
 
@@ -69,7 +72,7 @@ namespace appui
                 upb_progress.Style = ProgressBarStyle.Blocks;
                 upb_progress.MarqueeAnimationSpeed = 0;
 
-                if (this.appSetting.Offline)
+                if (this.defaultConnector.Offline)
                 {
                     ubt_run.Enabled = false;
                     utx_sqlquery.Enabled = false;
