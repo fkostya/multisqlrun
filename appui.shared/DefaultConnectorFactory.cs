@@ -2,12 +2,7 @@
 using appui.shared.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace appui.shared
 {
@@ -15,19 +10,16 @@ namespace appui.shared
     {
         private readonly ILogger _logger;
         private readonly AppSettings _settings;
+        private readonly IServiceProvider _config;
 
-        public DefaultConnectorFactory()
-        {
-
-        }
-
-        public DefaultConnectorFactory(IOptions<AppSettings> appSettings, ILogger<AppErrorLog> logger)
+        public DefaultConnectorFactory(IOptions<AppSettings> appSettings, ILogger<AppErrorLog> logger, IServiceProvider configuration)
         {
             _settings = appSettings.Value;
             _logger = logger;
+            _config = configuration;
         }
 
-        public IConnector CreateDefaultConnector()
+        public IConnector GetDefaultConnector()
         {
             try
             {
@@ -36,9 +28,11 @@ namespace appui.shared
                 _logger.LogDebug($"Creating instance of: {assemblyFile}.{typeName}");
 
                 Assembly assembly = Assembly.LoadFrom(assemblyFile);
-
                 Type type = assembly.GetType(typeName);
-                IConnector connector = (IConnector)Activator.CreateInstance(type);
+                var connector = _config?.GetService(type) as IConnector;
+
+                _logger.LogDebug($"Created instance of: {connector}");
+
                 return connector;
             }
             catch (Exception ex)

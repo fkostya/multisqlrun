@@ -39,7 +39,7 @@ namespace appui
             this.connection = connection;
             this.Logger = logger;
 
-            this.defaultConnector = defaultConnector.CreateDefaultConnector();
+            this.defaultConnector = defaultConnector.GetDefaultConnector();
             Logger.LogInformation($"App started");
         }
 
