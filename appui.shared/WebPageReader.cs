@@ -11,7 +11,7 @@ namespace appui.shared
         private readonly CatalogConnection config;
         private readonly NetworkCredential credential;
         private readonly HtmlWeb web;
-        private const string support_type = "web";
+        private const string support_type = "df-web";
 
         public WebPageReader(IOptions<List<CatalogConnection>> options, CredentialCache credentialCache, HtmlWeb htmlWeb)
         {
@@ -19,13 +19,13 @@ namespace appui.shared
                 .Where(f => f.Name == support_type)
                 .FirstOrDefault();
 
-            credential = credentialCache.GetCredential(new Uri(this.config?.ConnectionString), "Basic");
+            credential = credentialCache.GetCredential(new Uri(this.config?.Url), "Basic");
             web = htmlWeb;
         }
 
         public async Task<HtmlDocument> GetPageAsync()
         {
-            var doc = await web.LoadFromWebAsync(config.ConnectionString, credential);
+            var doc = await web.LoadFromWebAsync(config.Url, credential);
 
             return doc;
         }

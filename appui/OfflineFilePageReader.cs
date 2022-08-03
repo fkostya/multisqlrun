@@ -11,7 +11,7 @@ namespace appui
     public class OfflineFilePageReader : IPageReader
     {
         private readonly CatalogConnection config;
-        private const string support_type = "offline";
+        private const string support_type = "df-offline";
 
 
         public OfflineFilePageReader(IOptions<List<CatalogConnection>> options)
@@ -24,7 +24,7 @@ namespace appui
         public async Task<HtmlDocument> GetPageAsync()
         {
             var doc = new HtmlDocument();
-            doc.Load(config.ConnectionString);
+            doc.Load(config.FilePath);
 
             return await Task.FromResult(doc);
         }
