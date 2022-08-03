@@ -20,7 +20,7 @@ namespace appui
 
         public PageReaderFactory(IOptions<AppSettings> config, IServiceProvider serviceProvider)
         {
-            Offline = config?.Value?.Offline;
+            Offline = config?.Value?.DefaultCatalogConnector.Offline;
             ServiceProvider = serviceProvider;
         }
 

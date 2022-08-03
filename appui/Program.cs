@@ -49,8 +49,8 @@ namespace appui
                 .AddLogging(configure => configure.AddConsole())
                 .AddLogging(configure => configure.AddNLog())
                 .AddTransient<MainForm>()
-                .AddTransient<WebPageReader>()
-                .AddTransient<OfflineFilePageReader>()
+                .AddScoped<WebPageReader>()
+                .AddScoped<OfflineFilePageReader>()
                 .AddScoped<IServiceProvider, ServiceProvider>()
                 .Configure<List<CatalogConnection>>(Configuration.GetSection("catalogSourceSettings:catalogConnections"))
                 .Configure<AppSettings>(Configuration.GetSection("appSettings"))
@@ -59,7 +59,9 @@ namespace appui
                 .AddSingleton<IPageReaderFactory, PageReaderFactory>()
                 .AddSingleton<CredentialCache>()
                 .AddSingleton<HtmlWeb>()
-                .AddSingleton<ITenantManager, TenantManager>();
+                .AddSingleton<ITenantManager, TenantManager>()
+                .AddSingleton<DefaultConnectorFactory>()
+                .AddSingleton<DayforceConnector>();
         }
     }
 }

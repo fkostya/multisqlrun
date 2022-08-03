@@ -10,14 +10,13 @@ namespace appui.shared.Models
     {
         public int StopAfterMilliseconds { get; set; }
         public string OutputFolder { get; set; }
-        public bool Offline { get; set; }
         public DefaultCatalogConnector DefaultCatalogConnector { get; set; }
     }
 
     public class DefaultCatalogConnector
     {
-        public string Class { get; set; }
-        public string Namespace { get; set; }
-        public string Interface { get; set; }
+        public bool Offline { get; set; }
+        public string TypeName { get; set; }
+        public string AssemblyFile { get; set; }
     }
 }

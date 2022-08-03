@@ -13,6 +13,7 @@ namespace appui.shared
     {
         private readonly CatalogSourceSettings catalogSourceSettings;
         private readonly AppSettings appSettings;
+        public bool Offline { get; set; } = true;
 
         public DayforceConnector(IOptions<CatalogSourceSettings> catalogSettings, IOptions<AppSettings> appSettings)
         {
@@ -22,7 +23,7 @@ namespace appui.shared
 
         public Task<int> Load()
         {
-            if (this.appSettings.Offline)
+            if (this.appSettings.DefaultCatalogConnector.Offline)
             {
 
             }
