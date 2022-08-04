@@ -22,7 +22,7 @@ namespace appui
 {
     public partial class MainForm : Form
     {
-        private IList<IConnectionRecord> parsedDoc;
+        private IList<IConnectionStringInfo> parsedDoc;
         private bool openConnectionProcess;
         private readonly ILoadConnections connection;
         private readonly AppSettings appSetting;
@@ -39,7 +39,7 @@ namespace appui
             this.connection = connection;
             this.Logger = logger;
 
-            this.defaultConnector = defaultConnector.GetDefaultConnector();
+            this.defaultConnector = defaultConnector.GetConnectorFactory();
             Logger.LogInformation($"App started");
         }
 
@@ -72,11 +72,11 @@ namespace appui
                 upb_progress.Style = ProgressBarStyle.Blocks;
                 upb_progress.MarqueeAnimationSpeed = 0;
 
-                if (this.defaultConnector.Offline)
-                {
-                    ubt_run.Enabled = false;
-                    utx_sqlquery.Enabled = false;
-                }
+                //if (this.defaultConnector.Offline)
+                //{
+                //    ubt_run.Enabled = false;
+                //    utx_sqlquery.Enabled = false;
+                //}
             }
             catch (Exception ex)
             {
@@ -143,12 +143,12 @@ namespace appui
                         try
                         {
                             var cmd = new SqlRunCommand();
-                            var output = await cmd.RunQuery(utx_sqlquery.Text, cc.server, cc.database, sqlSettings.Credential.UserId, decode(sqlSettings.Credential.Password), sqlSettings.ConnectionTimeout);
+                            var output = await cmd.RunQuery(utx_sqlquery.Text, cc.Server, cc.Database, sqlSettings.Credential.UserId, decode(sqlSettings.Credential.Password), sqlSettings.ConnectionTimeout);
                             updateClientProgress(clients.Count, current);
 
                             lock (this)
                             {
-                                result[cc.database] = output;
+                                result[cc.Database] = output;
                                 Interlocked.Increment(ref processed);
                             }
                         }
@@ -207,13 +207,13 @@ namespace appui
             return Encoding.UTF8.GetString(data);
         }
 
-        private IList<IConnectionRecord> getAllClientsOrSelected(string version)
+        private IList<IConnectionStringInfo> getAllClientsOrSelected(string version)
         {
             var selected = new HashSet<string>(ulv_clients.SelectedItems.Count != 0
                 ? ulv_clients.SelectedItems?.Cast<string>().ToList()
                 : ulv_clients.Items.Cast<string>());
 
-            return this.parsedDoc.Where(f => selected.Contains(f.client)).ToList();
+            return this.parsedDoc.Where(f => selected.Contains(f.Client)).ToList();
         }
 
         private Dictionary<string, List<Tuple<string, string>>> getFakeOutput()
@@ -337,7 +337,7 @@ namespace appui
                .ToList()
                .ForEach(f =>
                {
-                   ulv_clients.Items.Insert(f.index, f.item.client);
+                   ulv_clients.Items.Insert(f.index, f.item.Client);
                });
 
             ulv_clients.EndUpdate();
@@ -362,7 +362,7 @@ namespace appui
                 .ToList()
                 .ForEach(f =>
                 {
-                    ulv_clients.Items.Insert(f.index, f.item.client);
+                    ulv_clients.Items.Insert(f.index, f.item.Client);
                 });
 
             ulv_clients.EndUpdate();
@@ -372,17 +372,17 @@ namespace appui
         {
             var client = connection
                 .Find(ucb_branch.SelectedItem?.ToString(), ((CheckedListBox)sender).SelectedItem?.ToString())
-                .Where(f => f.client == ((CheckedListBox)sender).SelectedItem?.ToString())
+                .Where(f => f.Client == ((CheckedListBox)sender).SelectedItem?.ToString())
                 .FirstOrDefault();
 
             _changeClientSection(client);
         }
 
-        private void _changeClientSection(IConnectionRecord client)
+        private void _changeClientSection(IConnectionStringInfo client)
         {
-            utx_dbname.Text = client?.database;
-            utx_clientname.Text = client?.id;
-            utx_servername.Text = client?.server;
+            utx_dbname.Text = client?.Database;
+            utx_clientname.Text = client?.ID;
+            utx_servername.Text = client?.Server;
         }
 
         private void utx_outputpath_MouseClick(object sender, MouseEventArgs e)

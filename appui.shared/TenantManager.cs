@@ -20,7 +20,7 @@ namespace appui.shared
 
         public async Task<List<ICatalog>> LoadCadalogsFromSource(IConnector connector)
         {
-            await connector.Load();
+            var reader = connector.LoadConnectionStrings();
             return null;
         }
 

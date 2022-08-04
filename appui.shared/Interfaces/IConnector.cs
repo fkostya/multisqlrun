@@ -1,16 +1,14 @@
-﻿using appui.shared.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace appui.shared.Interfaces
+﻿namespace appui.shared.Interfaces
 {
+    /// <summary>
+    /// Connector to database connection string provider like DF infra or html page with all data.
+    /// </summary>
     public interface IConnector
     {
-        public bool Offline { get; set; }
-
-        Task<int> Load();
+        /// <summary>
+        /// Load connection strings from connection string provider
+        /// </summary>
+        /// <returns></returns>
+        public Task<IList<IConnectionStringInfo>> LoadConnectionStrings();
     }
 }

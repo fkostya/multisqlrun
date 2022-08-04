@@ -8,8 +8,8 @@ namespace appui.shared.Interfaces
 {
     public interface ILoadConnections
     {
-        Task<IList<IConnectionRecord>> Load();
+        Task<IList<IConnectionStringInfo>> Load();
 
-        IList<IConnectionRecord> Find(string version, string key = "");
+        IList<IConnectionStringInfo> Find(string version, string key = "");
     }
 }

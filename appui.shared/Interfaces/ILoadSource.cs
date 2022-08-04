@@ -2,6 +2,6 @@
 {
     public interface ILoadSource
     {
-        IEnumerable<IConnectionRecord> GetConnections();
+        IEnumerable<IConnectionStringInfo> GetConnections();
     }
 }

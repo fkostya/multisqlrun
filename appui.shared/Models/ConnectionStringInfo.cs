@@ -1,6 +1,8 @@
-﻿namespace appui.shared.Interfaces
+﻿using appui.shared.Interfaces;
+
+namespace appui.shared.Models
 {
-    public interface IConnectionStringInfo
+    public class ConnectionStringInfo : IConnectionStringInfo
     {
         public string ID { get; set; }
         public string Client { get; set; }

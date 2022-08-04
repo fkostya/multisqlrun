@@ -39,11 +39,11 @@ namespace appui.shared
             return list;
         }
 
-        public IEnumerable<IConnectionRecord> GetConnections()
+        public IEnumerable<IConnectionStringInfo> GetConnections()
         {
             var trs = content.SelectNodes("//table[@id='TestInfrastructure']//tbody//tr");
 
-            var list = new List<IConnectionRecord>();
+            var list = new List<IConnectionStringInfo>();
 
             var versions = this.GetVersions();
 
@@ -59,12 +59,12 @@ namespace appui.shared
 
                     if (!string.IsNullOrWhiteSpace(database) && database.Length > 3 && !string.IsNullOrWhiteSpace(server) && server.Length > 3)
                     {
-                        yield return new ConnectionRecord()
+                        yield return new ConnectionStringInfo()
                         {
-                            id = node.Id,
-                            client = node.ChildNodes.Count > 0 ? node.ChildNodes[0].InnerHtml : "",
-                            database = database,
-                            server = server,
+                            ID = node.Id,
+                            Client = node.ChildNodes.Count > 0 ? node.ChildNodes[0].InnerHtml : "",
+                            Database = database,
+                            Server = server,
                             Version = versions[index]
                         };
                     }

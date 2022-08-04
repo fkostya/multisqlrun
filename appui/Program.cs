@@ -61,7 +61,7 @@ namespace appui
                 .AddSingleton<HtmlWeb>()
                 .AddSingleton<ITenantManager, TenantManager>()
                 .AddSingleton<DefaultConnectorFactory>()
-                .AddSingleton<DayforceConnector>();
+                .AddSingleton<DFConnector>();
         }
     }
 }

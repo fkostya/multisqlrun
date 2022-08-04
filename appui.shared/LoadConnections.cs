@@ -10,28 +10,28 @@ namespace appui.shared
     public class LoadConnections : ILoadConnections
     {
         private readonly IPageReader reader;
-        private Dictionary<string, List<IConnectionRecord>> connectionIndex;
+        private Dictionary<string, List<IConnectionStringInfo>> connectionIndex;
 
         public LoadConnections(IPageReaderFactory pageReaderFactory)
         {
             this.reader = pageReaderFactory.CreatePageReader();
         }
 
-        public async Task<IList<IConnectionRecord>> Load()
+        public async Task<IList<IConnectionStringInfo>> Load()
         {
-            connectionIndex = new Dictionary<string, List<IConnectionRecord>>();
+            connectionIndex = new Dictionary<string, List<IConnectionStringInfo>>();
 
             var htmlDoc = await this.reader.GetPageAsync();
 
             var doc = new WebDocument(htmlDoc);
 
-            IEnumerable<IConnectionRecord> sites = doc.GetConnections();
-            var connections = new List<IConnectionRecord>();
-            foreach (IConnectionRecord site in sites)
+            IEnumerable<IConnectionStringInfo> sites = doc.GetConnections();
+            var connections = new List<IConnectionStringInfo>();
+            foreach (IConnectionStringInfo site in sites)
             {
                 if (!connectionIndex.ContainsKey(site.Version))
                 {
-                    connectionIndex.Add(site.Version, new List<IConnectionRecord>());
+                    connectionIndex.Add(site.Version, new List<IConnectionStringInfo>());
                 }
                 connectionIndex[site.Version].Add(site);
                 connections.Add(site);
@@ -40,13 +40,13 @@ namespace appui.shared
             return connections;
         }
 
-        public IList<IConnectionRecord> Find(string version, string key = "")
+        public IList<IConnectionStringInfo> Find(string version, string key = "")
         {
-            if (string.IsNullOrEmpty(version) || !connectionIndex.ContainsKey(version)) return new List<IConnectionRecord>();
+            if (string.IsNullOrEmpty(version) || !connectionIndex.ContainsKey(version)) return new List<IConnectionStringInfo>();
 
             return connectionIndex[version]
-                .Where(f => f.client.Contains(key, StringComparison.OrdinalIgnoreCase) ||
-                f.database.Contains(key, StringComparison.OrdinalIgnoreCase))
+                .Where(f => f.Client.Contains(key, StringComparison.OrdinalIgnoreCase) ||
+                f.Database.Contains(key, StringComparison.OrdinalIgnoreCase))
                 .ToList();
         }
     }

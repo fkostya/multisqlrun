@@ -19,25 +19,25 @@ namespace appui.shared
             _config = configuration;
         }
 
-        public IConnector GetDefaultConnector()
+        public IConnector GetConnectorFactory()
         {
             try
             {
                 var assemblyFile = $"{Environment.CurrentDirectory}\\{_settings.DefaultCatalogConnector.AssemblyFile}";
                 var typeName = _settings.DefaultCatalogConnector.TypeName;
-                _logger.LogDebug($"Creating instance of: {assemblyFile}.{typeName}");
+                _logger.LogDebug(message: $"Creating instance of: {assemblyFile}.{typeName}");
 
                 Assembly assembly = Assembly.LoadFrom(assemblyFile);
                 Type type = assembly.GetType(typeName);
                 var connector = _config?.GetService(type) as IConnector;
 
-                _logger.LogDebug($"Created instance of: {connector}");
+                _logger.LogDebug(message: $"Created instance of: {connector}");
 
                 return connector;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, ex.Message);
+                _logger.LogError(exception: ex, message: ex.Message);
             }
             return new EmptyConnector();
         }

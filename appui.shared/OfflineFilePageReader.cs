@@ -2,11 +2,8 @@
 using appui.shared.Models;
 using HtmlAgilityPack;
 using Microsoft.Extensions.Options;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace appui
+namespace appui.shared
 {
     public class OfflineFilePageReader : IPageReader
     {

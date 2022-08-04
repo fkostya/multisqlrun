@@ -14,7 +14,7 @@ namespace appui
 {
     public interface II
     {
-        void open(IList<IConnectionRecord> dbs);
+        void open(IList<IConnectionStringInfo> dbs);
 
         void run(string sqlquery, Action<object> progress);
 
@@ -30,7 +30,7 @@ namespace appui
 
     internal class SqlRunCommand : IRunCommand
     {
-        public void Run(string sql, IList<IConnectionRecord> dbs, Action<int> notify)
+        public void Run(string sql, IList<IConnectionStringInfo> dbs, Action<int> notify)
         {
             foreach (var db in dbs)
             {

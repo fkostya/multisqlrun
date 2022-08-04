@@ -20,7 +20,7 @@ namespace appui.shared
 
     public class SqlUtility : ISqlUtility
     {
-        public IList<IConnectionRecord> Databases { get; set; }
+        public IList<IConnectionStringInfo> Databases { get; set; }
         private IList<dynamic> output;
         private readonly AppSettings settings;
         private readonly ILogger logger;
@@ -31,7 +31,7 @@ namespace appui.shared
             this.logger = logger;
         }
 
-        public void Initialize(IList<IConnectionRecord> dbs)
+        public void Initialize(IList<IConnectionStringInfo> dbs)
         {
             Databases = dbs;
         }
@@ -41,7 +41,7 @@ namespace appui.shared
             foreach (var db in this.Databases)
             {
 
-                progress(new ProgressDbNotification { Database = db.database });
+                progress(new ProgressDbNotification { Database = db.Database });
             }
         }
 

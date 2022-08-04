@@ -16,7 +16,7 @@ namespace appui.shared.Interfaces
     /// </summary>
     public interface ISqlUtility
     {
-        void Initialize(IList<IConnectionRecord> dbs);
+        void Initialize(IList<IConnectionStringInfo> dbs);
 
         void Run(string sqlquery, Action<IProcressDbNotificaion> progress);
 
