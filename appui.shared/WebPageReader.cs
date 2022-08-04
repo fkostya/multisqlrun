@@ -23,7 +23,7 @@ namespace appui.shared
             web = htmlWeb;
         }
 
-        public async Task<HtmlDocument> GetPageAsync()
+        public async Task<HtmlDocument> LoadPageAsync()
         {
             var doc = await web.LoadFromWebAsync(config.Url, credential);
 

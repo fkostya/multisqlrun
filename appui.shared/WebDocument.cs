@@ -61,7 +61,7 @@ namespace appui.shared
                     {
                         yield return new ConnectionStringInfo()
                         {
-                            ID = node.Id,
+                            Id = node.Id,
                             Client = node.ChildNodes.Count > 0 ? node.ChildNodes[0].InnerHtml : "",
                             Database = database,
                             Server = server,

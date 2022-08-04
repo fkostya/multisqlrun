@@ -1,9 +1,5 @@
 ﻿using appui.shared.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using appui.shared.Models;
 
 namespace appui.shared
 {
@@ -13,20 +9,44 @@ namespace appui.shared
     /// </summary>
     public class TenantManager : ITenantManager
     {
-        public TenantManager()
-        {
+        private readonly IConnector connector;
+        private Dictionary<string, List<ITenant>> tenantIndex;
 
+        public TenantManager(DefaultConnectorFactory defaultConnectorFactory)
+        {
+            this.connector = defaultConnectorFactory.GetConnectorFactory();
         }
 
-        public async Task<List<ICatalog>> LoadCadalogsFromSource(IConnector connector)
+        public async Task<IList<ITenant>> LoadTenantsFromCatalog()
         {
-            var reader = connector.LoadConnectionStrings();
-            return null;
+            var connectionStrings = await connector.LoadConnectionStrings();
+            var tenants = new List<ITenant>();
+            foreach (var cs in connectionStrings)
+            {
+                tenants.Add(new Tenant { 
+                    Name = cs.Client,
+                    Version = cs.Version,
+                    ConnectionString = new TenantConnectionString
+                    {
+                        Database = cs.Database,
+                        UserName = cs.UserName,
+                        Password = cs.Password
+                    }
+                });
+            }
+
+            return tenants;
         }
 
-        public ITenant LoadTenantsFromCatalog(string catalog)
+        public IList<ITenant> Find(string version, string key = "")
         {
             return null;
+            //if (string.IsNullOrEmpty(version) || !connectionIndex.ContainsKey(version)) return new List<IConnectionStringInfo>();
+
+            //return connectionIndex[version]
+            //    .Where(f => f.Client.Contains(key, StringComparison.OrdinalIgnoreCase) ||
+            //    f.Database.Contains(key, StringComparison.OrdinalIgnoreCase))
+            //    .ToList();
         }
     }
 }

@@ -9,7 +9,7 @@ namespace appui.tests
 {
     class PageReaderStub : IPageReader
     {
-        public async Task<HtmlDocument> GetPageAsync()
+        public async Task<HtmlDocument> LoadPageAsync()
         {
             var doc = new HtmlDocument();
             doc.LoadHtml("<html></html>");

@@ -24,22 +24,23 @@ namespace appui
     {
         private IList<IConnectionStringInfo> parsedDoc;
         private bool openConnectionProcess;
-        private readonly ILoadConnections connection;
         private readonly AppSettings appSetting;
         private readonly SqlSettings sqlSettings;
         private readonly ILogger Logger;
-        private readonly IConnector defaultConnector;
+        private readonly ITenantManager tenantManager;
 
-        public MainForm(IOptions<AppSettings> appSettings, IOptions<SqlSettings> sqlSettings, ILoadConnections connection, ILogger<AppErrorLog> logger, DefaultConnectorFactory defaultConnector)
+        public MainForm(IOptions<AppSettings> appSettings, 
+            IOptions<SqlSettings> sqlSettings, 
+            ILogger<AppErrorLog> logger,
+            ITenantManager tenantManager)
         {
             InitializeComponent();
 
             this.appSetting = appSettings.Value;
             this.sqlSettings = sqlSettings.Value;
-            this.connection = connection;
             this.Logger = logger;
+            this.tenantManager = tenantManager;
 
-            this.defaultConnector = defaultConnector.GetConnectorFactory();
             Logger.LogInformation($"App started");
         }
 
@@ -96,7 +97,7 @@ namespace appui
 
         private async Task<int> refresh()
         {
-            var connections = await this.connection.Load();
+            var connections = await tenantManager.LoadTenantsFromCatalog();
 
             connections
                 .DistinctBy(f => f.Version)
@@ -331,13 +332,13 @@ namespace appui
             ulv_clients.BeginUpdate();
             ulv_clients.Items.Clear();
 
-            connection
+            tenantManager
                .Find(ucb_branch.SelectedItem?.ToString(), utx_search.Text)
                .Select((item, index) => new { item = item, index = index })
                .ToList()
                .ForEach(f =>
                {
-                   ulv_clients.Items.Insert(f.index, f.item.Client);
+                   ulv_clients.Items.Insert(f.index, f.item.Name);
                });
 
             ulv_clients.EndUpdate();
@@ -356,13 +357,13 @@ namespace appui
             ulv_clients.Items.Clear();
             _changeClientSection(null);
 
-            connection
+            tenantManager
                 .Find(ucb_branch.SelectedItem?.ToString(), utx_search.Text)
                 .Select((item, index) => new { item = item, index = index })
                 .ToList()
                 .ForEach(f =>
                 {
-                    ulv_clients.Items.Insert(f.index, f.item.Client);
+                    ulv_clients.Items.Insert(f.index, f.item.Name);
                 });
 
             ulv_clients.EndUpdate();
@@ -370,19 +371,19 @@ namespace appui
 
         private void ulv_clients_SelectedIndexChanged(object sender, EventArgs e)
         {
-            var client = connection
+            var tenant = tenantManager
                 .Find(ucb_branch.SelectedItem?.ToString(), ((CheckedListBox)sender).SelectedItem?.ToString())
-                .Where(f => f.Client == ((CheckedListBox)sender).SelectedItem?.ToString())
+                .Where(f => f.Name == ((CheckedListBox)sender).SelectedItem?.ToString())
                 .FirstOrDefault();
 
-            _changeClientSection(client);
+            _changeClientSection(tenant);
         }
 
-        private void _changeClientSection(IConnectionStringInfo client)
+        private void _changeClientSection(ITenant tenant)
         {
-            utx_dbname.Text = client?.Database;
-            utx_clientname.Text = client?.ID;
-            utx_servername.Text = client?.Server;
+            utx_dbname.Text = tenant?.ConnectionString?.Database;
+            utx_clientname.Text = tenant?.ConnectionString?.UserName;
+            utx_servername.Text = tenant?.ConnectionString.DbServer;
         }
 
         private void utx_outputpath_MouseClick(object sender, MouseEventArgs e)

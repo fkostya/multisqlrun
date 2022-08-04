@@ -4,7 +4,7 @@ namespace appui.shared.Models
 {
     public class ConnectionStringInfo : IConnectionStringInfo
     {
-        public string ID { get; set; }
+        public string Id { get; set; }
         public string Client { get; set; }
         public string Database { get; set; }
         public string Server { get; set; }

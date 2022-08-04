@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace appui.shared.Interfaces
+﻿namespace appui.shared.Interfaces
 {
+    /// <summary>
+    /// Class represents tenant manager layer, like load tenants, find tenants by version\key
+    /// </summary>
     public interface ITenantManager
     {
+        Task<IList<ITenant>> LoadTenantsFromCatalog();
+        IList<ITenant> Find(string version, string key = "");
     }
 }

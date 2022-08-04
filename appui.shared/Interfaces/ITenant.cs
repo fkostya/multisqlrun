@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace appui.shared.Interfaces
+﻿namespace appui.shared.Interfaces
 {
     public interface ITenant
     {
-        ICatalog Catalog{ get; }
+        string Name { get; set; }
+        string Version { get; set; }
+        ITenantConnectionString ConnectionString { get; set; }
     }
 }

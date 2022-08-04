@@ -18,7 +18,7 @@ namespace appui.shared
                .FirstOrDefault();
         }
 
-        public async Task<HtmlDocument> GetPageAsync()
+        public async Task<HtmlDocument> LoadPageAsync()
         {
             var doc = new HtmlDocument();
             doc.Load(config.FilePath);

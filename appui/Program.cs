@@ -55,7 +55,6 @@ namespace appui
                 .Configure<List<CatalogConnection>>(Configuration.GetSection("catalogSourceSettings:catalogConnections"))
                 .Configure<AppSettings>(Configuration.GetSection("appSettings"))
                 .Configure<SqlSettings>(Configuration.GetSection("sqlSettings"))
-                .AddSingleton<ILoadConnections, LoadConnections>()
                 .AddSingleton<IPageReaderFactory, PageReaderFactory>()
                 .AddSingleton<CredentialCache>()
                 .AddSingleton<HtmlWeb>()
