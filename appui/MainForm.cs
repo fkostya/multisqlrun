@@ -333,7 +333,7 @@ namespace appui
             ulv_clients.Items.Clear();
 
             tenantManager
-               .Find(ucb_branch.SelectedItem?.ToString(), utx_search.Text)
+               .FindTenants(ucb_branch.SelectedItem?.ToString(), utx_search.Text)
                .Select((item, index) => new { item = item, index = index })
                .ToList()
                .ForEach(f =>
@@ -358,7 +358,7 @@ namespace appui
             _changeClientSection(null);
 
             tenantManager
-                .Find(ucb_branch.SelectedItem?.ToString(), utx_search.Text)
+                .FindTenants(ucb_branch.SelectedItem?.ToString(), utx_search.Text)
                 .Select((item, index) => new { item = item, index = index })
                 .ToList()
                 .ForEach(f =>
@@ -372,7 +372,7 @@ namespace appui
         private void ulv_clients_SelectedIndexChanged(object sender, EventArgs e)
         {
             var tenant = tenantManager
-                .Find(ucb_branch.SelectedItem?.ToString(), ((CheckedListBox)sender).SelectedItem?.ToString())
+                .FindTenants(ucb_branch.SelectedItem?.ToString(), ((CheckedListBox)sender).SelectedItem?.ToString())
                 .Where(f => f.Name == ((CheckedListBox)sender).SelectedItem?.ToString())
                 .FirstOrDefault();
 

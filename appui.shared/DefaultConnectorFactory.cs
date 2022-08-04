@@ -39,6 +39,11 @@ namespace appui.shared
             {
                 _logger.LogError(exception: ex, message: ex.Message);
             }
+            finally
+            {
+
+            }
+            _logger.LogDebug(message: $"Created instance of EmptyConnector");
             return new EmptyConnector();
         }
     }

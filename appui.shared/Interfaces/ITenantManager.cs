@@ -6,6 +6,6 @@
     public interface ITenantManager
     {
         Task<IList<ITenant>> LoadTenantsFromCatalog();
-        IList<ITenant> Find(string version, string key = "");
+        IList<ITenant> FindTenants(string version, string key = "");
     }
 }

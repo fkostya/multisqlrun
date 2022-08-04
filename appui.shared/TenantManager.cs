@@ -10,7 +10,7 @@ namespace appui.shared
     public class TenantManager : ITenantManager
     {
         private readonly IConnector connector;
-        private Dictionary<string, List<ITenant>> tenantIndex;
+        private IList<ITenant> tenants;
 
         public TenantManager(DefaultConnectorFactory defaultConnectorFactory)
         {
@@ -20,10 +20,11 @@ namespace appui.shared
         public async Task<IList<ITenant>> LoadTenantsFromCatalog()
         {
             var connectionStrings = await connector.LoadConnectionStrings();
-            var tenants = new List<ITenant>();
+            this.tenants = new List<ITenant>();
             foreach (var cs in connectionStrings)
             {
-                tenants.Add(new Tenant { 
+                tenants.Add(new Tenant
+                {
                     Name = cs.Client,
                     Version = cs.Version,
                     ConnectionString = new TenantConnectionString
@@ -38,15 +39,15 @@ namespace appui.shared
             return tenants;
         }
 
-        public IList<ITenant> Find(string version, string key = "")
+        public IList<ITenant> FindTenants(string tenantVersion, string tenantName = "")
         {
-            return null;
-            //if (string.IsNullOrEmpty(version) || !connectionIndex.ContainsKey(version)) return new List<IConnectionStringInfo>();
+            if (string.IsNullOrEmpty(tenantVersion) || !tenants.Any(f => f.Version.Equals(tenantVersion, StringComparison.CurrentCultureIgnoreCase)))
+                return new List<ITenant>();
 
-            //return connectionIndex[version]
-            //    .Where(f => f.Client.Contains(key, StringComparison.OrdinalIgnoreCase) ||
-            //    f.Database.Contains(key, StringComparison.OrdinalIgnoreCase))
-            //    .ToList();
+            return tenants
+                .Where(f => f.Version.Equals(tenantVersion, StringComparison.CurrentCultureIgnoreCase))
+                .Where(f => f.Name.Contains(tenantName, StringComparison.OrdinalIgnoreCase) || f.ConnectionString.Database.Contains(tenantName, StringComparison.OrdinalIgnoreCase))
+                .ToList();
         }
     }
 }
