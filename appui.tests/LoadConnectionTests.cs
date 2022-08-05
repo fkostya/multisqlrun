@@ -44,10 +44,8 @@ namespace appui.tests
             //    .Setup(c => c.CreatePageReader())
             //    .Returns(new MyClass());
 
-            LoadConnections con= new LoadConnections(new PageReaderFactoryStub());
-            var doc = con.Load();
             
-            Assert.IsNotNull(doc);
+            Assert.IsNotNull(null);
         }
     }
 }
