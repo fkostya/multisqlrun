@@ -27,7 +27,7 @@ namespace appui.shared
                 {
                     Name = cs.Client,
                     Version = cs.Version,
-                    ConnectionString = new TenantConnectionString
+                    Connection = new TenantConnection
                     {
                         Database = cs.Database,
                         UserName = cs.UserName,
@@ -46,7 +46,7 @@ namespace appui.shared
 
             return tenants
                 .Where(f => f.Version.Equals(tenantVersion, StringComparison.CurrentCultureIgnoreCase))
-                .Where(f => f.Name.Contains(tenantName, StringComparison.OrdinalIgnoreCase) || f.ConnectionString.Database.Contains(tenantName, StringComparison.OrdinalIgnoreCase))
+                .Where(f => f.Name.Contains(tenantName, StringComparison.OrdinalIgnoreCase) || f.Connection.Database.Contains(tenantName, StringComparison.OrdinalIgnoreCase))
                 .ToList();
         }
     }

@@ -1,8 +1,6 @@
-﻿using System.Security;
-
-namespace appui.shared.Interfaces
+﻿namespace appui.shared.Interfaces
 {
-    public interface ITenantConnectionString
+    public interface ITenantConnection
     {
         string DbServer { get; set; }
         string Database { get; set; }

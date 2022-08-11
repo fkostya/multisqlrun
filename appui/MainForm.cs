@@ -144,12 +144,12 @@ namespace appui
                         try
                         {
                             var cmd = new SqlRunCommand();
-                            var output = await cmd.RunQuery(utx_sqlquery.Text, cc.Server, cc.Database, sqlSettings.Credential.UserId, decode(sqlSettings.Credential.Password), sqlSettings.ConnectionTimeout);
+                            var output = await cmd.RunQuery(utx_sqlquery.Text, cc.Connection.DbServer, cc.Connection.Database, sqlSettings.Credential.UserId, decode(sqlSettings.Credential.Password), sqlSettings.ConnectionTimeout);
                             updateClientProgress(clients.Count, current);
 
                             lock (this)
                             {
-                                result[cc.Database] = output;
+                                result[cc.Connection.Database] = output;
                                 Interlocked.Increment(ref processed);
                             }
                         }
@@ -208,13 +208,16 @@ namespace appui
             return Encoding.UTF8.GetString(data);
         }
 
-        private IList<IConnectionStringInfo> getAllClientsOrSelected(string version)
+        private IList<ITenant> getAllClientsOrSelected(string version)
         {
             var selected = new HashSet<string>(ulv_clients.SelectedItems.Count != 0
                 ? ulv_clients.SelectedItems?.Cast<string>().ToList()
                 : ulv_clients.Items.Cast<string>());
 
-            return this.parsedDoc.Where(f => selected.Contains(f.Client)).ToList();
+            return this.tenantManager.LoadTenantsFromCatalog().Result
+                .ToList()
+                .Where(f => selected.Contains(f.Name))
+                .ToList();
         }
 
         private Dictionary<string, List<Tuple<string, string>>> getFakeOutput()
@@ -381,9 +384,9 @@ namespace appui
 
         private void _changeClientSection(ITenant tenant)
         {
-            utx_dbname.Text = tenant?.ConnectionString?.Database;
-            utx_clientname.Text = tenant?.ConnectionString?.UserName;
-            utx_servername.Text = tenant?.ConnectionString.DbServer;
+            utx_dbname.Text = tenant?.Connection?.Database;
+            utx_clientname.Text = tenant?.Connection?.UserName;
+            utx_servername.Text = tenant?.Connection.DbServer;
         }
 
         private void utx_outputpath_MouseClick(object sender, MouseEventArgs e)

@@ -4,6 +4,6 @@
     {
         string Name { get; set; }
         string Version { get; set; }
-        ITenantConnectionString ConnectionString { get; set; }
+        ITenantConnection Connection { get; set; }
     }
 }

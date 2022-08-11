@@ -7,6 +7,6 @@ namespace appui.shared.Models
     {
         public string Name { get; set; }
         public string Version { get; set; }
-        public ITenantConnectionString ConnectionString { get; set; }
+        public ITenantConnection Connection { get; set; }
     }
 }

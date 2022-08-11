@@ -2,7 +2,7 @@
 
 namespace appui.shared.Models
 {
-    public class TenantConnectionString : ITenantConnectionString
+    public class TenantConnection : ITenantConnection
     {
         public string DbServer { get; set; }
         public string Database { get; set; }
