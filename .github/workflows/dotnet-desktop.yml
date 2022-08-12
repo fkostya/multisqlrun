@@ -84,3 +84,7 @@ jobs:
       run: msbuild $env:Solution_Name /t:Restore /p:Configuration=$env:Configuration
       env:
         Configuration: ${{ matrix.configuration }}
+        
+    - name: .Net Code Coverage Badge
+      uses: simon-k/dotnet-code-coverage-badge@v1.0.0
+
