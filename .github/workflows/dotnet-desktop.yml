@@ -75,23 +75,24 @@ jobs:
     - name: Setup MSBuild.exe
       uses: microsoft/setup-msbuild@v1.0.2
 
-    # Execute all unit tests in the solution
-    - name: Execute unit tests
-      run: dotnet test --collect:"XPlat Code Coverage"
-
     # Restore the application to populate the obj folder with RuntimeIdentifiers
     - name: Restore the application
       run: msbuild $env:Solution_Name /t:Restore /p:Configuration=$env:Configuration
       env:
         Configuration: ${{ matrix.configuration }}
         
+    # Execute all unit tests in the solution
+    - name: Execute unit tests
+      run: dotnet test --collect:"xplat code coverage"
+    
+    # Execute code coverage for unit tests results in the solution
     - name: .Net Code Coverage Badge
       uses: simon-k/dotnet-code-coverage-badge@v1.0.0
       id: create_coverage_badge
       with:
         label: Unit Test Coverage
         color: brightgreen
-        path: appui.tests\TestResults\coverage.opencover.xml
+        path: appui.tests\TestResults\**\coverage.opencover.xml
         gist-filename: code-coverage.json
         gist-id: 6139c93439673c361cd0aebd8462e298
         gist-auth-token: ${{ secrets.GIST_AUTH_TOKEN }} 
