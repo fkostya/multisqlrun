@@ -10,8 +10,8 @@ jobs:
       runs-on: ubuntu-latest
     
     steps:
-      - name: run delete-old-branches-action
+      - name: delete-old-branches-step
         run: git branch -r --merged | grep -v master | sed 's/origin\///' | xargs -n 1 git push --delete origin
 
-      - name: git remote prune origin
+      - name: git-remote-prune-step
         run: git remote prune origin
