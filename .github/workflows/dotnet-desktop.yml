@@ -91,7 +91,7 @@ jobs:
       id: create_coverage_badge
       with:
         label: Unit Test Coverage
-        color: brightgreen
+        color: green
         path: appui.tests\TestResults\coverage.opencover.xml
         gist-filename: code-coverage.json
         gist-id: 6139c93439673c361cd0aebd8462e298
