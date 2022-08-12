@@ -1,18 +1,10 @@
-﻿using appui.shared;
-using appui.shared.Interfaces;
-using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Xunit;
 
 namespace appui.tests
 {
-    [TestFixture]
     public class ConnectorTests
     {
-        [TestCase]
+        [Fact]
         public void MyTestMethod()
         {
             //IConnector connector = new DFConnector();
