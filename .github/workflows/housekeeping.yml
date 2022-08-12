@@ -6,11 +6,12 @@ on:
 
 jobs:
     housekeeping:
-    name: cleanup old branches
-    runs-on: ubuntu-latest
+      name: cleanup old branches
+      runs-on: ubuntu-latest
+    
     steps:
-        name: run delete-old-branches-action
+    - name: run delete-old-branches-action
         run: git branch -r --merged | grep -v master | sed 's/origin\///' | xargs -n 1 git push --delete origin
 
-        name: git remote prune origin
+    - name: git remote prune origin
         run: git remote prune origin
