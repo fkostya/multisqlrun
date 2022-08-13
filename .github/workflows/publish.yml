@@ -1,0 +1,12 @@
+name: publish
+
+on
+  push:
+    tags:
+	  - '*'
+
+jobs:
+  build:
+    name: publish binaries
+	runs-on: windows-latest
+			
