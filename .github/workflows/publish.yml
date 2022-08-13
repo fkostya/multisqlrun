@@ -19,7 +19,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: publish
-      run: dotnet publish -c release --locked
+      run: dotnet publish -c release
     - name: Upload binaries to release
       uses: svenstaro/upload-release-action@v2
       with:
