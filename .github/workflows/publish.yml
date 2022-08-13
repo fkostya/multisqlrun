@@ -14,7 +14,7 @@ jobs:
         include:
           - os: windows-latest
             artifact_name: multirunsql.exe
-            asset_name: mything-windows-amd64
+            asset_name: multirunsql-windows-amd64
 
     steps:
     - uses: actions/checkout@v2
