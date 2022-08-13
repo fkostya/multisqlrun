@@ -1,17 +1,13 @@
 ﻿using appui.shared.Interfaces;
 using appui.shared.Models;
 using HtmlAgilityPack;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace appui.shared
 {
-    internal class WebDocument : ILoadSource
+    public class WebDocument : ILoadSource
     {
         private readonly HtmlNode content;
+        private readonly HtmlNode defaultHtmlNode = HtmlNode.CreateNode("<html>");
 
         public WebDocument(HtmlDocument htmlDoc)
         {
@@ -19,31 +15,34 @@ namespace appui.shared
 
             if(this.content == null)
             {
-                this.content = HtmlNode.CreateNode("");
+                this.content = defaultHtmlNode;
             }
         }
 
         private IList<string> GetVersions()
         {
+            var nodes = this.content.SelectNodes("//a[@class='toggle-vis']");
+
             var list = new List<string>();
-
-            if (string.IsNullOrWhiteSpace(content.InnerHtml))
+            if (nodes == null)
                 return list;
-
-            var nodes = content.SelectNodes("//a[@class='toggle-vis']");
 
             foreach (var _ in nodes)
             {
-                list.Add(_.InnerText);
+                list.Add(_.InnerText.Trim());
             }
             return list;
         }
 
         public IEnumerable<IConnectionStringInfo> GetConnections()
         {
-            var trs = content.SelectNodes("//table[@id='TestInfrastructure']//tbody//tr");
-
+            var trs = this.content.SelectNodes("//table[@id='TestInfrastructure']//tbody//tr");
             var list = new List<IConnectionStringInfo>();
+
+            if (trs == null)
+            {
+                trs = new HtmlNodeCollection(defaultHtmlNode);
+            }
 
             var versions = this.GetVersions();
 
@@ -52,20 +51,25 @@ namespace appui.shared
                 var memberNodes = node.SelectNodes(".//td[@data-site='sitename']");
                 var index = 0;
 
+                if(memberNodes == null)
+                {
+                    memberNodes = new HtmlNodeCollection(this.defaultHtmlNode);
+                }
                 foreach (var mem in memberNodes)
                 {
-                    var database = mem.SelectSingleNode(".//font[@data-client-id=\'" + node.Id + "\']")?.InnerHtml;
+                    var database = mem.SelectSingleNode(".//font[@data-client-id=\'" + node.Id + "\']")?.InnerHtml.Trim();
                     var server = mem.SelectSingleNode(".//small[@class='dbServerVersion']")?.InnerHtml.Split("-")?[0]?.Trim().Replace("[", "");
+                    var client = node.SelectSingleNode(".//td[@class='namespace sorting_1']")?.InnerHtml.Trim();
 
                     if (!string.IsNullOrWhiteSpace(database) && database.Length > 3 && !string.IsNullOrWhiteSpace(server) && server.Length > 3)
                     {
                         yield return new ConnectionStringInfo()
                         {
-                            Id = node.Id,
-                            Client = node.ChildNodes.Count > 0 ? node.ChildNodes[0].InnerHtml : "",
-                            Database = database,
-                            Server = server,
-                            Version = versions[index]
+                            Id = node.Id.Trim(),
+                            Client = client.Trim(),
+                            Database = database.Trim(),
+                            Server = server.Trim(),
+                            Version = versions[index].Trim()
                         };
                     }
                     index++;
