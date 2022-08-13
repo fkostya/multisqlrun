@@ -20,11 +20,11 @@ jobs:
     - uses: actions/checkout@v2
     - name: publish
       run: dotnet publish -c release
-    - name: Upload binaries to release
-      uses: svenstaro/upload-release-action@v2
+    - name: upload published to release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
       with:
-        repo_token: ${{ secrets.GITHUB_TOKEN }}
-        file: target/release/${{ matrix.artifact_name }}
-        asset_name: ${{ matrix.asset_name }}
-        tag: ${{ github.ref }}
-        prerelease: true
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
