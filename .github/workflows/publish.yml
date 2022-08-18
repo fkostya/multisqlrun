@@ -7,22 +7,38 @@ on:
 
 jobs:
   publish:
-    name: Publish for ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        include:
-          - os: windows-latest
+        configuration: [Release]
+        dotnet: ['6.0.x']
+         - os: windows-latest
             artifact_name: multirunsql.exe
             asset_name: multirunsql-windows-amd64
 
+    name: publish for ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    
     steps:
-    - uses: actions/checkout@v2
+    - name: checkout
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    
+    # Install the .NET Core workload
+    - name: Install .NET Core
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: ${{ matrix.dotnet }}
+    
+    - name: restore dependencies
+      run: dotnet restore
+
     - name: publish
-      run: dotnet publish -c release
+      run: dotnet publish -c Release -o ./published
+
     - name: upload published to release
       id: create_release
       uses: actions/upload-artifact@v3
       with:
-        path: .\appui\bin\Release\net6.0-windows\publish
-        name: miltisqlrun-portable
+        path: .\publish
+        name: miltisqlrun-portable.zip

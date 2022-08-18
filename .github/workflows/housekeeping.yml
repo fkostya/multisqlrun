@@ -10,6 +10,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
       - run: git branch -vv
       #- run: git branch -r --merged | grep -v master | sed 's/origin\///' | xargs -n 1 git push --delete origin
       - run: git remote prune origin

@@ -45,12 +45,11 @@ on:
     branches: [ "master" ]
 
 jobs:
-
   build:
-
     strategy:
       matrix:
         configuration: [Release]
+        dotnet: ['6.0.x']
 
     runs-on: windows-latest  # For a list of available runner types, refer to
                              # https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idruns-on
@@ -58,9 +57,9 @@ jobs:
     env:
       Solution_Name: multirun.sln                               # Replace with your solution name, i.e. MyWpfApp.sln.
       Test_Project_Path: appui.tests\appui.tests.csproj         # Replace with the path to your test project, i.e. MyWpfApp.Tests\MyWpfApp.Tests.csproj.
-
+    
     steps:
-    - name: Checkout
+    - name: checkout
       uses: actions/checkout@v3
       with:
         fetch-depth: 0
@@ -69,22 +68,19 @@ jobs:
     - name: Install .NET Core
       uses: actions/setup-dotnet@v2
       with:
-        dotnet-version: 6.0.x
+        dotnet-version: ${{ matrix.dotnet }}
 
-    # Add  MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
-    - name: Setup MSBuild.exe
-      uses: microsoft/setup-msbuild@v1.0.2
+    - name: restore dependencies
+      run: dotnet restore
 
-    # Restore the application to populate the obj folder with RuntimeIdentifiers
-    - name: Restore the application
-      run: msbuild $env:Solution_Name /t:Restore /p:Configuration=$env:Configuration
-      env:
-        Configuration: ${{ matrix.configuration }}
+    - name: build
+      run: |
+        dotnet build --configuration Release --no-restore
+        dotnet publish -c Release -o ./published
         
-    # Execute all unit tests in the solution
-    - name: Execute unit tests
-      run: dotnet test  -p:CollectCoverage=true -p:CoverletOutput=TestResults/ -p:CoverletOutputFormat=opencover
-    
+    - name: test
+      run: dotnet test --no-restore --verbosity normal -p:CollectCoverage=true -p:CoverletOutput=TestResults/ -p:CoverletOutputFormat=opencover
+
     # Execute code coverage for unit tests results in the solution
     - name: .Net Code Coverage Badge
       uses: simon-k/dotnet-code-coverage-badge@v1.0.0
