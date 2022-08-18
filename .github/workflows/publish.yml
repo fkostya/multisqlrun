@@ -25,5 +25,4 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         path: .\appui\bin\Release\net6.0-windows\publish
-        name: ${{ github.ref }}-portable
-        release_name: release ${{ github.ref }}
+        name: miltisqlrun-portable
