@@ -11,9 +11,7 @@ jobs:
       matrix:
         configuration: [Release]
         dotnet: ['6.0.x']
-         - os: windows-latest
-            artifact_name: multirunsql.exe
-            asset_name: multirunsql-windows-amd64
+        os: [windows-latest]
 
     name: publish for ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
