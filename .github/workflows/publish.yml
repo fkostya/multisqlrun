@@ -22,9 +22,8 @@ jobs:
       run: dotnet publish -c release
     - name: upload published to release
       id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+      uses: actions/upload-artifact@v3
       with:
-        tag_name: ${{ github.ref }}-portable
-        release_name: Release ${{ github.ref }}
+        path: appui/bin/Release/net6.0-windows/publish
+        name: ${{ github.ref }}-portable
+        release_name: release ${{ github.ref }}
