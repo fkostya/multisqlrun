@@ -40,3 +40,10 @@ jobs:
       with:
         path: .\published\
         name: miltisqlrun-portable.zip
+        
+    - name: publish to release
+      uses: johnwbyrd/update-release@v1.0.0
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        asset: .\miltisqlrun-portable.zip
+
