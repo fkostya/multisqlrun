@@ -1,4 +1,5 @@
 ﻿using appui.shared;
+using appui.shared.Interfaces;
 using appui.shared.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -9,7 +10,7 @@ namespace appui.tests
 {
     public class OfflineFilePageReaderTests
     {
-        private OfflineFilePageReader buildOfflineFilePageReader(IOptions<List<CatalogConnection>>? options)
+        private OfflineFilePageReader buildOfflineFilePageReader(IOptions<List<ICatalog>>? options)
         {
             var logger = new Mock<ILogger<AppErrorLog>>();
 
@@ -27,7 +28,7 @@ namespace appui.tests
         [Fact]
         public void CreatingNewInstance_WhenConnectionTypeNotProvided_InstanceIsNotNull()
         {
-            var options = Options.Create(new List<CatalogConnection>());
+            var options = Options.Create(new List<ICatalog>());
 
             var reader = buildOfflineFilePageReader(options);
 
@@ -37,7 +38,7 @@ namespace appui.tests
         [Fact]
         public void CreatingNewInstance_WhenConnectionTypeNotSupported_InstanceIsNotNull()
         {
-            var options = Options.Create(new List<CatalogConnection>() { new CatalogConnection { Name = "df-test" } });
+            var options = Options.Create(new List<ICatalog>() { new FileCatalog { Type = "df-test" } });
 
             var reader = buildOfflineFilePageReader(options);
 
@@ -47,7 +48,7 @@ namespace appui.tests
         [Fact]
         public void CreatingNewInstance_WhenConnectionTypeSupported_InstanceIsNotNull()
         {
-            var options = Options.Create(new List<CatalogConnection>() { new CatalogConnection { Name = "df-offline" } });
+            var options = Options.Create(new List<ICatalog>() { new FileCatalog { Type = "windows-file" } });
 
             var reader = buildOfflineFilePageReader(options);
 
@@ -57,7 +58,7 @@ namespace appui.tests
         [Fact]
         public async Task LoadPageAsync_WhenUrlIsEmpty_DefaultDocumentIsNotNull()
         {
-            var options = Options.Create(new List<CatalogConnection>() { new CatalogConnection { Name = "df-offline", FilePath= "" } });
+            var options = Options.Create(new List<ICatalog>() { new FileCatalog { Type = "windows-file", FilePath= "" } });
 
             var reader = buildOfflineFilePageReader(options);
 
@@ -68,7 +69,7 @@ namespace appui.tests
         [Fact]
         public async Task LoadPageAsync_WhenWebPageIsNull_DefaultDocumentIsNotNull()
         {
-            var options = Options.Create(new List<CatalogConnection>() { new CatalogConnection { Name = "df-offline", FilePath = "" } });
+            var options = Options.Create(new List<ICatalog>() { new FileCatalog { Type = "windows-file", FilePath = "" } });
 
             var reader = buildOfflineFilePageReader(options);
 

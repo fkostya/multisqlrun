@@ -97,7 +97,7 @@ namespace appui
 
         private async Task<int> refresh()
         {
-            var connections = await tenantManager.LoadTenantsFromCatalog();
+            var connections = await tenantManager.LoadTenants(null);
 
             connections
                 .DistinctBy(f => f.Version)
@@ -214,7 +214,7 @@ namespace appui
                 ? ulv_clients.SelectedItems?.Cast<string>().ToList()
                 : ulv_clients.Items.Cast<string>());
 
-            return this.tenantManager.LoadTenantsFromCatalog().Result
+            return this.tenantManager.LoadTenants(null).Result
                 .ToList()
                 .Where(f => selected.Contains(f.Name))
                 .ToList();

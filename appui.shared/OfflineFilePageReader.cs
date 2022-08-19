@@ -8,15 +8,17 @@ namespace appui.shared
 {
     public class OfflineFilePageReader : IPageReader
     {
-        private readonly CatalogConnection config;
-        private const string support_type = "df-offline";
+        private readonly FileCatalog config;
+        private const string support_type = "windows-file";
         private readonly ILogger logger;
 
-        public OfflineFilePageReader(IOptions<List<CatalogConnection>> options, ILogger<AppErrorLog> logger)
+        public OfflineFilePageReader(IOptions<List<ICatalog>> options, ILogger<AppErrorLog> logger)
         {
             this.config = options?.Value?
-               .Where(f => f.Name == support_type)
+               .Where(f => f.Type.ToLower() == support_type.ToLower())
+               .Cast<FileCatalog>()
                .FirstOrDefault();
+
             this.logger = logger;
 
             this.logger.LogInformation($"OfflineFilePageReader will load file from path: {this.config?.FilePath}");

@@ -52,7 +52,7 @@ namespace appui
                 .AddScoped<WebPageReader>()
                 .AddScoped<OfflineFilePageReader>()
                 .AddScoped<IServiceProvider, ServiceProvider>()
-                .Configure<List<CatalogConnection>>(Configuration.GetSection("catalogSourceSettings:catalogConnections"))
+                .Configure<List<ICatalog>>(Configuration.GetSection("catalogSourceSettings:catalogConnections"))
                 .Configure<AppSettings>(Configuration.GetSection("appSettings"))
                 .Configure<SqlSettings>(Configuration.GetSection("sqlSettings"))
                 .AddSingleton<CredentialCache>()

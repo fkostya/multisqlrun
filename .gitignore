@@ -6,3 +6,4 @@ bin/
 obj/
 todo.txt
 /appui.tests/TestResults/
+/published

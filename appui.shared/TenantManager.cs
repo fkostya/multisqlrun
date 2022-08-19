@@ -17,7 +17,12 @@ namespace appui.shared
             this.connector = defaultConnectorFactory.GetConnectorFactory();
         }
 
-        public async Task<IList<ITenant>> LoadTenantsFromCatalog()
+        public async Task<IList<ICatalog>> LoadTenantsCatalogs()
+        {
+            return null;
+        }
+
+        public async Task<IList<ITenant>> LoadTenants(ICatalog catalog)
         {
             var connectionStrings = await connector.LoadConnectionStrings();
             this.tenants = new List<ITenant>();

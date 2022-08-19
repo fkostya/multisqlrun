@@ -1,4 +1,5 @@
 ﻿using appui.shared;
+using appui.shared.Interfaces;
 using appui.shared.Models;
 using HtmlAgilityPack;
 using Microsoft.Extensions.Logging;
@@ -11,7 +12,7 @@ namespace appui.tests
 {
     public class WebPageReaderTests
     {
-        private WebPageReader buildWebPageReader(IOptions<List<CatalogConnection>>options = null, CredentialCache credentialCache = null, HtmlWeb htmlWeb = null)
+        private WebPageReader buildWebPageReader(IOptions<List<ICatalog>> options = null, CredentialCache credentialCache = null, HtmlWeb htmlWeb = null)
         {
             var logger = new Mock<ILogger<AppErrorLog>>();
 
@@ -30,7 +31,7 @@ namespace appui.tests
         [Fact]
         public void CreatingNewInstance_WhenConnectionTypeNotProvided_InstanceIsNotNull()
         {
-            var options = Options.Create(new List<CatalogConnection>());
+            var options = Options.Create(new List<ICatalog>());
 
             //credential.Setup(c => c.GetCredential(new Uri("https://google.com"), "Basic"));
             //.Returns(new NetworkCredential());
@@ -49,7 +50,7 @@ namespace appui.tests
         [Fact]
         public void CreatingNewInstance_WhenConnectionTypeNotSupported_InstanceIsNotNull()
         {
-            var options = Options.Create(new List<CatalogConnection>() { new CatalogConnection { Name = "df-test" } });
+            var options = Options.Create(new List<ICatalog>() { new WebCatalog { Type = "df-web-url-test" } });
 
             WebPageReader reader = buildWebPageReader(options);
 
@@ -59,7 +60,7 @@ namespace appui.tests
         [Fact]
         public void CreatingNewInstance_WhenConnectionTypeSupported_InstanceIsNotNull()
         {
-            var options = Options.Create(new List<CatalogConnection>() { new CatalogConnection { Name = "df-web" } });
+            var options = Options.Create(new List<ICatalog>() { new WebCatalog { Type = "df-web-url" } });
             var credential = new Mock<CredentialCache>();
             var webHtml = new Mock<HtmlWeb>();
 
@@ -71,7 +72,7 @@ namespace appui.tests
         [Fact]
         public async Task LoadPageAsync_WhenUrlIsEmpty_DefaultDocumentIsNotNull()
         {
-            var options = Options.Create(new List<CatalogConnection>() { new CatalogConnection { Name = "df-web", Url = "" } });
+            var options = Options.Create(new List<ICatalog>() { new WebCatalog { Type= "df-web-url", Url = "" } });
             var credential = new Mock<CredentialCache>();
             var webHtml = new Mock<HtmlWeb>();
 
@@ -84,7 +85,7 @@ namespace appui.tests
         [Fact]
         public async Task LoadPageAsync_WhenWebPageIsNull_DefaultDocumentIsNotNull()
         {
-            var options = Options.Create(new List<CatalogConnection>() { new CatalogConnection { Name = "df-web", Url = "" } });
+            var options = Options.Create(new List<ICatalog>() { new WebCatalog { Type = "df-web-url", Url = "" } });
             var credential = new Mock<CredentialCache>();
             var webHtml = new Mock<HtmlWeb>();
 
