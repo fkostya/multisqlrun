@@ -1,5 +1,6 @@
 ﻿using appui.shared.Interfaces;
 using appui.shared.Models;
+using Microsoft.Extensions.Options;
 
 namespace appui.shared
 {
@@ -11,15 +12,18 @@ namespace appui.shared
     {
         private readonly IConnector connector;
         private IList<ITenant> tenants;
+        private IList<ICatalog> catalogs;
 
-        public TenantManager(DefaultConnectorFactory defaultConnectorFactory)
+        public TenantManager(IOptions<List<ICatalog>> catalogs, DefaultConnectorFactory defaultConnectorFactory)
         {
             this.connector = defaultConnectorFactory.GetConnectorFactory();
+
+            this.catalogs = catalogs.Value;
         }
 
-        public async Task<IList<ICatalog>> LoadTenantsCatalogs()
+        public async Task<IList<ICatalog>> LoadCatalogs()
         {
-            return null;
+            return await Task.FromResult(catalogs);
         }
 
         public async Task<IList<ITenant>> LoadTenants(ICatalog catalog)

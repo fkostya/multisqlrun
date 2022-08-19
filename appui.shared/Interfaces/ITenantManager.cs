@@ -5,7 +5,7 @@
     /// </summary>
     public interface ITenantManager
     {
-        Task<IList<ICatalog>> LoadTenantsCatalogs();
+        Task<IList<ICatalog>> LoadCatalogs();
 
         Task<IList<ITenant>> LoadTenants(ICatalog catalog);
 
