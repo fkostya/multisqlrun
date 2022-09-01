@@ -45,5 +45,5 @@ jobs:
       uses: softprops/action-gh-release
       with:
           files: miltisqlrun-portable.zip
-        env:
+      env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
