@@ -34,9 +34,16 @@ jobs:
     - name: publish
       run: dotnet publish -c Release -o ./published
 
-    - name: upload published to release
+    - name: upload published to artifacts
       id: upload_artifact
       uses: actions/upload-artifact@v3
       with:
         path: .\published\
         name: miltisqlrun-portable.zip
+        
+    - name: upload artifact to release
+      uses: softprops/action-gh-release
+      with:
+          files: miltisqlrun-portable.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
