@@ -1,0 +1,19 @@
+﻿=======version 3.0=============================================
+upgrade to core7.0[technical debt]:
+create a separate file to sql query[core func]:
+	create file in shared project: DONE
+	replace mainform to use new class: DONE
+	delete old sqlruncommand file: DONE
+	add unit tests: DONE
+=======version 2.0=============================================
+download file with connections - DONE
+convert to List - DONE
+and save to local as cvs
+read connection from cvs file
+add refresh option - DONE
+add dependecy injection - DONE
+create unit test project - DONE
+create project shared - DONE
+move shared code to new shared project - DONE
+add appsettings.json+IOptions pattern - DONE
+test online web site - DONE

@@ -52,14 +52,15 @@ namespace appui
                 .AddScoped<WebPageReader>()
                 .AddScoped<OfflineFilePageReader>()
                 .AddScoped<IServiceProvider, ServiceProvider>()
-                .Configure<List<ICatalog>>(Configuration.GetSection("catalogSourceSettings:catalogConnections"))
+                .Configure<List<Catalog>>(Configuration.GetSection("catalogSourceSettings:catalogConnections"))
                 .Configure<AppSettings>(Configuration.GetSection("appSettings"))
                 .Configure<SqlSettings>(Configuration.GetSection("sqlSettings"))
                 .AddSingleton<CredentialCache>()
                 .AddSingleton<HtmlWeb>()
                 .AddSingleton<ITenantManager, TenantManager>()
                 .AddSingleton<DefaultConnectorFactory>()
-                .AddSingleton<DFConnector>();
+                .AddSingleton<DFConnector>()
+                .AddTransient<RunMsSqlQueryConnector>();
         }
     }
 }

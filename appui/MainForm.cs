@@ -2,6 +2,8 @@
 using appui.shared.Interfaces;
 using appui.shared.Models;
 using CsvHelper;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
@@ -28,11 +30,13 @@ namespace appui
         private readonly SqlSettings sqlSettings;
         private readonly ILogger Logger;
         private readonly ITenantManager tenantManager;
+        private readonly IServiceProvider serviceProvider;
 
-        public MainForm(IOptions<AppSettings> appSettings, 
-            IOptions<SqlSettings> sqlSettings, 
+        public MainForm(IOptions<AppSettings> appSettings,
+            IOptions<SqlSettings> sqlSettings,
             ILogger<AppErrorLog> logger,
-            ITenantManager tenantManager)
+            ITenantManager tenantManager,
+            IServiceProvider serviceProvider)
         {
             InitializeComponent();
 
@@ -40,6 +44,7 @@ namespace appui
             this.sqlSettings = sqlSettings.Value;
             this.Logger = logger;
             this.tenantManager = tenantManager;
+            this.serviceProvider = serviceProvider;
 
             Logger.LogInformation($"App started");
         }
@@ -134,6 +139,14 @@ namespace appui
 
                     foreach (var cc in clients)
                     {
+                        var connection = new TenantConnection
+                        {
+                            Database = cc.Connection.Database,
+                            DbServer = cc.Connection.DbServer,
+                            UserName = sqlSettings.Credential.UserId,
+                            Password = decode(sqlSettings.Credential.Password)
+                        };
+
                         Interlocked.Increment(ref current);
 
                         lblProgress.Text = $"{current} of {clients?.Count()}";
@@ -143,13 +156,26 @@ namespace appui
 
                         try
                         {
-                            var cmd = new SqlRunCommand();
-                            var output = await cmd.RunQuery(utx_sqlquery.Text, cc.Connection.DbServer, cc.Connection.Database, sqlSettings.Credential.UserId, decode(sqlSettings.Credential.Password), sqlSettings.ConnectionTimeout);
+                            RunMsSqlQueryConnector cmd = serviceProvider.GetService<RunMsSqlQueryConnector>();
+                            List<Dictionary<string, object>> output = await cmd.Run(connection, utx_sqlquery.Text);
+
                             updateClientProgress(clients.Count, current);
 
                             lock (this)
                             {
-                                result[cc.Connection.Database] = output;
+                                result[cc.Connection.Database] = (List<Tuple<string, string>>)output
+                                    .Select(f =>
+                                    {
+                                        var list = new List<Tuple<string, string>>();
+                                        foreach (var k in f.Keys)
+                                        {
+                                            if (f[k] != null)
+                                            {
+                                                list.Add(new Tuple<string, string>(k, f[k].ToString()));
+                                            }
+                                        }
+                                        return list;
+                                    });
                                 Interlocked.Increment(ref processed);
                             }
                         }
