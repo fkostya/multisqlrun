@@ -2,26 +2,13 @@
 
 namespace appui.shared.Models
 {
-    public abstract class Catalog : ICatalog
+    public class Catalog
     {
         public string Name { get; set; }
         public string Type { get; set; }
-        
         public Parser Parse { get; set; }
-    }
-
-    class SqlCatalog : Catalog
-    {
         public string ConnectionString { get; set; }
-    }
-
-    public class FileCatalog: Catalog
-    {
         public string FilePath { get; set; }
-    }
-
-    public class WebCatalog : Catalog
-    {
         public string Url { get; set; }
     }
 

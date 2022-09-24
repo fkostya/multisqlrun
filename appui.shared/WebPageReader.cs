@@ -9,20 +9,20 @@ namespace appui.shared
 {
     public class WebPageReader : IPageReader
     {
-        private readonly WebCatalog config;
+        private readonly Catalog config;
         private readonly NetworkCredential credential;
         private readonly HtmlWeb web;
         private const string support_type = "web-url";
-        private readonly WebCatalog defaultConnection = new WebCatalog();
+        private readonly Catalog defaultConnection = new Catalog();
         private readonly HtmlDocument defaultHtmlDocument = new HtmlDocument();
         private readonly ILogger logger;
 
-        public WebPageReader(IOptions<List<ICatalog>> options, CredentialCache credentialCache, HtmlWeb htmlWeb, ILogger<AppErrorLog> logger)
+        public WebPageReader(IOptions<List<Catalog>> options, CredentialCache credentialCache, HtmlWeb htmlWeb, ILogger<AppErrorLog> logger)
         {
             this.logger = logger;
             this.config = options?.Value?
                 .Where(f => f.Type== support_type)
-                .Cast<WebCatalog>()
+                .Cast<Catalog>()
                 .SingleOrDefault();
 
             if (config == null)

@@ -12,7 +12,7 @@ namespace appui.tests
 {
     public class WebPageReaderTests
     {
-        private WebPageReader buildWebPageReader(IOptions<List<ICatalog>> options = null, CredentialCache credentialCache = null, HtmlWeb htmlWeb = null)
+        private WebPageReader buildWebPageReader(IOptions<List<Catalog>>? options, CredentialCache? credentialCache, HtmlWeb? htmlWeb)
         {
             var logger = new Mock<ILogger<AppErrorLog>>();
 
@@ -23,7 +23,7 @@ namespace appui.tests
         public void CreatingNewInstance_WhenNoArgumentsProvided_InstanceIsNotNull()
         {
             var logger = new Mock<ILogger<AppErrorLog>>();
-            WebPageReader reader = buildWebPageReader();
+            WebPageReader reader = buildWebPageReader(null, null, null);
 
             Assert.NotNull(reader);
         }
@@ -31,7 +31,7 @@ namespace appui.tests
         [Fact]
         public void CreatingNewInstance_WhenConnectionTypeNotProvided_InstanceIsNotNull()
         {
-            var options = Options.Create(new List<ICatalog>());
+            var options = Options.Create(new List<Catalog>());
 
             //credential.Setup(c => c.GetCredential(new Uri("https://google.com"), "Basic"));
             //.Returns(new NetworkCredential());
@@ -42,7 +42,7 @@ namespace appui.tests
             //    .Setup(c => c.LoadFromWebAsync("", credential.Object))
             //    .Returns(new HtmlDocument());
 
-            WebPageReader reader = buildWebPageReader(options);
+            WebPageReader reader = buildWebPageReader(options, null, null);
 
             Assert.NotNull(reader);
         }
@@ -50,9 +50,9 @@ namespace appui.tests
         [Fact]
         public void CreatingNewInstance_WhenConnectionTypeNotSupported_InstanceIsNotNull()
         {
-            var options = Options.Create(new List<ICatalog>() { new WebCatalog { Type = "df-web-url-test" } });
+            var options = Options.Create(new List<Catalog>() { new Catalog { Type = "df-web-url-test" } });
 
-            WebPageReader reader = buildWebPageReader(options);
+            WebPageReader reader = buildWebPageReader(options, null, null);
 
             Assert.NotNull(reader);
         }
@@ -60,11 +60,11 @@ namespace appui.tests
         [Fact]
         public void CreatingNewInstance_WhenConnectionTypeSupported_InstanceIsNotNull()
         {
-            var options = Options.Create(new List<ICatalog>() { new WebCatalog { Type = "df-web-url" } });
+            var options = Options.Create(new List<Catalog>() { new Catalog { Type = "df-web-url" } });
             var credential = new Mock<CredentialCache>();
             var webHtml = new Mock<HtmlWeb>();
 
-            WebPageReader reader = buildWebPageReader(options, credential.Object);
+            WebPageReader reader = buildWebPageReader(options, credential.Object, null);
 
             Assert.NotNull(reader);
         }
@@ -72,7 +72,7 @@ namespace appui.tests
         [Fact]
         public async Task LoadPageAsync_WhenUrlIsEmpty_DefaultDocumentIsNotNull()
         {
-            var options = Options.Create(new List<ICatalog>() { new WebCatalog { Type= "df-web-url", Url = "" } });
+            var options = Options.Create(new List<Catalog>() { new Catalog { Type= "df-web-url", Url = "" } });
             var credential = new Mock<CredentialCache>();
             var webHtml = new Mock<HtmlWeb>();
 
@@ -85,7 +85,7 @@ namespace appui.tests
         [Fact]
         public async Task LoadPageAsync_WhenWebPageIsNull_DefaultDocumentIsNotNull()
         {
-            var options = Options.Create(new List<ICatalog>() { new WebCatalog { Type = "df-web-url", Url = "" } });
+            var options = Options.Create(new List<Catalog>() { new Catalog { Type = "df-web-url", Url = "" } });
             var credential = new Mock<CredentialCache>();
             var webHtml = new Mock<HtmlWeb>();
 

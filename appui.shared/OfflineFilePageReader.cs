@@ -8,20 +8,20 @@ namespace appui.shared
 {
     public class OfflineFilePageReader : IPageReader
     {
-        private readonly FileCatalog config;
-        private const string support_type = "windows-file";
+        private readonly Catalog config;
+        private const string support_type = "df-windows-file";
         private readonly ILogger logger;
 
-        public OfflineFilePageReader(IOptions<List<ICatalog>> options, ILogger<AppErrorLog> logger)
+        public OfflineFilePageReader(IOptions<List<Catalog>> options, ILogger<AppErrorLog> logger)
         {
             this.config = options?.Value?
-               .Where(f => f.Type.ToLower() == support_type.ToLower())
-               .Cast<FileCatalog>()
+               .Where(f => f.Type.Equals(support_type, StringComparison.OrdinalIgnoreCase))
+               .Cast<Catalog>()
                .FirstOrDefault();
 
             this.logger = logger;
 
-            this.logger.LogInformation($"OfflineFilePageReader will load file from path: {this.config?.FilePath}");
+            this.logger?.LogInformation($"OfflineFilePageReader will load file from path: {this.config?.FilePath}");
         }
 
         public async Task<HtmlDocument> LoadPageAsync()
@@ -29,11 +29,11 @@ namespace appui.shared
             var doc = new HtmlDocument();
             try
             {
-                doc.Load(config.FilePath);
+                doc.Load(config?.FilePath);
             }
             catch (Exception ex)
             {
-                this.logger.LogError(ex, ex.Message);
+                this.logger?.LogError(ex, ex.Message);
 
                 doc = new HtmlDocument();
             }
