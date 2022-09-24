@@ -1,6 +1,6 @@
 ﻿=======version 3.0=============================================
 upgrade to core7.0[technical debt]:
-create a separate file to sql query[core func]:
+create a separate file to sql query[core func]: DONE
 	create file in shared project: DONE
 	replace mainform to use new class: DONE
 	delete old sqlruncommand file: DONE
