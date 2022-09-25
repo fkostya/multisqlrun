@@ -30,7 +30,7 @@ To open an issue for this project, please visit the [multisqlrun project issue t
 ## version 2.0
 - [X] download file with connections
 - [X] convert to List
-- [ ] and save to local as cvs[future request]
+- [ ] and save to local as cvs[future]
 - [X] add refresh option
 - [X] add dependecy injection
 - [X] create unit test project
