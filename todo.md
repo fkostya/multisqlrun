@@ -1,10 +1,12 @@
 ﻿## version 3.1
+---
 - [ ] read tenant connections from cvs file[version 3.1][core func]
 ## version 3.0
+---
 - [ ] replace sync to AMQP(async massaging queue protocol) protocol[core func]:
 	* add consumer project: [DONE]
 	* add rabbitmq dependency: [DONE]
-		[tutor](https://medium.com/geekculture/installing-rabbitmq-on-windows-4411f5114a84)
+		[how to install](https://medium.com/geekculture/installing-rabbitmq-on-windows-4411f5114a84)
 	* impelement one consumer:
 	* add producer to main project:
 - [ ] upgrade to core7.0[technical debt]:
@@ -19,6 +21,7 @@
 	* delete old sqlruncommand file
 	* add unit tests
 ## version 2.0
+---
 - [X] download file with connections
 - [X] convert to List
 - [ ] and save to local as cvs[future request]
@@ -30,4 +33,5 @@
 - [X] add appsettings.json+IOptions pattern
 - [X] test online web site
 ## version 1.0
+---
 - [X] POC version
