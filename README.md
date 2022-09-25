@@ -22,7 +22,7 @@ To open an issue for this project, please visit the [multisqlrun project issue t
 - [ ] separate tenants by version[core func]:
 	* change settings
 	* show tenant names on UI
-- [X] create a separate file to sql query[core func]:
+- [X] create a separate file to sql query[core func](#11):
 	* create file in shared project
 	* replace mainform to use new class
 	* delete old sqlruncommand file
