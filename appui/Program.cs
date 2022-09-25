@@ -55,6 +55,7 @@ namespace appui
                 .Configure<List<Catalog>>(Configuration.GetSection("catalogSourceSettings:catalogConnections"))
                 .Configure<AppSettings>(Configuration.GetSection("appSettings"))
                 .Configure<SqlSettings>(Configuration.GetSection("sqlSettings"))
+                .Configure<RabbitMqSettings>(Configuration.GetSection("rabbitmqSettings"))
                 .AddSingleton<CredentialCache>()
                 .AddSingleton<HtmlWeb>()
                 .AddSingleton<ITenantManager, TenantManager>()
