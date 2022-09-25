@@ -10,7 +10,7 @@ To open an issue for this project, please visit the [multisqlrun project issue t
 ## version 3.1
 - [ ] read tenant connections from cvs file[version 3.1][core func]
 ## version 3.0
-- [ ] replace sync to AMQP(async massaging queue protocol) protocol[core func]:
+- [ ] replace sync to AMQP(advanced massage queuing protocol) protocol[core func]:
 	* add consumer project: [DONE]
 	* add rabbitmq dependency: [DONE]
 		[how to install](https://medium.com/geekculture/installing-rabbitmq-on-windows-4411f5114a84)
