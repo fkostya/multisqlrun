@@ -1,6 +1,11 @@
+using appui.connectors;
+using appui.models.Interfaces;
+using appui.models.Payloads;
 using appui.shared;
+using appui.shared.Enums;
 using appui.shared.Interfaces;
 using appui.shared.Models;
+using appui.shared.RabbitMQ;
 using HtmlAgilityPack;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -42,6 +47,7 @@ namespace appui
         {
             Configuration = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
+                .AddEnvironmentVariables()
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: false)
                 .Build();
 
@@ -52,16 +58,29 @@ namespace appui
                 .AddScoped<WebPageReader>()
                 .AddScoped<OfflineFilePageReader>()
                 .AddScoped<IServiceProvider, ServiceProvider>()
-                .Configure<List<Catalog>>(Configuration.GetSection("catalogSourceSettings:catalogConnections"))
+                .Configure<IEnumerable<ResourceCatalog>>(Configuration.GetSection("catalogSourceSettings:catalogConnections"))
                 .Configure<AppSettings>(Configuration.GetSection("appSettings"))
                 .Configure<SqlSettings>(Configuration.GetSection("sqlSettings"))
+                .Configure<MessagingSettings>(Configuration.GetSection("messagingSettings"))
                 .Configure<RabbitMqSettings>(Configuration.GetSection("rabbitmqSettings"))
                 .AddSingleton<CredentialCache>()
                 .AddSingleton<HtmlWeb>()
                 .AddSingleton<ITenantManager, TenantManager>()
                 .AddSingleton<DefaultConnectorFactory>()
                 .AddSingleton<DFConnector>()
-                .AddTransient<RunMsSqlQueryConnector>();
+                .AddTransient<MsSqlQueryConnector>()
+                .AddSingleton<RabbitMqProducer>()
+                .AddSingleton<SingleThreadContext>()
+                .AddTransient<IMessagePayload, MsSqlMessagePayload>()
+                .AddTransient<IMessagePayload, SaveCvsFileMessagePayload>()
+                .AddSingleton<IMessageProducer>((configure) =>
+                {
+                    return Configuration.GetSection("appSettings").Get<AppSettings>().Mode.ToLower() switch
+                    {
+                        "rabbitmq" => configure.GetService<RabbitMqProducer>(),
+                        _ => configure.GetService<SingleThreadContext>(),
+                    };
+                });
         }
     }
 }

@@ -1,45 +1,32 @@
-﻿using appui.shared.Interfaces;
-using appui.shared.Models;
+﻿using appui.models;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Logging;
 using System.Data;
-using System.Data.SqlClient;
 using System.Diagnostics;
 
-namespace appui.shared
+namespace appui.connectors
 {
-    public class RunMsSqlQueryConnector
+    public class MsSqlQueryConnector
     {
         const int timeout = 300;
-        private readonly ILogger Logger;
+        private readonly ILogger<MsSqlQueryConnector>? logger;
+        private readonly MsSqlConnection connection;
 
-        public RunMsSqlQueryConnector(ILogger<AppErrorLog> logger = null)
+        public MsSqlQueryConnector(MsSqlConnection connection, ILogger<MsSqlQueryConnector>? logger)
         {
-            this.Logger = logger;
+            this.logger = logger;
+            this.connection = connection;
         }
 
-        public async Task<List<Dictionary<string, object>>> Run(ITenantConnection connection, string query)
-        {
-            return await runQuery(connection, query);
-        }
-
-        private async Task<List<Dictionary<string, object>>> runQuery(ITenantConnection connection, string query)
+        public async Task<List<Dictionary<string, object?>>> Run(string? query)
         {
             Stopwatch sw = new Stopwatch();
             sw.Start();
 
-            var result = new List<Dictionary<string, object>>();
+            var result = new List<Dictionary<string, object?>>();
             try
             {
-                var builder = new SqlConnectionStringBuilder
-                {
-                    DataSource = connection.DbServer,
-                    InitialCatalog = connection.Database,
-                    UserID = connection.UserName,
-                    Password = connection.Password,
-                    ConnectTimeout = timeout
-                };
-
-                using (var sqlconnection = new SqlConnection(builder.ConnectionString))
+                using (var sqlconnection = new SqlConnection(connection.GetConnectionString<string>()))
                 {
                     using (var cmd = new SqlCommand(query, sqlconnection) { CommandType = CommandType.Text })
                     {
@@ -49,13 +36,10 @@ namespace appui.shared
                         {
                             DataTable schemaTable = reader.GetSchemaTable();
 
-                            var dic = new Dictionary<string, object>();
+                            var dic = new Dictionary<string, object?>();
                             foreach (DataColumn column in schemaTable.Columns)
                             {
-                                if (!dic.ContainsKey(column.ColumnName.ToString()))
-                                {
-                                    dic.Add(column.ColumnName.ToString(), null);
-                                }
+                                dic[column.ColumnName.ToString()] = null;
                             }
 
                             while (reader.Read())
@@ -77,12 +61,12 @@ namespace appui.shared
             }
             catch (Exception ex)
             {
-                Logger?.LogError(ex, ex.Message);
+                logger?.LogError($"Exception for connectionString:{connection.GetConnectionString<string>()}, {ex.Message}");
             }
             finally
             {
                 sw.Stop();
-                Logger?.LogTrace($"query run time for {connection.DbServer}", sw.Elapsed);
+                logger?.LogTrace($"query run time for {connection.Name}", sw.Elapsed);
             }
 
             return result;

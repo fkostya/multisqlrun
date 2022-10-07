@@ -1,4 +1,8 @@
-﻿using appui.shared;
+﻿using appui.connectors;
+using appui.models;
+using appui.models.Interfaces;
+using appui.models.Payloads;
+using appui.shared;
 using appui.shared.Interfaces;
 using appui.shared.Models;
 using CsvHelper;
@@ -28,15 +32,17 @@ namespace appui
         private bool openConnectionProcess;
         private readonly AppSettings appSetting;
         private readonly SqlSettings sqlSettings;
-        private readonly ILogger Logger;
+        private readonly ILogger<MainForm> Logger;
         private readonly ITenantManager tenantManager;
         private readonly IServiceProvider serviceProvider;
+        private readonly IMessageProducer messageProducer;
 
         public MainForm(IOptions<AppSettings> appSettings,
             IOptions<SqlSettings> sqlSettings,
-            ILogger<AppErrorLog> logger,
+            ILogger<MainForm> logger,
             ITenantManager tenantManager,
-            IServiceProvider serviceProvider)
+            IServiceProvider serviceProvider,
+            IMessageProducer messageProducer)
         {
             InitializeComponent();
 
@@ -45,8 +51,11 @@ namespace appui
             this.Logger = logger;
             this.tenantManager = tenantManager;
             this.serviceProvider = serviceProvider;
+            this.messageProducer = messageProducer;
 
             Logger.LogInformation($"App started");
+
+            //messageProducer.Publish()
         }
 
         private async void ubt_connect_Click(object sender, EventArgs e)
@@ -139,12 +148,12 @@ namespace appui
 
                     foreach (var cc in clients)
                     {
-                        var connection = new TenantConnection
+                        var connection = new MsSqlConnection
                         {
-                            Database = cc.Connection.Database,
+                            DbDatabase = cc.Connection.Database,
                             DbServer = cc.Connection.DbServer,
-                            UserName = sqlSettings.Credential.UserId,
-                            Password = decode(sqlSettings.Credential.Password)
+                            DbUserName = sqlSettings.Credential.UserId,
+                            DbPassword = decode(sqlSettings.Credential.Password)
                         };
 
                         Interlocked.Increment(ref current);
@@ -156,8 +165,23 @@ namespace appui
 
                         try
                         {
-                            RunMsSqlQueryConnector cmd = serviceProvider.GetService<RunMsSqlQueryConnector>();
-                            List<Dictionary<string, object>> output = await cmd.Run(connection, utx_sqlquery.Text);
+                            //TODO: delate after this.messageService.Publish(payload) implemented
+                            //RunMsSqlQueryConnector cmd = serviceProvider.GetService<RunMsSqlQueryConnector>();
+                            //List<Dictionary<string, object>> output = await cmd.Run(connection, utx_sqlquery.Text);
+                            List<Dictionary<string, object>> output = new List<Dictionary<string, object>>();
+                            try
+                            {
+                                MsSqlMessagePayload payload = (MsSqlMessagePayload)serviceProvider.GetService<IMessagePayload>();
+                                payload.Connection = connection;
+                                payload.Query = utx_sqlquery.Text;
+                                this.Logger.LogTrace($"posting message to queue with payload:{payload}");
+                                this.messageProducer.Publish(payload);
+                                this.Logger.LogTrace($"posted message to queue with payload:{payload}");
+                            }
+                            catch (Exception ex)
+                            {
+                                Logger.LogCritical(ex, ex.Message);
+                            }
 
                             updateClientProgress(clients.Count, current);
 

@@ -8,15 +8,15 @@ namespace appui.shared
 {
     public class OfflineFilePageReader : IPageReader
     {
-        private readonly Catalog config;
+        private readonly ResourceCatalog config;
         private const string support_type = "df-windows-file";
         private readonly ILogger logger;
 
-        public OfflineFilePageReader(IOptions<List<Catalog>> options, ILogger<AppErrorLog> logger)
+        public OfflineFilePageReader(IOptions<List<ResourceCatalog>> options, ILogger<AppErrorLog> logger)
         {
             this.config = options?.Value?
                .Where(f => f.Type.Equals(support_type, StringComparison.OrdinalIgnoreCase))
-               .Cast<Catalog>()
+               .Cast<ResourceCatalog>()
                .FirstOrDefault();
 
             this.logger = logger;

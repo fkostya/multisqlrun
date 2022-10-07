@@ -12,7 +12,7 @@ namespace appui.tests
 {
     public class WebPageReaderTests
     {
-        private WebPageReader buildWebPageReader(IOptions<List<Catalog>>? options, CredentialCache? credentialCache, HtmlWeb? htmlWeb)
+        private WebPageReader buildWebPageReader(IOptions<List<ResourceCatalog>>? options, CredentialCache? credentialCache, HtmlWeb? htmlWeb)
         {
             var logger = new Mock<ILogger<AppErrorLog>>();
 
@@ -31,7 +31,7 @@ namespace appui.tests
         [Fact]
         public void CreatingNewInstance_WhenConnectionTypeNotProvided_InstanceIsNotNull()
         {
-            var options = Options.Create(new List<Catalog>());
+            var options = Options.Create(new List<ResourceCatalog>());
 
             //credential.Setup(c => c.GetCredential(new Uri("https://google.com"), "Basic"));
             //.Returns(new NetworkCredential());
@@ -50,7 +50,7 @@ namespace appui.tests
         [Fact]
         public void CreatingNewInstance_WhenConnectionTypeNotSupported_InstanceIsNotNull()
         {
-            var options = Options.Create(new List<Catalog>() { new Catalog { Type = "df-web-url-test" } });
+            var options = Options.Create(new List<ResourceCatalog>() { new ResourceCatalog { Type = "df-web-url-test" } });
 
             WebPageReader reader = buildWebPageReader(options, null, null);
 
@@ -60,7 +60,7 @@ namespace appui.tests
         [Fact]
         public void CreatingNewInstance_WhenConnectionTypeSupported_InstanceIsNotNull()
         {
-            var options = Options.Create(new List<Catalog>() { new Catalog { Type = "df-web-url" } });
+            var options = Options.Create(new List<ResourceCatalog>() { new ResourceCatalog { Type = "df-web-url" } });
             var credential = new Mock<CredentialCache>();
             var webHtml = new Mock<HtmlWeb>();
 
@@ -72,7 +72,7 @@ namespace appui.tests
         [Fact]
         public async Task LoadPageAsync_WhenUrlIsEmpty_DefaultDocumentIsNotNull()
         {
-            var options = Options.Create(new List<Catalog>() { new Catalog { Type= "df-web-url", Url = "" } });
+            var options = Options.Create(new List<ResourceCatalog>() { new ResourceCatalog { Type= "df-web-url", Url = "" } });
             var credential = new Mock<CredentialCache>();
             var webHtml = new Mock<HtmlWeb>();
 
@@ -85,7 +85,7 @@ namespace appui.tests
         [Fact]
         public async Task LoadPageAsync_WhenWebPageIsNull_DefaultDocumentIsNotNull()
         {
-            var options = Options.Create(new List<Catalog>() { new Catalog { Type = "df-web-url", Url = "" } });
+            var options = Options.Create(new List<ResourceCatalog>() { new ResourceCatalog { Type = "df-web-url", Url = "" } });
             var credential = new Mock<CredentialCache>();
             var webHtml = new Mock<HtmlWeb>();
 

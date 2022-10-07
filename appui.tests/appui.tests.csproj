@@ -26,6 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\appui.connectors\appui.connectors.csproj" />
     <ProjectReference Include="..\appui.shared\appui.shared.csproj" />
   </ItemGroup>
 

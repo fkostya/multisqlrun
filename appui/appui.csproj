@@ -36,19 +36,20 @@
 
   <ItemGroup>
     <PackageReference Include="CsvHelper" Version="28.0.1" />
-    <PackageReference Include="HtmlAgilityPack" Version="1.11.43" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.46" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
-    <PackageReference Include="NLog" Version="5.0.1" />
-    <PackageReference Include="NLog.Extensions.Logging" Version="5.0.1" />
+    <PackageReference Include="NLog" Version="5.0.4" />
+    <PackageReference Include="NLog.Extensions.Logging" Version="5.0.4" />
     <PackageReference Include="Serilog.Extensions.Logging.File" Version="3.0.0" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.3" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\appui.connectors\appui.connectors.csproj" />
     <ProjectReference Include="..\appui.shared\appui.shared.csproj" />
   </ItemGroup>
 
