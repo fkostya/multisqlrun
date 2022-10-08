@@ -6,5 +6,6 @@ namespace appui.models.Payloads
     {
         public MsSqlConnection? Connection { get; set; }
         public string? Query { get; set; }
+        public string? StoragePath { get; set; }//REFACTOR: remove after switching to rabbitmq 
     }
 }

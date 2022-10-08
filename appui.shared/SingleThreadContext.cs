@@ -40,7 +40,7 @@ namespace appui.shared
                                         });
 
                 var cvsConnector = new CvsFileWriteConnector(_serviceProvider.GetRequiredService<ILogger<CvsFileWriteConnector>>());
-                await cvsConnector.Invoke(result, "");
+                await cvsConnector.Invoke(result, (payload as MsSqlMessagePayload).StoragePath);
             }
             catch (Exception ex)
             {
