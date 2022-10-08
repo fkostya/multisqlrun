@@ -1,18 +1,16 @@
-﻿using appui.shared;
+﻿using appui.models;
+using appui.models.Interfaces;
+using appui.models.Payloads;
+using appui.shared;
 using appui.shared.Interfaces;
 using appui.shared.Models;
-using CsvHelper;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
 using System.Diagnostics;
-using System.Dynamic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -24,19 +22,20 @@ namespace appui
 {
     public partial class MainForm : Form
     {
-        private IList<IConnectionStringInfo> parsedDoc;
         private bool openConnectionProcess;
         private readonly AppSettings appSetting;
         private readonly SqlSettings sqlSettings;
-        private readonly ILogger Logger;
+        private readonly ILogger<MainForm> Logger;
         private readonly ITenantManager tenantManager;
         private readonly IServiceProvider serviceProvider;
+        private readonly IMessageProducer messageProducer;
 
         public MainForm(IOptions<AppSettings> appSettings,
             IOptions<SqlSettings> sqlSettings,
-            ILogger<AppErrorLog> logger,
+            ILogger<MainForm> logger,
             ITenantManager tenantManager,
-            IServiceProvider serviceProvider)
+            IServiceProvider serviceProvider,
+            IMessageProducer messageProducer)
         {
             InitializeComponent();
 
@@ -45,6 +44,7 @@ namespace appui
             this.Logger = logger;
             this.tenantManager = tenantManager;
             this.serviceProvider = serviceProvider;
+            this.messageProducer = messageProducer;
 
             Logger.LogInformation($"App started");
         }
@@ -77,12 +77,6 @@ namespace appui
 
                 upb_progress.Style = ProgressBarStyle.Blocks;
                 upb_progress.MarqueeAnimationSpeed = 0;
-
-                //if (this.defaultConnector.Offline)
-                //{
-                //    ubt_run.Enabled = false;
-                //    utx_sqlquery.Enabled = false;
-                //}
             }
             catch (Exception ex)
             {
@@ -117,67 +111,56 @@ namespace appui
             return await Task.FromResult(0);
         }
 
+        private string path = "";
         private async void ubt_run_Click(object sender, EventArgs e)
         {
             ubt_run.Enabled = false;
-            utx_outputpath.Text = "";
-
-            Dictionary<string, List<Tuple<string, string>>> result = new Dictionary<string, List<Tuple<string, string>>>();
-
+            utx_outputpath.Text = string.Empty;
             var query = utx_sqlquery.Text;
+            
             if (!string.IsNullOrWhiteSpace(query))
             {
-                var processed = 0;
                 int? totalToProcess = 0;
                 try
                 {
+                    path = $".\\{appSetting.OutputFolder}\\{FileUtility.GeneratePath}";
+                    new DirectoryInfo(path).Create();
+
                     var clients = getAllClientsOrSelected(ucb_branch.SelectedItem?.ToString());
 
-                    //new SqlRunCommand().Run(utx_sqlquery.Text, clients, (current) => { updateClientProgress(clients.Count, current); });
-
-                    var current = 0;
-
+                    var processed = 0;
                     foreach (var cc in clients)
                     {
-                        var connection = new TenantConnection
-                        {
-                            Database = cc.Connection.Database,
-                            DbServer = cc.Connection.DbServer,
-                            UserName = sqlSettings.Credential.UserId,
-                            Password = decode(sqlSettings.Credential.Password)
-                        };
-
-                        Interlocked.Increment(ref current);
-
-                        lblProgress.Text = $"{current} of {clients?.Count()}";
+                        lblProgress.Text = $"{processed} of {clients.Count()}";
 
                         var source = new CancellationTokenSource();
                         initDbConnectionProcess(source.Token);
 
                         try
                         {
-                            RunMsSqlQueryConnector cmd = serviceProvider.GetService<RunMsSqlQueryConnector>();
-                            List<Dictionary<string, object>> output = await cmd.Run(connection, utx_sqlquery.Text);
-
-                            updateClientProgress(clients.Count, current);
-
-                            lock (this)
+                            try
                             {
-                                result[cc.Connection.Database] = (List<Tuple<string, string>>)output
-                                    .Select(f =>
-                                    {
-                                        var list = new List<Tuple<string, string>>();
-                                        foreach (var k in f.Keys)
-                                        {
-                                            if (f[k] != null)
-                                            {
-                                                list.Add(new Tuple<string, string>(k, f[k].ToString()));
-                                            }
-                                        }
-                                        return list;
-                                    });
-                                Interlocked.Increment(ref processed);
+                                MsSqlMessagePayload payload = (MsSqlMessagePayload)serviceProvider.GetService<IMessagePayload>();
+                                payload.Connection = new MsSqlConnection
+                                {
+                                    DbDatabase = cc.Connection.Database,
+                                    DbServer = cc.Connection.DbServer,
+                                    DbUserName = sqlSettings.Credential.UserId,
+                                    DbPassword = decode(sqlSettings.Credential.Password)
+                                };
+                                payload.Query = utx_sqlquery.Text;
+                                payload.StoragePath = path;
+                                this.Logger.LogTrace($"posting message to queue with payload:{payload}");
+                                await this.messageProducer.Publish(payload);
+                                this.Logger.LogTrace($"posted message to queue with payload:{payload}");
                             }
+                            catch (Exception ex)
+                            {
+                                Logger.LogCritical($"Exception: {ex}");
+                            }
+
+                            updateClientProgress(clients.Count, processed++);
+
                         }
                         catch
                         {
@@ -185,39 +168,21 @@ namespace appui
                         }
                         finally
                         {
-                            updateClientProgress(clients.Count, current);
+                            updateClientProgress(clients.Count, processed++);
                         }
                     }
                 }
                 catch (Exception ex)
                 {
+                    Logger?.LogError($"Exception: {ex}");
                     stopDbConnectionProcess(null);
                     MessageBox.Show(ex.Message);
                 }
                 finally
                 {
-                    stopDbConnectionProcess(null);
-
-                    //result = getFakeOutput();
-
-                    var path = "error";
                     try
                     {
-                        var waitingTime = 0;
-                        while (result.Count != totalToProcess && waitingTime <= this.appSetting.StopAfterMilliseconds)
-                        {
-                            waitingTime += 1000;
-                            await Task.Delay(1000);
-                            updateClientProgress(1, 1);
-                        }
-
-                        if (waitingTime == this.appSetting.StopAfterMilliseconds)
-                        {
-                            MessageBox.Show(string.Format("processed {0} out of total {1}", result.Count, totalToProcess));
-                        }
-
-                        path = await saveOutputToCsv(result);
-
+                        stopDbConnectionProcess(null);
                         upb_progress.Value = upb_progress.Maximum;
                     }
                     catch { }
@@ -244,23 +209,6 @@ namespace appui
                 .ToList()
                 .Where(f => selected.Contains(f.Name))
                 .ToList();
-        }
-
-        private Dictionary<string, List<Tuple<string, string>>> getFakeOutput()
-        {
-            var output = new Dictionary<string, List<Tuple<string, string>>>();
-
-            output["client1"] = new List<Tuple<string, string>>{
-                new Tuple<string, string>("field1", "1"),
-                new Tuple<string, string>("field2", "11"),
-            };
-
-            output["client2"] = new List<Tuple<string, string>>{
-                new Tuple<string, string>("field1", "2"),
-                new Tuple<string, string>("field2", "22"),
-            };
-
-            return output;
         }
 
         private void updateClientProgress(int max, int current)
@@ -300,60 +248,6 @@ namespace appui
             {
                 source.Cancel();
             }
-        }
-
-        public string path { get; set; }
-
-        private void createFolderName()
-        {
-            var uniqueFolderName = $"{DateTime.Now.Year}_{DateTime.Now.Month}_{DateTime.Now.Day}_{DateTime.Now.Hour}_{DateTime.Now.Minute}";
-
-            this.path = $".\\output\\{uniqueFolderName}";
-
-            new DirectoryInfo(path).Create();
-        }
-
-        private async Task<string> saveOutputToCsv(Dictionary<string, List<Tuple<string, string>>> output)
-        {
-            try
-            {
-                createFolderName();
-
-                var records = new List<dynamic>();
-
-                foreach (var item in output)
-                {
-                    dynamic record = new ExpandoObject();
-                    var dictionary = (IDictionary<string, object>)record;
-                    dictionary.Add("client", item.Key);
-
-                    var column_index = 0;
-                    foreach (var item2 in item.Value)
-                    {
-                        var uniqueColumnKey = item2.Item1;
-                        if (dictionary.ContainsKey(item2.Item1))
-                        {
-                            uniqueColumnKey = $"{uniqueColumnKey}_{column_index++}";
-                        }
-                        dictionary[uniqueColumnKey] = item2.Item2;
-                    }
-                    if (dictionary.Count > 1)
-                        records.Add(dictionary);
-                }
-
-                using (var writer = new StreamWriter($"{this.path}\\output.csv"))
-                using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
-                {
-                    await csv.WriteRecordsAsync(records);
-                }
-
-                return await Task.FromResult(Path.GetFullPath(path));
-            }
-            catch
-            {
-            }
-
-            return null;
         }
 
         private void updateListOfClients()
@@ -417,7 +311,7 @@ namespace appui
 
         private void utx_outputpath_MouseClick(object sender, MouseEventArgs e)
         {
-            Process.Start("explorer.exe", utx_outputpath.Text);
+            Process.Start(appSetting.Explorer, utx_outputpath.Text);
         }
 
         private void btn_selectall_Click(object sender, EventArgs e)

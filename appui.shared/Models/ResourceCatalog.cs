@@ -2,7 +2,7 @@
 
 namespace appui.shared.Models
 {
-    public class Catalog
+    public class ResourceCatalog
     {
         public string Name { get; set; }
         public string Type { get; set; }

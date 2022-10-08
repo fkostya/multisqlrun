@@ -3,7 +3,8 @@
 namespace appui.shared.Models
 {
     [ExcludeFromCodeCoverage]
-    public class AppErrorLog
+    public class MessagingSettings
     {
+        public string Protocol { get; set; }
     }
 }
