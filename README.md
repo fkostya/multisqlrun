@@ -24,6 +24,7 @@ To open an issue for this project, please visit the [multisqlrun project issue t
 - [ ] study DAPR architecture
 - [ ] bug fixes[technical debt]
 ## version 3.0 - active
+- [ ] refactor code(model\BL) layer to support rabbitmq architecture
 - [ ] replace sync to AMQP(advanced massage queuing protocol) protocol[core func]:
 - [ ] replace sync to AMQP(async massaging queue protocol) protocol[core func] [how to](https://www.rabbitmq.com/documentation.html):  
 	- [X] add consumer project  
