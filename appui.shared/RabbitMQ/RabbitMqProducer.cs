@@ -34,7 +34,7 @@ namespace appui.shared.RabbitMQ
             this.connection?.Dispose();
         }
 
-        public void Publish(IMessagePayload payload)
+        public async Task Publish(IMessagePayload payload)
         {
             try
             {

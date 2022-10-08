@@ -20,9 +20,9 @@ namespace appui.consumers
         {
             try
             {
-                var connector = this.serviceProvider?.GetService<WriteLogConnector>();
+                //var connector = this.serviceProvider?.GetService<CvsFileWriteConnector>();
 
-                connector?.Invoke(message);
+                //connector.Invoke(message);
             }
             catch (Exception ex)
             {

@@ -18,12 +18,12 @@ namespace appui.connectors
             this.connection = connection;
         }
 
-        public async Task<List<Dictionary<string, object?>>> Run(string? query)
+        public async Task<List<Dictionary<string, object>>> Invoke(string? query)
         {
-            Stopwatch sw = new Stopwatch();
+            Stopwatch sw = new();
             sw.Start();
 
-            var result = new List<Dictionary<string, object?>>();
+            var result = new List<Dictionary<string, object>>();
             try
             {
                 using (var sqlconnection = new SqlConnection(connection.GetConnectionString<string>()))
@@ -36,10 +36,13 @@ namespace appui.connectors
                         {
                             DataTable schemaTable = reader.GetSchemaTable();
 
-                            var dic = new Dictionary<string, object?>();
+                            var dic = new Dictionary<string, object>()
+                            {
+                                {"database", connection.DbDatabase ?? "" }
+                            };
                             foreach (DataColumn column in schemaTable.Columns)
                             {
-                                dic[column.ColumnName.ToString()] = null;
+                                dic[column.ColumnName.ToString()] = new();
                             }
 
                             while (reader.Read())
@@ -66,7 +69,7 @@ namespace appui.connectors
             finally
             {
                 sw.Stop();
-                logger?.LogTrace($"query run time for {connection.Name}", sw.Elapsed);
+                logger?.LogTrace($"total query run time for {connection.Name}", sw.Elapsed);
             }
 
             return result;

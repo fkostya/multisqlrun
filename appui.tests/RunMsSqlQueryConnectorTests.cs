@@ -12,7 +12,7 @@ namespace appui.tests
         {
             var connectionMock = new Mock<MsSqlConnection>();
             var connector = new MsSqlQueryConnector(connectionMock.Object, null);
-            var result = connector.Run(string.Empty);
+            var result = connector.Invoke(string.Empty);
             Assert.NotNull(result);
         }
     }

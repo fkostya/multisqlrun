@@ -145,17 +145,10 @@ namespace appui
                     //new SqlRunCommand().Run(utx_sqlquery.Text, clients, (current) => { updateClientProgress(clients.Count, current); });
 
                     var current = 0;
+                    createFolderName();
 
                     foreach (var cc in clients)
                     {
-                        var connection = new MsSqlConnection
-                        {
-                            DbDatabase = cc.Connection.Database,
-                            DbServer = cc.Connection.DbServer,
-                            DbUserName = sqlSettings.Credential.UserId,
-                            DbPassword = decode(sqlSettings.Credential.Password)
-                        };
-
                         Interlocked.Increment(ref current);
 
                         lblProgress.Text = $"{current} of {clients?.Count()}";
@@ -165,14 +158,17 @@ namespace appui
 
                         try
                         {
-                            //TODO: delate after this.messageService.Publish(payload) implemented
-                            //RunMsSqlQueryConnector cmd = serviceProvider.GetService<RunMsSqlQueryConnector>();
-                            //List<Dictionary<string, object>> output = await cmd.Run(connection, utx_sqlquery.Text);
                             List<Dictionary<string, object>> output = new List<Dictionary<string, object>>();
                             try
                             {
                                 MsSqlMessagePayload payload = (MsSqlMessagePayload)serviceProvider.GetService<IMessagePayload>();
-                                payload.Connection = connection;
+                                payload.Connection = new MsSqlConnection
+                                {
+                                    DbDatabase = cc.Connection.Database,
+                                    DbServer = cc.Connection.DbServer,
+                                    DbUserName = sqlSettings.Credential.UserId,
+                                    DbPassword = decode(sqlSettings.Credential.Password)
+                                };
                                 payload.Query = utx_sqlquery.Text;
                                 this.Logger.LogTrace($"posting message to queue with payload:{payload}");
                                 this.messageProducer.Publish(payload);
@@ -180,7 +176,7 @@ namespace appui
                             }
                             catch (Exception ex)
                             {
-                                Logger.LogCritical(ex, ex.Message);
+                                Logger.LogCritical($"Exception: {ex}");
                             }
 
                             updateClientProgress(clients.Count, current);
@@ -332,7 +328,7 @@ namespace appui
         {
             var uniqueFolderName = $"{DateTime.Now.Year}_{DateTime.Now.Month}_{DateTime.Now.Day}_{DateTime.Now.Hour}_{DateTime.Now.Minute}";
 
-            this.path = $".\\output\\{uniqueFolderName}";
+            this.path = $".\\{appSetting.OutputFolder}\\{uniqueFolderName}";
 
             new DirectoryInfo(path).Create();
         }
@@ -341,8 +337,6 @@ namespace appui
         {
             try
             {
-                createFolderName();
-
                 var records = new List<dynamic>();
 
                 foreach (var item in output)
@@ -441,7 +435,7 @@ namespace appui
 
         private void utx_outputpath_MouseClick(object sender, MouseEventArgs e)
         {
-            Process.Start("explorer.exe", utx_outputpath.Text);
+            Process.Start(appSetting.Explorer, utx_outputpath.Text);
         }
 
         private void btn_selectall_Click(object sender, EventArgs e)

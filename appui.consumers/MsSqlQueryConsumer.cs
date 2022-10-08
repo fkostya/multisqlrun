@@ -35,7 +35,7 @@ namespace appui.consumers
                         DbPassword = payload?.Connection?.DbPassword
                     };
                     var connector = new MsSqlQueryConnector(connection, serviceProvider?.GetService<ILogger<MsSqlQueryConnector>>());
-                    connector.Run(payload?.Query).GetAwaiter().GetResult();
+                    connector.Invoke(payload?.Query).GetAwaiter().GetResult();
 
             //        return await Task.FromResult(true);
             //    }

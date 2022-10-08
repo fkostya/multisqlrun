@@ -7,7 +7,8 @@ namespace appui.shared.Models
     {
         public int StopAfterMilliseconds { get; set; }
         public string OutputFolder { get; set; }
-        public string Mode { get; set; }//AppMode: rabbitmq, simple
+        public string Mode { get; set; }//AppMode: rabbitmq, singlethread, offline
+        public string Explorer { get; set; }
         public DefaultCatalogConnector DefaultCatalogConnector { get; set; }
     }
 

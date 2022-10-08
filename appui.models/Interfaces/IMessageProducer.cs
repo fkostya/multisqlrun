@@ -2,6 +2,6 @@
 {
     public interface IMessageProducer
     {
-        void Publish(IMessagePayload message);
+        Task Publish(IMessagePayload message);
     }
 }
