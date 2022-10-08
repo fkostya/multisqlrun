@@ -111,40 +111,33 @@ namespace appui
             return await Task.FromResult(0);
         }
 
-        private string path = ""; 
+        private string path = "";
         private async void ubt_run_Click(object sender, EventArgs e)
         {
             ubt_run.Enabled = false;
-            utx_outputpath.Text = "";
-
-            Dictionary<string, List<Tuple<string, string>>> result = new Dictionary<string, List<Tuple<string, string>>>();
-
+            utx_outputpath.Text = string.Empty;
             var query = utx_sqlquery.Text;
+            
             if (!string.IsNullOrWhiteSpace(query))
             {
-                var processed = 0;
                 int? totalToProcess = 0;
                 try
                 {
                     path = $".\\{appSetting.OutputFolder}\\{FileUtility.GeneratePath}";
                     new DirectoryInfo(path).Create();
-                    
+
                     var clients = getAllClientsOrSelected(ucb_branch.SelectedItem?.ToString());
 
-                    var current = 0;
-
+                    var processed = 0;
                     foreach (var cc in clients)
                     {
-                        Interlocked.Increment(ref current);
-
-                        lblProgress.Text = $"{current} of {clients?.Count()}";
+                        lblProgress.Text = $"{processed} of {clients.Count()}";
 
                         var source = new CancellationTokenSource();
                         initDbConnectionProcess(source.Token);
 
                         try
                         {
-                            List<Dictionary<string, object>> output = new List<Dictionary<string, object>>();
                             try
                             {
                                 MsSqlMessagePayload payload = (MsSqlMessagePayload)serviceProvider.GetService<IMessagePayload>();
@@ -166,9 +159,8 @@ namespace appui
                                 Logger.LogCritical($"Exception: {ex}");
                             }
 
-                            updateClientProgress(clients.Count, current);
+                            updateClientProgress(clients.Count, processed++);
 
-                            Interlocked.Increment(ref processed);
                         }
                         catch
                         {
@@ -176,35 +168,21 @@ namespace appui
                         }
                         finally
                         {
-                            updateClientProgress(clients.Count, current);
+                            updateClientProgress(clients.Count, processed++);
                         }
                     }
                 }
                 catch (Exception ex)
                 {
+                    Logger?.LogError($"Exception: {ex}");
                     stopDbConnectionProcess(null);
                     MessageBox.Show(ex.Message);
                 }
                 finally
                 {
-                    stopDbConnectionProcess(null);
-
-                    var path = "error";
                     try
                     {
-                        var waitingTime = 0;
-                        while (result.Count != totalToProcess && waitingTime <= this.appSetting.StopAfterMilliseconds)
-                        {
-                            waitingTime += 1000;
-                            await Task.Delay(1000);
-                            updateClientProgress(1, 1);
-                        }
-
-                        if (waitingTime == this.appSetting.StopAfterMilliseconds)
-                        {
-                            MessageBox.Show(string.Format("processed {0} out of total {1}", result.Count, totalToProcess));
-                        }
-
+                        stopDbConnectionProcess(null);
                         upb_progress.Value = upb_progress.Maximum;
                     }
                     catch { }
