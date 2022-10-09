@@ -22,6 +22,7 @@ To open an issue for this project, please visit the [multisqlrun project issue t
 - [ ] replace data.sqlclient nuget package to microsoft.data.sqlclient[technical debt]
 - [ ] remove logger AppErrorLog
 - [ ] study DAPR architecture
+- [ ] add custom log folder[nice to have]
 - [ ] bug fixes[technical debt]
 ## version 3.0 - active
 - [ ] refactor code(model\BL) layer to support rabbitmq architecture
