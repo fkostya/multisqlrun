@@ -51,9 +51,9 @@
             this.ubt_connect.Name = "ubt_connect";
             this.ubt_connect.Size = new System.Drawing.Size(119, 36);
             this.ubt_connect.TabIndex = 0;
-            this.ubt_connect.Text = "load";
+            this.ubt_connect.Text = "refresh";
             this.ubt_connect.UseVisualStyleBackColor = true;
-            this.ubt_connect.Click += new System.EventHandler(this.ubt_connect_Click);
+            this.ubt_connect.Click += new System.EventHandler(this.button_refresh_Click);
             // 
             // ulv_clients
             // 
@@ -100,7 +100,7 @@
             this.ucb_branch.ItemHeight = 28;
             this.ucb_branch.Location = new System.Drawing.Point(131, 8);
             this.ucb_branch.Name = "ucb_branch";
-            this.ucb_branch.Size = new System.Drawing.Size(122, 36);
+            this.ucb_branch.Size = new System.Drawing.Size(165, 36);
             this.ucb_branch.TabIndex = 1;
             this.ucb_branch.SelectedIndexChanged += new System.EventHandler(this.ucb_branch_SelectedIndexChanged);
             // 
@@ -191,7 +191,7 @@
             this.btn_selectall.TabIndex = 12;
             this.btn_selectall.Text = "select all";
             this.btn_selectall.UseVisualStyleBackColor = true;
-            this.btn_selectall.Click += new System.EventHandler(this.btn_selectall_Click);
+            this.btn_selectall.Click += new System.EventHandler(this.button_selectall_Click);
             // 
             // MainForm
             // 

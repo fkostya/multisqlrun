@@ -12,21 +12,20 @@ namespace appui.shared
     {
         private readonly IConnector connector;
         private IList<ITenant> tenants;
-        private IList<ResourceCatalog> catalogs;
+        private IEnumerable<ResourceCatalog> catalogs;
 
         public TenantManager(IOptions<List<ResourceCatalog>> catalogs, DefaultConnectorFactory defaultConnectorFactory)
         {
             this.connector = defaultConnectorFactory.GetConnectorFactory();
-
-            var _catalogs = catalogs.Value;
+            this.catalogs = catalogs.Value.AsEnumerable<ResourceCatalog>();
         }
 
-        public async Task<IList<ResourceCatalog>> LoadCatalogs()
+        public async Task<IEnumerable<ResourceCatalog>> LoadCatalogs()
         {
             return await Task.FromResult(catalogs);
         }
 
-        public async Task<IList<ITenant>> LoadTenants(ICatalog catalog)
+        public async Task<IList<ITenant>> LoadTenants(ResourceCatalog catalog)
         {
             var connectionStrings = await connector.LoadConnectionStrings();
             this.tenants = new List<ITenant>();
@@ -48,13 +47,13 @@ namespace appui.shared
             return tenants;
         }
 
-        public IList<ITenant> FindTenants(string tenantVersion, string tenantName = "")
+
+        public IList<ITenant> FindTenants(ResourceCatalog catalog, string tenantName = "")
         {
-            if (string.IsNullOrEmpty(tenantVersion) || !tenants.Any(f => f.Version.Equals(tenantVersion, StringComparison.CurrentCultureIgnoreCase)))
+            if (catalog == null || this.tenants == null)
                 return new List<ITenant>();
 
-            return tenants
-                .Where(f => f.Version.Equals(tenantVersion, StringComparison.CurrentCultureIgnoreCase))
+            return this.tenants
                 .Where(f => f.Name.Contains(tenantName, StringComparison.OrdinalIgnoreCase) || f.Connection.Database.Contains(tenantName, StringComparison.OrdinalIgnoreCase))
                 .ToList();
         }

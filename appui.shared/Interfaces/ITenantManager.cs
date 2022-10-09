@@ -7,10 +7,10 @@ namespace appui.shared.Interfaces
     /// </summary>
     public interface ITenantManager
     {
-        Task<IList<ResourceCatalog>> LoadCatalogs();
+        Task<IEnumerable<ResourceCatalog>> LoadCatalogs();
 
-        Task<IList<ITenant>> LoadTenants(ICatalog catalog);
+        Task<IList<ITenant>> LoadTenants(ResourceCatalog catalog);
 
-        IList<ITenant> FindTenants(string version, string key = "");
+        IList<ITenant> FindTenants(ResourceCatalog version, string key = "");
     }
 }

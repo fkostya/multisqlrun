@@ -2,7 +2,6 @@ using appui.connectors;
 using appui.models.Interfaces;
 using appui.models.Payloads;
 using appui.shared;
-using appui.shared.Enums;
 using appui.shared.Interfaces;
 using appui.shared.Models;
 using appui.shared.RabbitMQ;
@@ -67,7 +66,6 @@ namespace appui
                 .AddSingleton<HtmlWeb>()
                 .AddSingleton<ITenantManager, TenantManager>()
                 .AddSingleton<DefaultConnectorFactory>()
-                .AddSingleton<DFConnector>()
                 .AddTransient<MsSqlQueryConnector>()
                 .AddSingleton<RabbitMqProducer>()
                 .AddSingleton<SingleThreadContext>()
@@ -80,6 +78,14 @@ namespace appui
                         "rabbitmq" => configure.GetService<RabbitMqProducer>(),
                         _ => configure.GetService<SingleThreadContext>(),
                     };
+                })
+                .AddSingleton<DFConnector>((configure) =>
+                {
+                    IPageReader reader =
+                        Configuration.GetSection("appSettings").Get<AppSettings>().Offline ?
+                        configure.GetService<OfflineFilePageReader>() : configure.GetService<WebPageReader>();
+                    
+                    return new DFConnector(reader);
                 });
         }
     }

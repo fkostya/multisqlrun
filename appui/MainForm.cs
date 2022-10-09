@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.IO;
@@ -49,7 +50,7 @@ namespace appui
             Logger.LogInformation($"App started");
         }
 
-        private async void ubt_connect_Click(object sender, EventArgs e)
+        private async void button_refresh_Click(object sender, EventArgs e)
         {
             try
             {
@@ -62,18 +63,13 @@ namespace appui
                 ubt_run.Enabled = false;
                 btn_selectall.Enabled = false;
 
-                clear();
-                await refresh();
+                _changeClientSection(null);
+
+                await refreshCatalogList();
+                await refreshTenantList();
 
                 openConnectionProcess = false;
-
-                ucb_branch.SelectedIndex = 0;
-
-                utx_search.Enabled = true;
-                utx_sqlquery.Enabled = true;
                 ucb_branch.Enabled = true;
-                ubt_run.Enabled = true;
-                btn_selectall.Enabled = true;
 
                 upb_progress.Style = ProgressBarStyle.Blocks;
                 upb_progress.MarqueeAnimationSpeed = 0;
@@ -87,28 +83,35 @@ namespace appui
             }
         }
 
-        private void clear()
+        private async Task refreshCatalogList()
         {
-            ucb_branch.Items.Clear();
-            ulv_clients.Items.Clear();
-            _changeClientSection(null);
+            var bindingComboBoxOriginalData = new BindingList<ResourceCatalog>((await tenantManager.LoadCatalogs()).ToList());
+
+            ucb_branch.DataSource = bindingComboBoxOriginalData;
+            ucb_branch.DisplayMember = "Name";
+            ucb_branch.SelectedIndex = 0;
         }
 
-        private async Task<int> refresh()
+        private async Task refreshTenantList()
         {
-            var connections = await tenantManager.LoadTenants(null);
+            ulv_clients.BeginUpdate();
 
-            connections
-                .DistinctBy(f => f.Version)
-                .Select((f, i) => new { f.Version, i })
-                .ToList()
-                .ForEach(f => ucb_branch.Items.Insert(f.i, f.Version));
+            btn_selectall.Enabled = false;
 
-            ucb_branch.SelectedIndex = 0;
+            var bindingComboBoxOriginalData = new BindingList<ITenant>((await tenantManager.LoadTenants((ResourceCatalog)ucb_branch.SelectedItem)).ToList());
 
-            updateListOfClients();
+            ulv_clients.DataSource = bindingComboBoxOriginalData;
+            ulv_clients.DisplayMember = "Name";
 
-            return await Task.FromResult(0);
+            if(bindingComboBoxOriginalData.Count >= 1)
+            {
+                btn_selectall.Enabled = true;
+                utx_search.Enabled = true;
+                utx_sqlquery.Enabled = true;
+                ubt_run.Enabled = true;
+            }
+
+            ulv_clients.EndUpdate();
         }
 
         private string path = "";
@@ -250,27 +253,10 @@ namespace appui
             }
         }
 
-        private void updateListOfClients()
-        {
-            ulv_clients.BeginUpdate();
-            ulv_clients.Items.Clear();
-
-            tenantManager
-               .FindTenants(ucb_branch.SelectedItem?.ToString(), utx_search.Text)
-               .Select((item, index) => new { item = item, index = index })
-               .ToList()
-               .ForEach(f =>
-               {
-                   ulv_clients.Items.Insert(f.index, f.item.Name);
-               });
-
-            ulv_clients.EndUpdate();
-        }
-
         private void ucb_branch_SelectedIndexChanged(object sender, EventArgs e)
         {
             _changeClientSection(null);
-            updateListOfClients();
+            //updateListOfClients();//TODO
         }
 
         private void utb_search_TextChanged(object sender, EventArgs e)
@@ -281,7 +267,7 @@ namespace appui
             _changeClientSection(null);
 
             tenantManager
-                .FindTenants(ucb_branch.SelectedItem?.ToString(), utx_search.Text)
+                .FindTenants((ResourceCatalog)ucb_branch.SelectedItem, utx_search.Text)
                 .Select((item, index) => new { item = item, index = index })
                 .ToList()
                 .ForEach(f =>
@@ -295,7 +281,7 @@ namespace appui
         private void ulv_clients_SelectedIndexChanged(object sender, EventArgs e)
         {
             var tenant = tenantManager
-                .FindTenants(ucb_branch.SelectedItem?.ToString(), ((CheckedListBox)sender).SelectedItem?.ToString())
+                .FindTenants((ResourceCatalog)ucb_branch.SelectedItem, ((CheckedListBox)sender).SelectedItem?.ToString())
                 .Where(f => f.Name == ((CheckedListBox)sender).SelectedItem?.ToString())
                 .FirstOrDefault();
 
@@ -314,7 +300,7 @@ namespace appui
             Process.Start(appSetting.Explorer, utx_outputpath.Text);
         }
 
-        private void btn_selectall_Click(object sender, EventArgs e)
+        private void button_selectall_Click(object sender, EventArgs e)
         {
             ulv_clients.BeginUpdate();
             if (ulv_clients.Items.Count != 0)

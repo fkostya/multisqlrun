@@ -29,7 +29,7 @@ namespace appui.shared
             var doc = new HtmlDocument();
             try
             {
-                doc.Load(config?.FilePath);
+                doc.Load(FileUtility.FilePath(config?.FilePath));
             }
             catch (Exception ex)
             {

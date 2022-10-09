@@ -7,34 +7,32 @@ using Microsoft.Extensions.Options;
 namespace appui.shared
 {
     /// <summary>
-    /// The class loads connection strings from 'my' internal company web site or pre-loaded html page.
+    /// The class loads connection strings from 'my' internal web site or pre-loaded html page.
     /// </summary>
     public class DFConnector : IConnector
     {
-        private readonly AppSettings appSettings;
-        private readonly IServiceProvider serviceProvider;
         private const int VALID_DATABASE_MIN_LENGTH_NAME = 3;
         private const int VALID_SERVER_MIN_LENGTH_NAME = 3;
+        private readonly IPageReader reader;
 
-        public DFConnector(IOptions<AppSettings> appSettings, IServiceProvider serviceProvider)
+        public DFConnector(IPageReader reader)
         {
-            this.appSettings = appSettings.Value;
-            this.serviceProvider = serviceProvider;
+            this.reader = reader;
         }
 
         public async Task<IList<IConnectionStringInfo>> LoadConnectionStrings()
         {
-            IPageReader reader = appSettings.DefaultCatalogConnector.Offline ?
-                serviceProvider.GetService<OfflineFilePageReader>() :
-                serviceProvider.GetService<WebPageReader>();
-
             var htmlDoc = await reader.LoadPageAsync();
-
-            var content = htmlDoc?.DocumentNode?.SelectNodes("//div[@id='divContent']")?[0];
-
-            var trs = content.SelectNodes("//table[@id='TestInfrastructure']//tbody//tr");
-
             var list = new List<IConnectionStringInfo>();
+
+            if (htmlDoc == null || htmlDoc.DocumentNode == null || !htmlDoc.DocumentNode.HasChildNodes)
+            {
+                return list;
+            }
+
+            var content = htmlDoc.DocumentNode.SelectNodes("//div[@id='divContent']")?[0];
+
+            var trs = content?.SelectNodes("//table[@id='TestInfrastructure']//tbody//tr");
 
             var versions = getVersions(content);
 
@@ -70,10 +68,10 @@ namespace appui.shared
         {
             var list = new List<string>();
 
-            if (string.IsNullOrWhiteSpace(content.InnerHtml))
+            if (string.IsNullOrWhiteSpace(content?.InnerHtml))
                 return list;
 
-            var nodes = content.SelectNodes("//a[@class='toggle-vis']");
+            var nodes = content?.SelectNodes("//a[@class='toggle-vis']");
 
             foreach (var _ in nodes)
             {
