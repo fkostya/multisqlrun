@@ -58,7 +58,7 @@ namespace appui
                 .AddScoped<WebPageReader>()
                 .AddScoped<OfflineFilePageReader>()
                 .AddScoped<IServiceProvider, ServiceProvider>()
-                .Configure<IEnumerable<ResourceCatalog>>(Configuration.GetSection("catalogSourceSettings:catalogConnections"))
+                .Configure<List<ResourceCatalog>>(Configuration.GetSection("catalogSourceSettings:catalogConnections"))
                 .Configure<AppSettings>(Configuration.GetSection("appSettings"))
                 .Configure<SqlSettings>(Configuration.GetSection("sqlSettings"))
                 .Configure<MessagingSettings>(Configuration.GetSection("messagingSettings"))

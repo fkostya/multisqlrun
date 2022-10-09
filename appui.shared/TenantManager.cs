@@ -12,16 +12,16 @@ namespace appui.shared
     {
         private readonly IConnector connector;
         private IList<ITenant> tenants;
-        private IList<ICatalog> catalogs;
+        private IList<ResourceCatalog> catalogs;
 
-        public TenantManager(IOptions<List<ICatalog>> catalogs, DefaultConnectorFactory defaultConnectorFactory)
+        public TenantManager(IOptions<List<ResourceCatalog>> catalogs, DefaultConnectorFactory defaultConnectorFactory)
         {
             this.connector = defaultConnectorFactory.GetConnectorFactory();
 
-            this.catalogs = catalogs.Value;
+            var _catalogs = catalogs.Value;
         }
 
-        public async Task<IList<ICatalog>> LoadCatalogs()
+        public async Task<IList<ResourceCatalog>> LoadCatalogs()
         {
             return await Task.FromResult(catalogs);
         }
