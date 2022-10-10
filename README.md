@@ -20,11 +20,11 @@ To open an issue for this project, please visit the [multisqlrun project issue t
 - [ ] read catalogs from file\database and use it to display on list of catalogs[technical debt]
 - [ ] implement full flow with rabbitmq and persist state in database[core func]
 - [ ] replace data.sqlclient nuget package to microsoft.data.sqlclient[technical debt]
-- [ ] remove logger AppErrorLog
 - [ ] study DAPR architecture
 - [ ] add custom log folder[nice to have]
 - [ ] bug fixes[technical debt]
 ## version 3.0 - active
+- [X] remove logger AppErrorLog
 - [ ] refactor code(model\BL) layer to support rabbitmq architecture
 - [ ] run sql query in 'singlethread' mode
 - [ ] replace sync to AMQP(advanced massage queuing protocol) protocol[core func]:
@@ -54,7 +54,7 @@ To open an issue for this project, please visit the [multisqlrun project issue t
 	- [X] replace mainform to use new class  
 	- [X] delete old sqlruncommand file  
 	- [X] add unit tests  
-## version 2.0
+## version 2.0 - MVP
 - [X] download file with connections
 - [X] convert to List
 - [ ] and save to local as cvs[future]
@@ -65,5 +65,5 @@ To open an issue for this project, please visit the [multisqlrun project issue t
 - [X] move shared code to new shared project
 - [X] add appsettings.json+IOptions pattern
 - [X] test online web site
-## version 1.0
+## version 1.0 - POC
 - [X] POC version
