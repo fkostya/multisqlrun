@@ -1,5 +1,6 @@
 ﻿using appui.shared;
 using appui.shared.Interfaces;
+using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
 
@@ -11,7 +12,8 @@ namespace appui.tests.Shared
         public void GenerateUniqueStorageName_RootFolderIsEmpty_ApplicationFolder()
         {
             var directoryWrapperMock = new Mock<DirectoryWrapper>();
-            var fu = new FileUtility(directoryWrapperMock.Object);
+            var loggerMock = new Mock<ILogger<FileUtility>>();
+            var fu = new FileUtility(directoryWrapperMock.Object, loggerMock.Object);
 
             var folderPath = fu.GenerateUniqueStorageName(string.Empty);
             Assert.StartsWith(".\\", folderPath);
@@ -22,7 +24,8 @@ namespace appui.tests.Shared
         public void GenerateUniqueStorageName_RootFolderCustomName_NameStartsWithCustomName()
         {
             var directoryWrapperMock = new Mock<DirectoryWrapper>();
-            var fu = new FileUtility(directoryWrapperMock.Object);
+            var loggerMock = new Mock<ILogger<FileUtility>>();
+            var fu = new FileUtility(directoryWrapperMock.Object, loggerMock.Object);
 
             var folderPath = fu.GenerateUniqueStorageName("custom-name");
             Assert.StartsWith(".\\custom-name", folderPath);
@@ -33,8 +36,9 @@ namespace appui.tests.Shared
         {
             var dwMock = new Mock<IDirectoryWrapper>();
             dwMock.Setup(f => f.CreateDirectory(It.IsAny<string>())).Throws<Exception>();
-            
-            var fu = new FileUtility(dwMock.Object);
+
+            var loggerMock = new Mock<ILogger<FileUtility>>();
+            var fu = new FileUtility(dwMock.Object, loggerMock.Object);
             Assert.Throws<Exception>(() => fu.CreateStorage(string.Empty));
 
             //Assert.CatchAsync<Exception>(async () => await )
@@ -46,7 +50,8 @@ namespace appui.tests.Shared
             var dwMock = new Mock<IDirectoryWrapper>();
             dwMock.Setup(f => f.CreateDirectory(It.IsAny<string>())).Returns<string>((path) => new DirectoryInfo("directory-name"));
 
-            var fu = new FileUtility(dwMock.Object);
+            var loggerMock = new Mock<ILogger<FileUtility>>();
+            var fu = new FileUtility(dwMock.Object, loggerMock.Object);
             Assert.NotNull(fu.CreateStorage("directory-name"));
         }
     }
