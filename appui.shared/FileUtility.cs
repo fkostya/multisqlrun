@@ -14,13 +14,13 @@ namespace appui.shared
             this._logger = logger;
         }
 
-        public DirectoryInfo CreateStorage(string path)
+        public T CreateStorage<T>(string path)
         {
             try
             {
                 var directory = _directoryWrapper.CreateDirectory(path);
                 this._logger.LogTrace($"Cretated directory: {directory}");
-                return directory;
+                return (T)(object)directory;
             }
             catch (Exception ex)
             {

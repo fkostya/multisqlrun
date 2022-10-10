@@ -2,7 +2,7 @@
 {
     public interface IStorageUtility
     {
-        DirectoryInfo CreateStorage(string path);
+        T CreateStorage<T>(string path);
 
         string GenerateUniqueStorageName(string rootStorageName);
     }

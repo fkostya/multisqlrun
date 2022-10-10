@@ -129,7 +129,7 @@ namespace appui
                 int? totalToProcess = 0;
                 try
                 {
-                    storeageUtility.CreateStorage(storeageUtility.GenerateUniqueStorageName(appSetting.OutputFolder));
+                    storeageUtility.CreateStorage<DirectoryInfo>(storeageUtility.GenerateUniqueStorageName(appSetting.OutputFolder));
 
                     var clients = getAllClientsOrSelected(ucb_branch.SelectedItem?.ToString());
 

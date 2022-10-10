@@ -39,7 +39,7 @@ namespace appui.tests.Shared
 
             var loggerMock = new Mock<ILogger<FileUtility>>();
             var fu = new FileUtility(dwMock.Object, loggerMock.Object);
-            Assert.Throws<Exception>(() => fu.CreateStorage(string.Empty));
+            Assert.Throws<Exception>(() => fu.CreateStorage<DirectoryInfo>(string.Empty));
 
             //Assert.CatchAsync<Exception>(async () => await )
         }
@@ -52,7 +52,7 @@ namespace appui.tests.Shared
 
             var loggerMock = new Mock<ILogger<FileUtility>>();
             var fu = new FileUtility(dwMock.Object, loggerMock.Object);
-            Assert.NotNull(fu.CreateStorage("directory-name"));
+            Assert.NotNull(fu.CreateStorage<DirectoryInfo>("directory-name"));
         }
     }
 }

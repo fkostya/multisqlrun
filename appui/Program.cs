@@ -87,7 +87,7 @@ namespace appui
 
                     return new DFConnector(reader);
                 })
-                .AddTransient<IDirectoryWrapper, DirectoryWrapper>()
+                .AddSingleton<IDirectoryWrapper, DirectoryWrapper>()
                 .AddSingleton<IStorageUtility, FileUtility>();
         }
     }
