@@ -10,9 +10,9 @@ namespace appui.shared
     {
         private readonly ResourceCatalog config;
         private const string support_type = "df-windows-file";
-        private readonly ILogger logger;
+        private readonly ILogger<OfflineFilePageReader> logger;
 
-        public OfflineFilePageReader(IOptions<List<ResourceCatalog>> options, ILogger<AppErrorLog> logger)
+        public OfflineFilePageReader(IOptions<List<ResourceCatalog>> options, ILogger<OfflineFilePageReader> logger)
         {
             this.config = options?.Value?
                .Where(f => f.Type.Equals(support_type, StringComparison.OrdinalIgnoreCase))

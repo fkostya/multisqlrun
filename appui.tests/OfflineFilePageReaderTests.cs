@@ -12,7 +12,7 @@ namespace appui.tests
     {
         private OfflineFilePageReader buildOfflineFilePageReader(IOptions<List<ResourceCatalog>>? options)
         {
-            var logger = new Mock<ILogger<AppErrorLog>>();
+            var logger = new Mock<ILogger<OfflineFilePageReader>>();
 
             return new OfflineFilePageReader(null, logger.Object);
         }

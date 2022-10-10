@@ -21,14 +21,15 @@ namespace appui.shared
     public class SqlUtility : ISqlUtility
     {
         public IList<IConnectionStringInfo> Databases { get; set; }
-        private IList<dynamic> output;
+        private readonly IList<dynamic> output;
         private readonly AppSettings settings;
-        private readonly ILogger logger;
+        private readonly ILogger<SqlUtility> logger;
 
-        public SqlUtility(IOptions<AppSettings> settings, ILogger<AppErrorLog> logger)
+        public SqlUtility(IOptions<AppSettings> settings, ILogger<SqlUtility> logger)
         {
             this.settings = settings.Value;
             this.logger = logger;
+            this.output = new List<dynamic>();
         }
 
         public void Initialize(IList<IConnectionStringInfo> dbs)

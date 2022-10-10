@@ -8,11 +8,11 @@ namespace appui.shared
 {
     public class DefaultConnectorFactory
     {
-        private readonly ILogger _logger;
+        private readonly ILogger<DefaultConnectorFactory> _logger;
         private readonly AppSettings _settings;
         private readonly IServiceProvider _config;
 
-        public DefaultConnectorFactory(IOptions<AppSettings> appSettings, ILogger<AppErrorLog> logger, IServiceProvider configuration)
+        public DefaultConnectorFactory(IOptions<AppSettings> appSettings, ILogger<DefaultConnectorFactory> logger, IServiceProvider configuration)
         {
             _settings = appSettings.Value;
             _logger = logger;

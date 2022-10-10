@@ -126,7 +126,6 @@ namespace appui
             
             if (!string.IsNullOrWhiteSpace(query))
             {
-                int? totalToProcess = 0;
                 try
                 {
                     storeageUtility.CreateStorage<DirectoryInfo>(storeageUtility.GenerateUniqueStorageName(appSetting.OutputFolder));

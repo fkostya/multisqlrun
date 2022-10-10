@@ -14,7 +14,7 @@ namespace appui.tests
     {
         private WebPageReader buildWebPageReader(IOptions<List<ResourceCatalog>>? options, CredentialCache? credentialCache, HtmlWeb? htmlWeb)
         {
-            var logger = new Mock<ILogger<AppErrorLog>>();
+            var logger = new Mock<ILogger<WebPageReader>>();
 
             return new WebPageReader(options, credentialCache, htmlWeb, logger.Object);
         }
@@ -22,7 +22,7 @@ namespace appui.tests
         [Fact]
         public void CreatingNewInstance_WhenNoArgumentsProvided_InstanceIsNotNull()
         {
-            var logger = new Mock<ILogger<AppErrorLog>>();
+            var logger = new Mock<ILogger<WebPageReader>>();
             WebPageReader reader = buildWebPageReader(null, null, null);
 
             Assert.NotNull(reader);

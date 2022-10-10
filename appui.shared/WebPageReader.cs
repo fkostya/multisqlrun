@@ -15,9 +15,9 @@ namespace appui.shared
         private const string support_type = "web-url";
         private readonly ResourceCatalog defaultConnection = new ResourceCatalog();
         private readonly HtmlDocument defaultHtmlDocument = new HtmlDocument();
-        private readonly ILogger logger;
+        private readonly ILogger<WebPageReader> logger;
 
-        public WebPageReader(IOptions<List<ResourceCatalog>> options, CredentialCache credentialCache, HtmlWeb htmlWeb, ILogger<AppErrorLog> logger)
+        public WebPageReader(IOptions<List<ResourceCatalog>> options, CredentialCache credentialCache, HtmlWeb htmlWeb, ILogger<WebPageReader> logger)
         {
             this.logger = logger;
             this.config = options?.Value?
