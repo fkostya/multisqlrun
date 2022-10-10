@@ -30,4 +30,9 @@
     <ProjectReference Include="..\appui.shared\appui.shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Connector\" />
+    <Folder Include="Consumer\" />
+  </ItemGroup>
+
 </Project>
