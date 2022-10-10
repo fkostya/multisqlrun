@@ -29,7 +29,7 @@ namespace appui.shared
             var doc = new HtmlDocument();
             try
             {
-                doc.Load(FileUtility.FilePath(config?.FilePath));
+                doc.Load(this.getFilePath(config?.FilePath));
             }
             catch (Exception ex)
             {
@@ -38,6 +38,25 @@ namespace appui.shared
                 doc = new HtmlDocument();
             }
             return await Task.FromResult(doc);
+        }
+
+        private string getFilePath(string path)
+        {
+            var env_variable = '$';
+            var path_splitter = "\\";
+            if (!string.IsNullOrEmpty(path))
+            {
+                var path_split = path.Split(path_splitter);
+                var new_path = new List<string>();
+                for (var i = 0; i < path_split.Length; i++)
+                {
+                    new_path.Add(path_split[i][0] == env_variable ?
+                        Environment.GetEnvironmentVariable(path_split[i].TrimStart('$')).TrimStart('\\').TrimStart('\\').TrimEnd('\\').TrimEnd('\\')
+                        : path_split[i]);
+                }
+                return new_path.Aggregate((a, b) => a + path_splitter + b);
+            }
+            return path;
         }
     }
 }

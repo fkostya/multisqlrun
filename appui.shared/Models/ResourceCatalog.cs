@@ -10,7 +10,12 @@ namespace appui.shared.Models
         public string ConnectionString { get; set; }
         public string FilePath { get; set; }
         public string Url { get; set; }
-        public string Args { get; set; }
+        public CatalogConnectorArgument Args { get; set; }
+    }
+
+    public class CatalogConnectorArgument
+    {
+        public string Version { get; set; }
     }
 
     public class Parser

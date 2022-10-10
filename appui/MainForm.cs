@@ -30,13 +30,15 @@ namespace appui
         private readonly ITenantManager tenantManager;
         private readonly IServiceProvider serviceProvider;
         private readonly IMessageProducer messageProducer;
+        private readonly IStorageUtility storeageUtility;
 
         public MainForm(IOptions<AppSettings> appSettings,
             IOptions<SqlSettings> sqlSettings,
             ILogger<MainForm> logger,
             ITenantManager tenantManager,
             IServiceProvider serviceProvider,
-            IMessageProducer messageProducer)
+            IMessageProducer messageProducer,
+            IStorageUtility fileUtility)
         {
             InitializeComponent();
 
@@ -46,6 +48,7 @@ namespace appui
             this.tenantManager = tenantManager;
             this.serviceProvider = serviceProvider;
             this.messageProducer = messageProducer;
+            this.storeageUtility = fileUtility;
 
             Logger.LogInformation($"App started");
         }
@@ -126,8 +129,7 @@ namespace appui
                 int? totalToProcess = 0;
                 try
                 {
-                    path = $".\\{appSetting.OutputFolder}\\{FileUtility.GeneratePath}";
-                    new DirectoryInfo(path).Create();
+                    storeageUtility.CreateStorage(storeageUtility.GenerateUniqueStorageName(appSetting.OutputFolder));
 
                     var clients = getAllClientsOrSelected(ucb_branch.SelectedItem?.ToString());
 

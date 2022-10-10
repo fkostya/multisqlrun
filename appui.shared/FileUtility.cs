@@ -1,32 +1,25 @@
-﻿namespace appui.shared
+﻿using appui.shared.Interfaces;
+
+namespace appui.shared
 {
-    public static class FileUtility
+    public class FileUtility : IStorageUtility
     {
-        public static string GeneratePath
+        private readonly IDirectoryWrapper _directoryWrapper;
+
+        public FileUtility(IDirectoryWrapper directoryWrapper)
         {
-            get
-            {
-                return $"{DateTime.Now.Year}_{DateTime.Now.Month}_{DateTime.Now.Day}_{DateTime.Now.Hour}_{DateTime.Now.Minute}";
-            }
+            this._directoryWrapper = directoryWrapper;
         }
 
-        public static string FilePath(string path)
+        public DirectoryInfo CreateStorage(string path)
         {
-            var env_variable = '$';
-            var path_splitter = "\\";
-            if (!string.IsNullOrEmpty(path))
-            {
-                var path_split = path.Split(path_splitter);
-                var new_path = new List<string>();
-                for (var i = 0; i < path_split.Length; i++)
-                {
-                    new_path.Add(path_split[i][0] == env_variable ?
-                        Environment.GetEnvironmentVariable(path_split[i].TrimStart('$')).TrimStart('\\').TrimStart('\\')
-                        : path_split[i]);
-                }
-                return new_path.Aggregate((a, b) => a + path_splitter + b);
-            }
-            return path;
+            return _directoryWrapper.CreateDirectory(path);
+        }
+
+        public string GenerateUniqueStorageName(string rootStorageName)
+        {
+            var rootFolder = string.IsNullOrEmpty(rootStorageName) ? string.Empty : $"\\{rootStorageName}";
+            return $".{rootFolder}\\{DateTime.Now.Year}-{DateTime.Now.Month}-{DateTime.Now.Day}-{DateTime.Now.Hour}-{DateTime.Now.Minute}";
         }
     }
 }

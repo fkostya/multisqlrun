@@ -84,9 +84,11 @@ namespace appui
                     IPageReader reader =
                         Configuration.GetSection("appSettings").Get<AppSettings>().Offline ?
                         configure.GetService<OfflineFilePageReader>() : configure.GetService<WebPageReader>();
-                    
+
                     return new DFConnector(reader);
-                });
+                })
+                .AddTransient<IDirectoryWrapper, DirectoryWrapper>()
+                .AddSingleton<IStorageUtility, FileUtility>();
         }
     }
 }
