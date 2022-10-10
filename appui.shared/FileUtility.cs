@@ -1,4 +1,5 @@
-﻿using appui.shared.Interfaces;
+﻿using appui.models;
+using appui.shared.Interfaces;
 using Microsoft.Extensions.Logging;
 
 namespace appui.shared
@@ -20,7 +21,7 @@ namespace appui.shared
             {
                 var directory = _directoryWrapper.CreateDirectory(path);
                 this._logger.LogTrace($"Cretated directory: {directory}");
-                return (T)(object)directory;
+                return (T)(object)new DirectoryInfoWrapper() { Info = directory};
             }
             catch (Exception ex)
             {

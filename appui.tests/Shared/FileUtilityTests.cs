@@ -1,4 +1,5 @@
-﻿using appui.shared;
+﻿using appui.models;
+using appui.shared;
 using appui.shared.Interfaces;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -39,7 +40,7 @@ namespace appui.tests.Shared
 
             var loggerMock = new Mock<ILogger<FileUtility>>();
             var fu = new FileUtility(dwMock.Object, loggerMock.Object);
-            Assert.Throws<Exception>(() => fu.CreateStorage<DirectoryInfo>(string.Empty));
+            Assert.Throws<Exception>(() => fu.CreateStorage<DirectoryInfoWrapper>(string.Empty));
 
             //Assert.CatchAsync<Exception>(async () => await )
         }
@@ -52,7 +53,7 @@ namespace appui.tests.Shared
 
             var loggerMock = new Mock<ILogger<FileUtility>>();
             var fu = new FileUtility(dwMock.Object, loggerMock.Object);
-            Assert.NotNull(fu.CreateStorage<DirectoryInfo>("directory-name"));
+            Assert.NotNull(fu.CreateStorage<DirectoryInfoWrapper>("directory-name"));
         }
     }
 }
