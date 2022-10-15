@@ -46,9 +46,9 @@ To open an issue for this project, please visit the [multisqlrun project issue t
 - [ ] upgrade to core7.0[technical debt]:  
 - [ ] add appsettings(PROD|DEV).json[technical debt]:  
 - [ ] Program.cs: move IServiceCollection.Add...() to feed from extension(shared prj)[technical debt]:   
-- [ ] separate tenants by version[core func]:  
-	- [ ] change settings via appconfig  
-	- [ ] show tenant names on UI  
+- [X] separate tenants by version[core func]: PR #14  
+	- [X] change settings via appconfig  
+	- [X] show tenant names on UI  
 - [X] create a separate file to sql query[core func][PR](https://github.com/fkostya/multisqlrun/pull/11):  
 	- [X] create file in shared project  
 	- [X] replace mainform to use new class  
