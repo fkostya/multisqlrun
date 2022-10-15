@@ -1,6 +1,10 @@
-﻿using appui.shared.Interfaces;
+﻿using appui.models;
+using appui.shared.Interfaces;
 using appui.shared.Models;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using RabbitMQ.Client;
+using System.Net;
 
 namespace appui.shared
 {
@@ -10,14 +14,16 @@ namespace appui.shared
     /// </summary>
     public class TenantManager : ITenantManager
     {
-        private readonly IConnector connector;
         private IList<ITenant> tenants;
         private IEnumerable<ResourceCatalog> catalogs;
+        private readonly CatalogSourceDownloadFactory catalogSourceDownloadFactory;
+        private readonly IServiceProvider serviceProvider;
 
-        public TenantManager(IOptions<List<ResourceCatalog>> catalogs, DefaultConnectorFactory defaultConnectorFactory)
+        public TenantManager(IOptions<List<ResourceCatalog>> catalogs, CatalogSourceDownloadFactory catalogSourceDownloadFactory, IServiceProvider serviceProvider)
         {
-            this.connector = defaultConnectorFactory.GetConnectorFactory();
+            this.catalogSourceDownloadFactory = catalogSourceDownloadFactory;
             this.catalogs = catalogs.Value.AsEnumerable<ResourceCatalog>();
+            this.serviceProvider = serviceProvider;
         }
 
         public async Task<IEnumerable<ResourceCatalog>> LoadCatalogs()
@@ -25,9 +31,20 @@ namespace appui.shared
             return await Task.FromResult(catalogs);
         }
 
-        public async Task<IList<ITenant>> LoadTenants(ResourceCatalog catalog)
+        public async Task<IList<ITenant>> LoadTenants(ConnectorSetting catalog)
         {
-            var connectionStrings = await connector.LoadConnectionStrings();
+            if (catalog == null) return await Task.FromResult(new List<ITenant>());
+
+            var loadFromCatalog = this.catalogs.FirstOrDefault(f => f.Id.Equals(catalog.CatalogConnectionId));
+            if (loadFromCatalog == null) return await Task.FromResult(new List<ITenant>());
+
+            var download = catalogSourceDownloadFactory.CreateReaderFactory(loadFromCatalog.Type);
+            if (download == null) return await Task.FromResult(new List<ITenant>());
+            var connector = ActivatorUtilities.CreateInstance<DFConnector>(serviceProvider, (IPageReader)download);
+
+            var dict = new Dictionary<string, object>() { { "version", catalog.Args?.Version } };
+
+            var connectionStrings = await connector.LoadConnectionStrings(dict);
             this.tenants = new List<ITenant>();
             foreach (var cs in connectionStrings)
             {
@@ -47,8 +64,7 @@ namespace appui.shared
             return tenants;
         }
 
-
-        public IList<ITenant> FindTenants(ResourceCatalog catalog, string tenantName = "")
+        public IList<ITenant> FindTenants(ConnectorSetting catalog, string tenantName = "")
         {
             if (catalog == null || this.tenants == null)
                 return new List<ITenant>();

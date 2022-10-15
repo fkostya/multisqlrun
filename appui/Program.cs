@@ -1,10 +1,13 @@
 using appui.connectors;
+using appui.models;
 using appui.models.Interfaces;
 using appui.models.Payloads;
 using appui.shared;
 using appui.shared.Interfaces;
+using appui.shared.Interfaces.Repositories;
 using appui.shared.Models;
 using appui.shared.RabbitMQ;
+using appui.shared.Repositories;
 using HtmlAgilityPack;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -62,6 +65,7 @@ namespace appui
                 .Configure<SqlSettings>(Configuration.GetSection("sqlSettings"))
                 .Configure<MessagingSettings>(Configuration.GetSection("messagingSettings"))
                 .Configure<RabbitMqSettings>(Configuration.GetSection("rabbitmqSettings"))
+                .Configure<List<ConnectorSetting>>(Configuration.GetSection("connectorSettings:connectorSetting"))
                 .AddSingleton<CredentialCache>()
                 .AddSingleton<HtmlWeb>()
                 .AddSingleton<ITenantManager, TenantManager>()
@@ -79,7 +83,7 @@ namespace appui
                         _ => configure.GetService<SingleThreadContext>(),
                     };
                 })
-                .AddSingleton<DFConnector>((configure) =>
+                .AddScoped<DFConnector>((configure) =>
                 {
                     IPageReader reader =
                         Configuration.GetSection("appSettings").Get<AppSettings>().Offline ?
@@ -88,7 +92,10 @@ namespace appui
                     return new DFConnector(reader);
                 })
                 .AddSingleton<IDirectoryWrapper, DirectoryWrapper>()
-                .AddSingleton<IStorageUtility, FileUtility>();
+                .AddSingleton<IStorageUtility, FileUtility>()
+                .AddSingleton<IConnectorSettingsRepository, ConnectorSettingsAppSettingRepository>()
+                .AddSingleton<ConnectorFactory>()
+                .AddSingleton<CatalogSourceDownloadFactory>();
         }
     }
 }

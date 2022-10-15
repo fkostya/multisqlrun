@@ -1,4 +1,5 @@
-﻿using appui.shared.Models;
+﻿using appui.models;
+using appui.shared.Models;
 
 namespace appui.shared.Interfaces
 {
@@ -9,8 +10,8 @@ namespace appui.shared.Interfaces
     {
         Task<IEnumerable<ResourceCatalog>> LoadCatalogs();
 
-        Task<IList<ITenant>> LoadTenants(ResourceCatalog catalog);
+        Task<IList<ITenant>> LoadTenants(ConnectorSetting catalog);
 
-        IList<ITenant> FindTenants(ResourceCatalog version, string key = "");
+        IList<ITenant> FindTenants(ConnectorSetting version, string key = "");
     }
 }
