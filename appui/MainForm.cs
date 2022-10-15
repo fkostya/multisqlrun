@@ -1,6 +1,7 @@
 ﻿using appui.models;
 using appui.models.Interfaces;
 using appui.models.Payloads;
+using appui.resourses.Properties;
 using appui.shared;
 using appui.shared.Interfaces;
 using appui.shared.Interfaces.Repositories;
@@ -107,7 +108,7 @@ namespace appui
             ulv_clients.DataSource = bindingComboBoxOriginalData;
             ulv_clients.DisplayMember = "Name";
 
-            if(bindingComboBoxOriginalData.Count >= 1)
+            if (bindingComboBoxOriginalData.Count >= 1)
             {
                 btn_selectall.Enabled = true;
                 utx_search.Enabled = true;
@@ -124,7 +125,7 @@ namespace appui
             ubt_run.Enabled = false;
             utx_outputpath.Text = string.Empty;
             var query = utx_sqlquery.Text;
-            
+
             if (!string.IsNullOrWhiteSpace(query))
             {
                 try
@@ -301,12 +302,15 @@ namespace appui
 
         private void button_selectall_Click(object sender, EventArgs e)
         {
+
+            btn_selectall.Text = bool.Parse(btn_selectall.Tag.ToString()) == true ? Resources.lblunselectall : Resources.lblselectall;
+            btn_selectall.Tag = !bool.Parse(btn_selectall.Tag.ToString());
             ulv_clients.BeginUpdate();
             if (ulv_clients.Items.Count != 0)
             {
                 for (int i = 0; i < ulv_clients.Items.Count; i++)
                 {
-                    ulv_clients.SetItemChecked(i, true);
+                    ulv_clients.SetItemChecked(i, !ulv_clients.GetItemChecked(i));
                 }
             }
             ulv_clients.EndUpdate();

@@ -189,6 +189,7 @@
             this.btn_selectall.Name = "btn_selectall";
             this.btn_selectall.Size = new System.Drawing.Size(75, 23);
             this.btn_selectall.TabIndex = 12;
+            this.btn_selectall.Tag = "true";
             this.btn_selectall.Text = "select all";
             this.btn_selectall.UseVisualStyleBackColor = true;
             this.btn_selectall.Click += new System.EventHandler(this.button_selectall_Click);

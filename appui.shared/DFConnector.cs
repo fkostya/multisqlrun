@@ -2,6 +2,7 @@
 using appui.shared.Models;
 using HtmlAgilityPack;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace appui.shared
@@ -14,10 +15,12 @@ namespace appui.shared
         private const int VALID_DATABASE_MIN_LENGTH_NAME = 3;
         private const int VALID_SERVER_MIN_LENGTH_NAME = 3;
         private readonly IPageReader reader;
+        private readonly ILogger<DFConnector> logger;
 
-        public DFConnector(IPageReader reader)
+        public DFConnector(IPageReader reader, ILogger<DFConnector>? logger = null)
         {
             this.reader = reader;
+            this.logger = logger;
         }
 
         public async Task<IList<IConnectionStringInfo>> LoadConnectionStrings(Dictionary<string, object> args)
@@ -48,7 +51,7 @@ namespace appui.shared
 
                     if (!string.IsNullOrWhiteSpace(database) && database.Length > VALID_DATABASE_MIN_LENGTH_NAME 
                         && !string.IsNullOrWhiteSpace(server) && server.Length > VALID_SERVER_MIN_LENGTH_NAME
-                        && versions[index].Equals(args["version"].ToString(), StringComparison.OrdinalIgnoreCase))
+                        && args != null && args.ContainsKey("version") && versions[index].Equals(args["version"].ToString(), StringComparison.OrdinalIgnoreCase))
                     {
                         list.Add(new ConnectionStringInfo()
                         {
