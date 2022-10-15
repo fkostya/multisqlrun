@@ -70,7 +70,7 @@ namespace appui
                 ubt_run.Enabled = false;
                 btn_selectall.Enabled = false;
 
-                _changeClientSection(null);
+                _showSelectedTenantInfo(null);
 
                 await refreshCatalogList();
 
@@ -102,8 +102,23 @@ namespace appui
         {
             ulv_clients.BeginUpdate();
             btn_selectall.Enabled = false;
+            var search = utx_search.Text;
+            var tenants = (await tenantManager.LoadTenants((ConnectorSetting)ucb_branch.SelectedItem))
+                            .Where((f) =>
+                            {
+                                if (string.IsNullOrEmpty(search))
+                                {
+                                    return true;
+                                }
+                                else
+                                {
+                                    return f.Name.Contains(search, StringComparison.OrdinalIgnoreCase) || f.Connection.Database.Contains(search, StringComparison.OrdinalIgnoreCase);
+                                }
+                            })
+                            .ToList();
+                            
 
-            var bindingComboBoxOriginalData = new BindingList<ITenant>((await tenantManager.LoadTenants((ConnectorSetting)ucb_branch.SelectedItem)).ToList());
+            var bindingComboBoxOriginalData = new BindingList<ITenant>(tenants);
 
             ulv_clients.DataSource = bindingComboBoxOriginalData;
             ulv_clients.DisplayMember = "Name";
@@ -130,9 +145,9 @@ namespace appui
             {
                 try
                 {
-                    storeageUtility.CreateStorage<DirectoryInfo>(storeageUtility.GenerateUniqueStorageName(appSetting.OutputFolder));
+                    storeageUtility.CreateStorage<DirectoryInfoWrapper>(storeageUtility.GenerateUniqueStorageName(appSetting.OutputFolder));
 
-                    var clients = getAllClientsOrSelected(ucb_branch.SelectedItem?.ToString());
+                    var clients = getAllClientsOrSelected();
 
                     var processed = 0;
                     foreach (var cc in clients)
@@ -205,16 +220,11 @@ namespace appui
             return Encoding.UTF8.GetString(data);
         }
 
-        private IList<ITenant> getAllClientsOrSelected(string version)
+        private IList<ITenant> getAllClientsOrSelected()
         {
-            var selected = new HashSet<string>(ulv_clients.SelectedItems.Count != 0
-                ? ulv_clients.SelectedItems?.Cast<string>().ToList()
-                : ulv_clients.Items.Cast<string>());
-
-            return this.tenantManager.LoadTenants(null).Result
-                .ToList()
-                .Where(f => selected.Contains(f.Name))
-                .ToList();
+            return ulv_clients.CheckedItems.Count != 0
+                ? ulv_clients.CheckedItems?.Cast<ITenant>().ToList()
+                : ulv_clients.Items.Cast<ITenant>().ToList();
         }
 
         private void updateClientProgress(int max, int current)
@@ -259,36 +269,20 @@ namespace appui
         private async void ucb_branch_SelectedIndexChanged(object sender, EventArgs e)
         {
             await refreshTenantList();
-            _changeClientSection(null);
+            _showSelectedTenantInfo(null);
         }
 
-        private void utb_search_TextChanged(object sender, EventArgs e)
+        private async void utb_search_TextChanged(object sender, EventArgs e)
         {
-            ulv_clients.BeginUpdate();
-
-            ulv_clients.Items.Clear();
-            _changeClientSection(null);
-
-            tenantManager
-                .FindTenants((ConnectorSetting)ucb_branch.SelectedItem, utx_search.Text)
-                .Select((item, index) => new { item = item, index = index })
-                .ToList()
-                .ForEach(f =>
-                {
-                    ulv_clients.Items.Insert(f.index, f.item.Name);
-                });
-
-            ulv_clients.EndUpdate();
+            await refreshTenantList();
         }
 
         private void ulv_clients_SelectedIndexChanged(object sender, EventArgs e)
         {
-            var tenant = ((CheckedListBox)sender).SelectedItem as ITenant;
-
-            _changeClientSection(tenant);
+            _showSelectedTenantInfo(((CheckedListBox)sender).SelectedItem as ITenant);
         }
 
-        private void _changeClientSection(ITenant tenant)
+        private void _showSelectedTenantInfo(ITenant tenant)
         {
             utx_dbname.Text = tenant?.Connection?.Database;
             utx_clientname.Text = tenant?.Connection?.UserName;

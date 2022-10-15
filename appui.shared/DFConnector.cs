@@ -17,7 +17,7 @@ namespace appui.shared
         private readonly IPageReader reader;
         private readonly ILogger<DFConnector> logger;
 
-        public DFConnector(IPageReader reader, ILogger<DFConnector>? logger = null)
+        public DFConnector(IPageReader reader, ILogger<DFConnector> logger = null)
         {
             this.reader = reader;
             this.logger = logger;

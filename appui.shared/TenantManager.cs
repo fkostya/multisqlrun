@@ -63,15 +63,5 @@ namespace appui.shared
 
             return tenants;
         }
-
-        public IList<ITenant> FindTenants(ConnectorSetting catalog, string tenantName = "")
-        {
-            if (catalog == null || this.tenants == null)
-                return new List<ITenant>();
-
-            return this.tenants
-                .Where(f => f.Name.Contains(tenantName, StringComparison.OrdinalIgnoreCase) || f.Connection.Database.Contains(tenantName, StringComparison.OrdinalIgnoreCase))
-                .ToList();
-        }
     }
 }

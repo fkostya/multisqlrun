@@ -11,7 +11,5 @@ namespace appui.shared.Interfaces
         Task<IEnumerable<ResourceCatalog>> LoadCatalogs();
 
         Task<IList<ITenant>> LoadTenants(ConnectorSetting catalog);
-
-        IList<ITenant> FindTenants(ConnectorSetting version, string key = "");
     }
 }
