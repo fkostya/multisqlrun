@@ -29,7 +29,7 @@ namespace appui.connectors
                     var dictionary = (IDictionary<string, object>)record;
                     dictionary.Add("client", "item.Key");//TODO
 
-                    var column_index = 0;
+                    //var column_index = 0;
                     foreach (var item2 in item)
                     {
                         //var uniqueColumnKey = item2.Item1;

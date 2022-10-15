@@ -9,6 +9,6 @@
         /// Load connection strings from connection string provider
         /// </summary>
         /// <returns></returns>
-        Task<IList<IConnectionStringInfo>> LoadConnectionStrings();
+        Task<IList<IConnectionStringInfo>> LoadConnectionStrings(Dictionary<string, object> args);
     }
 }

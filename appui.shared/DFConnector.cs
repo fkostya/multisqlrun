@@ -20,7 +20,7 @@ namespace appui.shared
             this.reader = reader;
         }
 
-        public async Task<IList<IConnectionStringInfo>> LoadConnectionStrings()
+        public async Task<IList<IConnectionStringInfo>> LoadConnectionStrings(Dictionary<string, object> args)
         {
             var htmlDoc = await reader.LoadPageAsync();
             var list = new List<IConnectionStringInfo>();
@@ -47,7 +47,8 @@ namespace appui.shared
                     var server = mem.SelectSingleNode(".//small[@class='dbServerVersion']")?.InnerHtml.Split("-")?[0]?.Trim().Replace("[", "");
 
                     if (!string.IsNullOrWhiteSpace(database) && database.Length > VALID_DATABASE_MIN_LENGTH_NAME 
-                        && !string.IsNullOrWhiteSpace(server) && server.Length > VALID_SERVER_MIN_LENGTH_NAME)
+                        && !string.IsNullOrWhiteSpace(server) && server.Length > VALID_SERVER_MIN_LENGTH_NAME
+                        && versions[index].Equals(args["version"].ToString(), StringComparison.OrdinalIgnoreCase))
                     {
                         list.Add(new ConnectionStringInfo()
                         {

@@ -9,7 +9,7 @@ namespace appui.shared
             return null;
         }
 
-        public Task<IList<IConnectionStringInfo>> LoadConnectionStrings()
+        public Task<IList<IConnectionStringInfo>> LoadConnectionStrings(Dictionary<string, object> args)
         {
             throw new NotImplementedException();
         }

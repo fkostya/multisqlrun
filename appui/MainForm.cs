@@ -3,6 +3,7 @@ using appui.models.Interfaces;
 using appui.models.Payloads;
 using appui.shared;
 using appui.shared.Interfaces;
+using appui.shared.Interfaces.Repositories;
 using appui.shared.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -31,14 +32,15 @@ namespace appui
         private readonly IServiceProvider serviceProvider;
         private readonly IMessageProducer messageProducer;
         private readonly IStorageUtility storeageUtility;
-
+        private readonly IConnectorSettingsRepository connectorSettingsRepository;
         public MainForm(IOptions<AppSettings> appSettings,
             IOptions<SqlSettings> sqlSettings,
             ILogger<MainForm> logger,
             ITenantManager tenantManager,
             IServiceProvider serviceProvider,
             IMessageProducer messageProducer,
-            IStorageUtility fileUtility)
+            IStorageUtility fileUtility,
+            IConnectorSettingsRepository connectorSettingsRepository)
         {
             InitializeComponent();
 
@@ -49,6 +51,7 @@ namespace appui
             this.serviceProvider = serviceProvider;
             this.messageProducer = messageProducer;
             this.storeageUtility = fileUtility;
+            this.connectorSettingsRepository = connectorSettingsRepository;
 
             Logger.LogInformation($"App started");
         }
@@ -69,7 +72,6 @@ namespace appui
                 _changeClientSection(null);
 
                 await refreshCatalogList();
-                await refreshTenantList();
 
                 openConnectionProcess = false;
                 ucb_branch.Enabled = true;
@@ -88,7 +90,7 @@ namespace appui
 
         private async Task refreshCatalogList()
         {
-            var bindingComboBoxOriginalData = new BindingList<ResourceCatalog>((await tenantManager.LoadCatalogs()).ToList());
+            var bindingComboBoxOriginalData = new BindingList<ConnectorSetting>((await connectorSettingsRepository.GetConnectorSettings()).ToList());
 
             ucb_branch.DataSource = bindingComboBoxOriginalData;
             ucb_branch.DisplayMember = "Name";
@@ -98,10 +100,9 @@ namespace appui
         private async Task refreshTenantList()
         {
             ulv_clients.BeginUpdate();
-
             btn_selectall.Enabled = false;
 
-            var bindingComboBoxOriginalData = new BindingList<ITenant>((await tenantManager.LoadTenants((ResourceCatalog)ucb_branch.SelectedItem)).ToList());
+            var bindingComboBoxOriginalData = new BindingList<ITenant>((await tenantManager.LoadTenants((ConnectorSetting)ucb_branch.SelectedItem)).ToList());
 
             ulv_clients.DataSource = bindingComboBoxOriginalData;
             ulv_clients.DisplayMember = "Name";
@@ -254,10 +255,10 @@ namespace appui
             }
         }
 
-        private void ucb_branch_SelectedIndexChanged(object sender, EventArgs e)
+        private async void ucb_branch_SelectedIndexChanged(object sender, EventArgs e)
         {
+            await refreshTenantList();
             _changeClientSection(null);
-            //updateListOfClients();//TODO
         }
 
         private void utb_search_TextChanged(object sender, EventArgs e)
@@ -268,7 +269,7 @@ namespace appui
             _changeClientSection(null);
 
             tenantManager
-                .FindTenants((ResourceCatalog)ucb_branch.SelectedItem, utx_search.Text)
+                .FindTenants((ConnectorSetting)ucb_branch.SelectedItem, utx_search.Text)
                 .Select((item, index) => new { item = item, index = index })
                 .ToList()
                 .ForEach(f =>
@@ -281,10 +282,7 @@ namespace appui
 
         private void ulv_clients_SelectedIndexChanged(object sender, EventArgs e)
         {
-            var tenant = tenantManager
-                .FindTenants((ResourceCatalog)ucb_branch.SelectedItem, ((CheckedListBox)sender).SelectedItem?.ToString())
-                .Where(f => f.Name == ((CheckedListBox)sender).SelectedItem?.ToString())
-                .FirstOrDefault();
+            var tenant = ((CheckedListBox)sender).SelectedItem as ITenant;
 
             _changeClientSection(tenant);
         }
