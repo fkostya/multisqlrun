@@ -134,26 +134,25 @@ namespace appui
             ulv_clients.EndUpdate();
         }
 
-        private string path = "";
+        
         private async void ubt_run_Click(object sender, EventArgs e)
         {
             ubt_run.Enabled = false;
             utx_outputpath.Text = string.Empty;
-            var query = utx_sqlquery.Text;
 
-            if (!string.IsNullOrWhiteSpace(query))
+            if (!string.IsNullOrWhiteSpace(utx_sqlquery.Text))
             {
                 try
                 {
-                    storeageUtility.CreateStorage<DirectoryInfoWrapper>(storeageUtility.GenerateUniqueStorageName(appSetting.OutputFolder));
+                    utx_outputpath.Text = storeageUtility.CreateStorage<DirectoryInfoWrapper>(storeageUtility.GenerateUniqueStorageName(appSetting.OutputFolder)).Info.FullName;
+                    utx_outputpath.Enabled = false;
 
-                    var clients = getAllClientsOrSelected();
+                    var tenants = getSelectedTenantsOrALl();
 
                     var processed = 0;
-                    foreach (var cc in clients)
+                    foreach (var tenant in tenants)
                     {
-                        lblProgress.Text = $"{processed} of {clients.Count()}";
-
+                        lblProgress.Text = $"{processed} of {tenants.Count()}";
                         var source = new CancellationTokenSource();
                         initDbConnectionProcess(source.Token);
 
@@ -161,16 +160,16 @@ namespace appui
                         {
                             try
                             {
-                                MsSqlMessagePayload payload = (MsSqlMessagePayload)serviceProvider.GetService<IMessagePayload>();
+                                MsSqlMessagePayload payload = (MsSqlMessagePayload)serviceProvider.GetService<MsSqlMessagePayload>();
                                 payload.Connection = new MsSqlConnection
                                 {
-                                    DbDatabase = cc.Connection.Database,
-                                    DbServer = cc.Connection.DbServer,
+                                    DbDatabase = tenant.Connection.Database,
+                                    DbServer = tenant.Connection.DbServer,
                                     DbUserName = sqlSettings.Credential.UserId,
                                     DbPassword = decode(sqlSettings.Credential.Password)
                                 };
                                 payload.Query = utx_sqlquery.Text;
-                                payload.StoragePath = path;
+                                payload.StoragePath = utx_outputpath.Text;
                                 this.Logger.LogTrace($"posting message to queue with payload:{payload}");
                                 await this.messageProducer.Publish(payload);
                                 this.Logger.LogTrace($"posted message to queue with payload:{payload}");
@@ -179,9 +178,6 @@ namespace appui
                             {
                                 Logger.LogCritical($"Exception: {ex}");
                             }
-
-                            updateClientProgress(clients.Count, processed++);
-
                         }
                         catch
                         {
@@ -189,7 +185,8 @@ namespace appui
                         }
                         finally
                         {
-                            updateClientProgress(clients.Count, processed++);
+                            updateClientProgress(tenants.Count, processed++);
+                            lblProgress.Text = $"{processed} of {tenants.Count()}";
                         }
                     }
                 }
@@ -208,8 +205,8 @@ namespace appui
                     }
                     catch { }
 
-                    utx_outputpath.Text = path;
                     ubt_run.Enabled = true;
+                    utx_outputpath.Enabled = true;
                 }
             }
         }
@@ -220,7 +217,7 @@ namespace appui
             return Encoding.UTF8.GetString(data);
         }
 
-        private IList<ITenant> getAllClientsOrSelected()
+        private IList<ITenant> getSelectedTenantsOrALl()
         {
             return ulv_clients.CheckedItems.Count != 0
                 ? ulv_clients.CheckedItems?.Cast<ITenant>().ToList()

@@ -10,6 +10,6 @@ namespace appui.shared.Interfaces
     {
         Task<IEnumerable<ResourceCatalog>> LoadCatalogs();
 
-        Task<IList<ITenant>> LoadTenants(ConnectorSetting catalog);
+        Task<IEnumerable<ITenant>> LoadTenants(ConnectorSetting catalog);
     }
 }

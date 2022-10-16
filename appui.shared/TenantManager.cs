@@ -14,7 +14,6 @@ namespace appui.shared
     /// </summary>
     public class TenantManager : ITenantManager
     {
-        private IList<ITenant> tenants;
         private IEnumerable<ResourceCatalog> catalogs;
         private readonly CatalogSourceDownloadFactory catalogSourceDownloadFactory;
         private readonly IServiceProvider serviceProvider;
@@ -31,7 +30,7 @@ namespace appui.shared
             return await Task.FromResult(catalogs);
         }
 
-        public async Task<IList<ITenant>> LoadTenants(ConnectorSetting catalog)
+        public async Task<IEnumerable<ITenant>> LoadTenants(ConnectorSetting catalog)
         {
             if (catalog == null) return await Task.FromResult(new List<ITenant>());
 
@@ -45,7 +44,7 @@ namespace appui.shared
             var dict = new Dictionary<string, object>() { { "version", catalog.Args?.Version } };
 
             var connectionStrings = await connector.LoadConnectionStrings(dict);
-            this.tenants = new List<ITenant>();
+            var tenants = new List<ITenant>();
             foreach (var cs in connectionStrings)
             {
                 tenants.Add(new Tenant
