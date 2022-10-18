@@ -160,7 +160,7 @@ namespace appui
                         {
                             try
                             {
-                                MsSqlMessagePayload payload = (MsSqlMessagePayload)serviceProvider.GetService<MsSqlMessagePayload>();
+                                MsSqlMessagePayload payload = serviceProvider.GetService<MsSqlMessagePayload>();
                                 payload.Connection = new MsSqlConnection
                                 {
                                     DbDatabase = tenant.Connection.Database,

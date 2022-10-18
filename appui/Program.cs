@@ -73,8 +73,8 @@ namespace appui
                 .AddTransient<MsSqlQueryConnector>()
                 .AddSingleton<RabbitMqProducer>()
                 .AddSingleton<SingleThreadContext>()
-                .AddTransient<IMessagePayload, MsSqlMessagePayload>()
-                .AddTransient<IMessagePayload, SaveCvsFileMessagePayload>()
+                .AddTransient<MsSqlMessagePayload>()
+                .AddTransient<SaveCvsFileMessagePayload>()
                 .AddSingleton<IMessageProducer>((configure) =>
                 {
                     return Configuration.GetSection("appSettings").Get<AppSettings>().Mode.ToLower() switch
