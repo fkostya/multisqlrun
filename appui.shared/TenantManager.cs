@@ -25,12 +25,12 @@ namespace appui.shared
             this.serviceProvider = serviceProvider;
         }
 
-        public async Task<IEnumerable<ResourceCatalog>> LoadCatalogs()
+        public async virtual Task<IEnumerable<ResourceCatalog>> LoadCatalogs()
         {
             return await Task.FromResult(catalogs);
         }
 
-        public async Task<IEnumerable<ITenant>> LoadTenants(ConnectorSetting catalog)
+        public async virtual Task<IEnumerable<ITenant>> LoadTenants(ConnectorSetting catalog)
         {
             if (catalog == null) return await Task.FromResult(new List<ITenant>());
 
