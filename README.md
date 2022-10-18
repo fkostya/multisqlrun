@@ -49,7 +49,7 @@ To open an issue for this project, please visit the [multisqlrun project issue t
 - [ ] intergare MediatR [how to tutorial](https://medium.com/aeturnuminc/microservices-using-mediatr-on-net-core-3-1-with-exception-handling-c273a7aa4a70)  
 - [ ] upgrade to core7.0[technical debt]:  
 - [ ] add appsettings(PROD|DEV).json[technical debt]:  
-- [ ] Program.cs: move IServiceCollection.Add...() to feed from extension(shared prj)[technical debt]:   
+- [X] Program.cs: move IServiceCollection.Add...() to feed from extension(shared prj)[technical debt]:   
 - [X] separate tenants by version[core func]: [PR 14](https://github.com/fkostya/multisqlrun/pull/14):  
 	- [X] change settings via appconfig  
 	- [X] show tenant names on UI  

@@ -18,6 +18,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Windows.Forms;
+using appui.shared.Extensions;
 
 namespace appui
 {
@@ -57,24 +58,12 @@ namespace appui
                 .AddLogging(configure => configure.AddConsole())
                 .AddLogging(configure => configure.AddNLog())
                 .AddTransient<MainForm>()
-                .AddScoped<WebPageReader>()
-                .AddScoped<OfflineFilePageReader>()
-                .AddScoped<IServiceProvider, ServiceProvider>()
                 .Configure<List<ResourceCatalog>>(Configuration.GetSection("catalogSourceSettings:catalogConnections"))
                 .Configure<AppSettings>(Configuration.GetSection("appSettings"))
                 .Configure<SqlSettings>(Configuration.GetSection("sqlSettings"))
                 .Configure<MessagingSettings>(Configuration.GetSection("messagingSettings"))
                 .Configure<RabbitMqSettings>(Configuration.GetSection("rabbitmqSettings"))
                 .Configure<List<ConnectorSetting>>(Configuration.GetSection("connectorSettings:connectorSetting"))
-                .AddSingleton<CredentialCache>()
-                .AddSingleton<HtmlWeb>()
-                .AddSingleton<ITenantManager, TenantManager>()
-                .AddSingleton<DefaultConnectorFactory>()
-                .AddTransient<MsSqlQueryConnector>()
-                .AddSingleton<RabbitMqProducer>()
-                .AddSingleton<SingleThreadContext>()
-                .AddTransient<MsSqlMessagePayload>()
-                .AddTransient<SaveCvsFileMessagePayload>()
                 .AddSingleton<IMessageProducer>((configure) =>
                 {
                     return Configuration.GetSection("appSettings").Get<AppSettings>().Mode.ToLower() switch
@@ -91,11 +80,7 @@ namespace appui
 
                     return new DFConnector(reader);
                 })
-                .AddSingleton<IDirectoryWrapper, DirectoryWrapper>()
-                .AddSingleton<IStorageUtility, FileUtility>()
-                .AddSingleton<IConnectorSettingsRepository, ConnectorSettingsAppSettingRepository>()
-                .AddSingleton<ConnectorFactory>()
-                .AddSingleton<CatalogSourceDownloadFactory>();
+                .AddSharedServices();
         }
     }
 }
