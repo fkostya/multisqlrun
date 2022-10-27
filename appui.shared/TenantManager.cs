@@ -55,7 +55,8 @@ namespace appui.shared
                     {
                         Database = cs.Database,
                         UserName = cs.UserName,
-                        Password = cs.Password
+                        Password = cs.Password,
+                        DbServer = cs.Server,
                     }
                 });
             }

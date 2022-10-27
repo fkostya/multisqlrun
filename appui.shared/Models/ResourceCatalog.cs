@@ -1,7 +1,9 @@
 ﻿using appui.shared.Interfaces;
+using System.Diagnostics.CodeAnalysis;
 
 namespace appui.shared.Models
 {
+    [ExcludeFromCodeCoverage]
     public class ResourceCatalog
     {
         public string Id { get; set; }
@@ -13,6 +15,7 @@ namespace appui.shared.Models
         public string Url { get; set; }
     }
 
+    [ExcludeFromCodeCoverage]
     public class Parser
     {
         public string Name { get; set; }

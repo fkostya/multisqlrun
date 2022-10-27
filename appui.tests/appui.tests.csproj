@@ -27,11 +27,13 @@
 
   <ItemGroup>
     <ProjectReference Include="..\appui.connectors\appui.connectors.csproj" />
+    <ProjectReference Include="..\appui.consumers\appui.consumers.csproj" />
+    <ProjectReference Include="..\appui.models\appui.models.csproj" />
+    <ProjectReference Include="..\appui.resourses\appui.resourses.csproj" />
     <ProjectReference Include="..\appui.shared\appui.shared.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Connector\" />
     <Folder Include="Consumer\" />
   </ItemGroup>
 

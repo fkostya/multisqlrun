@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-            this.ubt_connect = new System.Windows.Forms.Button();
+            this.ubt_refresh = new System.Windows.Forms.Button();
             this.ulv_clients = new System.Windows.Forms.CheckedListBox();
             this.upb_progress = new System.Windows.Forms.ProgressBar();
             this.utx_sqlquery = new System.Windows.Forms.TextBox();
@@ -44,16 +44,16 @@
             this.btn_selectall = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
-            // ubt_connect
+            // ubt_refresh
             // 
-            this.ubt_connect.Location = new System.Drawing.Point(7, 6);
-            this.ubt_connect.Margin = new System.Windows.Forms.Padding(2);
-            this.ubt_connect.Name = "ubt_connect";
-            this.ubt_connect.Size = new System.Drawing.Size(119, 36);
-            this.ubt_connect.TabIndex = 0;
-            this.ubt_connect.Text = "refresh";
-            this.ubt_connect.UseVisualStyleBackColor = true;
-            this.ubt_connect.Click += new System.EventHandler(this.button_refresh_Click);
+            this.ubt_refresh.Location = new System.Drawing.Point(176, 6);
+            this.ubt_refresh.Margin = new System.Windows.Forms.Padding(2);
+            this.ubt_refresh.Name = "ubt_refresh";
+            this.ubt_refresh.Size = new System.Drawing.Size(119, 36);
+            this.ubt_refresh.TabIndex = 0;
+            this.ubt_refresh.Text = "refresh";
+            this.ubt_refresh.UseVisualStyleBackColor = true;
+            this.ubt_refresh.Click += new System.EventHandler(this.button_refresh_Click);
             // 
             // ulv_clients
             // 
@@ -84,21 +84,20 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.utx_sqlquery.Enabled = false;
-            this.utx_sqlquery.Location = new System.Drawing.Point(12, 41);
+            this.utx_sqlquery.Location = new System.Drawing.Point(12, 48);
             this.utx_sqlquery.Multiline = true;
             this.utx_sqlquery.Name = "utx_sqlquery";
             this.utx_sqlquery.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.utx_sqlquery.Size = new System.Drawing.Size(719, 398);
+            this.utx_sqlquery.Size = new System.Drawing.Size(719, 391);
             this.utx_sqlquery.TabIndex = 2;
             this.utx_sqlquery.Text = "select max(featureid) as featureid from feature with(nolock)";
             // 
             // ucb_branch
             // 
-            this.ucb_branch.Enabled = false;
             this.ucb_branch.Font = new System.Drawing.Font("Segoe UI", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.ucb_branch.FormattingEnabled = true;
             this.ucb_branch.ItemHeight = 28;
-            this.ucb_branch.Location = new System.Drawing.Point(131, 8);
+            this.ucb_branch.Location = new System.Drawing.Point(6, 6);
             this.ucb_branch.Name = "ucb_branch";
             this.ucb_branch.Size = new System.Drawing.Size(165, 36);
             this.ucb_branch.TabIndex = 1;
@@ -182,14 +181,15 @@
             // 
             // btn_selectall
             // 
-            this.btn_selectall.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.btn_selectall.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.btn_selectall.Enabled = false;
             this.btn_selectall.Location = new System.Drawing.Point(730, 12);
             this.btn_selectall.Name = "btn_selectall";
             this.btn_selectall.Size = new System.Drawing.Size(75, 23);
             this.btn_selectall.TabIndex = 12;
-            this.btn_selectall.Tag = "true";
+            this.btn_selectall.Tag = "";
             this.btn_selectall.Text = "select all";
             this.btn_selectall.UseVisualStyleBackColor = true;
             this.btn_selectall.Click += new System.EventHandler(this.button_selectall_Click);
@@ -211,11 +211,12 @@
             this.Controls.Add(this.utx_sqlquery);
             this.Controls.Add(this.upb_progress);
             this.Controls.Add(this.ulv_clients);
-            this.Controls.Add(this.ubt_connect);
+            this.Controls.Add(this.ubt_refresh);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "MainForm";
             this.Text = "Form1";
+            this.Load += new System.EventHandler(this.MainForm_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -223,7 +224,7 @@
 
         #endregion
 
-        private System.Windows.Forms.Button ubt_connect;
+        private System.Windows.Forms.Button ubt_refresh;
         private System.Windows.Forms.CheckedListBox ulv_clients;
         private System.Windows.Forms.ProgressBar upb_progress;
         private System.Windows.Forms.TextBox utx_sqlquery;

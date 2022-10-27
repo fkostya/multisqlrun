@@ -10,9 +10,9 @@ namespace appui.connectors
     {
         const int timeout = 300;
         private readonly ILogger<MsSqlQueryConnector>? logger;
-        private readonly MsSqlConnection connection;
+        private readonly MsSqlConnection? connection;
 
-        public MsSqlQueryConnector(MsSqlConnection connection, ILogger<MsSqlQueryConnector>? logger)
+        public MsSqlQueryConnector(MsSqlConnection? connection, ILogger<MsSqlQueryConnector>? logger)
         {
             this.logger = logger;
             this.connection = connection;
@@ -26,7 +26,7 @@ namespace appui.connectors
             var result = new List<Dictionary<string, object>>();
             try
             {
-                using (var sqlconnection = new SqlConnection(connection.GetConnectionString<string>()))
+                using (var sqlconnection = new SqlConnection(connection?.GetConnectionString<string>()))
                 {
                     using (var cmd = new SqlCommand(query, sqlconnection) { CommandType = CommandType.Text })
                     {
@@ -38,7 +38,7 @@ namespace appui.connectors
 
                             var dic = new Dictionary<string, object>()
                             {
-                                {"database", connection.DbDatabase ?? "" }
+                                {"database", connection?.DbDatabase ?? "" }
                             };
                             foreach (DataColumn column in schemaTable.Columns)
                             {
@@ -64,12 +64,12 @@ namespace appui.connectors
             }
             catch (Exception ex)
             {
-                logger?.LogError($"Exception for connectionString:{connection.GetConnectionString<string>()}, {ex.Message}");
+                logger?.LogError($"Exception for connectionString:{connection?.GetConnectionString<string>()}, {ex.Message}");
             }
             finally
             {
                 sw.Stop();
-                logger?.LogTrace($"total query run time for {connection.Name}", sw.Elapsed);
+                logger?.LogTrace($"total query run time for {connection?.ConnectionName}", sw.Elapsed);
             }
 
             return result;

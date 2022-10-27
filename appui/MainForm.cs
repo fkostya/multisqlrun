@@ -2,7 +2,6 @@
 using appui.models.Interfaces;
 using appui.models.Payloads;
 using appui.resourses.Properties;
-using appui.shared;
 using appui.shared.Interfaces;
 using appui.shared.Interfaces.Repositories;
 using appui.shared.Models;
@@ -14,7 +13,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -34,6 +32,9 @@ namespace appui
         private readonly IMessageProducer messageProducer;
         private readonly IStorageUtility storeageUtility;
         private readonly IConnectorSettingsRepository connectorSettingsRepository;
+
+        private const int SelectedFirstItemIndex = 0;
+
         public MainForm(IOptions<AppSettings> appSettings,
             IOptions<SqlSettings> sqlSettings,
             ILogger<MainForm> logger,
@@ -70,8 +71,6 @@ namespace appui
                 ubt_run.Enabled = false;
                 btn_selectall.Enabled = false;
 
-                _showSelectedTenantInfo(null);
-
                 await refreshCatalogList();
 
                 openConnectionProcess = false;
@@ -95,35 +94,29 @@ namespace appui
 
             ucb_branch.DataSource = bindingComboBoxOriginalData;
             ucb_branch.DisplayMember = "Name";
-            ucb_branch.SelectedIndex = 0;
+            ucb_branch.SelectedIndex = SelectedFirstItemIndex;
         }
 
         private async Task refreshTenantList()
         {
             ulv_clients.BeginUpdate();
             btn_selectall.Enabled = false;
-            var search = utx_search.Text;
             var tenants = (await tenantManager.LoadTenants((ConnectorSetting)ucb_branch.SelectedItem))
                             .Where((f) =>
                             {
-                                if (string.IsNullOrEmpty(search))
-                                {
-                                    return true;
-                                }
-                                else
-                                {
-                                    return f.Name.Contains(search, StringComparison.OrdinalIgnoreCase) || f.Connection.Database.Contains(search, StringComparison.OrdinalIgnoreCase);
-                                }
+                                return string.IsNullOrEmpty(utx_search.Text)
+                                    || f.Name.Contains(utx_search.Text, StringComparison.OrdinalIgnoreCase)
+                                    || f.Connection.Database.Contains(utx_search.Text, StringComparison.OrdinalIgnoreCase);
                             })
                             .ToList();
-                            
+
 
             var bindingComboBoxOriginalData = new BindingList<ITenant>(tenants);
 
             ulv_clients.DataSource = bindingComboBoxOriginalData;
             ulv_clients.DisplayMember = "Name";
 
-            if (bindingComboBoxOriginalData.Count >= 1)
+            if (bindingComboBoxOriginalData.Any())
             {
                 btn_selectall.Enabled = true;
                 utx_search.Enabled = true;
@@ -134,7 +127,7 @@ namespace appui
             ulv_clients.EndUpdate();
         }
 
-        
+
         private async void ubt_run_Click(object sender, EventArgs e)
         {
             ubt_run.Enabled = false;
@@ -147,7 +140,7 @@ namespace appui
                     utx_outputpath.Text = storeageUtility.CreateStorage<DirectoryInfoWrapper>(storeageUtility.GenerateUniqueStorageName(appSetting.OutputFolder)).Info.FullName;
                     utx_outputpath.Enabled = false;
 
-                    var tenants = getSelectedTenantsOrALl();
+                    var tenants = getSelectedTenantsOrAllTenants();
 
                     var processed = 0;
                     foreach (var tenant in tenants)
@@ -165,8 +158,8 @@ namespace appui
                                 {
                                     DbDatabase = tenant.Connection.Database,
                                     DbServer = tenant.Connection.DbServer,
-                                    DbUserName = sqlSettings.Credential.UserId,
-                                    DbPassword = decode(sqlSettings.Credential.Password)
+                                    DbUserName = tenant.Connection.UserName ?? sqlSettings.Credential.UserId,
+                                    DbPassword = tenant.Connection.Password ?? decode(sqlSettings.Credential.Password)
                                 };
                                 payload.Query = utx_sqlquery.Text;
                                 payload.StoragePath = utx_outputpath.Text;
@@ -217,7 +210,7 @@ namespace appui
             return Encoding.UTF8.GetString(data);
         }
 
-        private IList<ITenant> getSelectedTenantsOrALl()
+        private IList<ITenant> getSelectedTenantsOrAllTenants()
         {
             return ulv_clients.CheckedItems.Count != 0
                 ? ulv_clients.CheckedItems?.Cast<ITenant>().ToList()
@@ -282,7 +275,7 @@ namespace appui
         private void _showSelectedTenantInfo(ITenant tenant)
         {
             utx_dbname.Text = tenant?.Connection?.Database;
-            utx_clientname.Text = tenant?.Connection?.UserName;
+            utx_clientname.Text = tenant?.Name;
             utx_servername.Text = tenant?.Connection.DbServer;
         }
 
@@ -293,18 +286,25 @@ namespace appui
 
         private void button_selectall_Click(object sender, EventArgs e)
         {
+            var currentState = string.IsNullOrEmpty(btn_selectall.Tag.ToString()) || !(bool)btn_selectall.Tag;
 
-            btn_selectall.Text = bool.Parse(btn_selectall.Tag.ToString()) == true ? Resources.lblunselectall : Resources.lblselectall;
-            btn_selectall.Tag = !bool.Parse(btn_selectall.Tag.ToString());
+            btn_selectall.Text = currentState ? Resources.lblunselectall : Resources.lblselectall;
+            btn_selectall.Tag = currentState;
+
             ulv_clients.BeginUpdate();
             if (ulv_clients.Items.Count != 0)
             {
                 for (int i = 0; i < ulv_clients.Items.Count; i++)
                 {
-                    ulv_clients.SetItemChecked(i, !ulv_clients.GetItemChecked(i));
+                    ulv_clients.SetItemChecked(i, currentState);
                 }
             }
             ulv_clients.EndUpdate();
+        }
+
+        private async void MainForm_Load(object sender, EventArgs e)
+        {
+            await refreshCatalogList();
         }
     }
 }

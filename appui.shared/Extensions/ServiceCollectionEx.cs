@@ -6,10 +6,12 @@ using appui.shared.RabbitMQ;
 using appui.shared.Repositories;
 using HtmlAgilityPack;
 using Microsoft.Extensions.DependencyInjection;
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 
 namespace appui.shared.Extensions
 {
+    [ExcludeFromCodeCoverage]
     public static class ServiceCollectionEx
     {
         public static IServiceCollection AddSharedServices(this IServiceCollection service)
