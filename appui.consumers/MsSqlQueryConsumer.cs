@@ -27,15 +27,15 @@ namespace appui.consumers
             //{
             //    try
             //    {
-                    var connection = new MsSqlConnection
-                    {
-                        DbServer = payload?.Connection?.DbServer,
-                        DbDatabase = payload?.Connection?.DbDatabase,
-                        DbUserName = payload?.Connection?.DbUserName,
-                        DbPassword = payload?.Connection?.DbPassword
-                    };
-                    var connector = new MsSqlQueryConnector(connection, serviceProvider?.GetService<ILogger<MsSqlQueryConnector>>());
-                    connector.Invoke(payload?.Query).GetAwaiter().GetResult();
+                    //var connection = new MsSqlConnection
+                    //{
+                    //    DbServer = payload?.Connection?.DbServer,
+                    //    DbDatabase = payload?.Connection?.DbDatabase,
+                    //    DbUserName = payload?.Connection?.DbUserName,
+                    //    DbPassword = payload?.Connection?.DbPassword
+                    //};
+                    //var connector = new MsSqlQueryConnector(connection, serviceProvider?.GetService<ILogger<MsSqlQueryConnector>>());
+                    //connector.Invoke(payload?.Query).GetAwaiter().GetResult();
 
             //        return await Task.FromResult(true);
             //    }

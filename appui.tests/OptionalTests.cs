@@ -28,11 +28,5 @@ namespace appui.tests
             var emptyObject = Optional.Empty<object>();
             Assert.NotNull(emptyObject);
         }
-
-        [Fact]
-        public void t()
-        {
-            var g = (null as List<string>).Create<List<string>>().Of("tret", "rrwer");
-        }
     }
 }

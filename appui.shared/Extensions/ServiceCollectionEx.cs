@@ -24,7 +24,7 @@ namespace appui.shared.Extensions
                 .AddSingleton<HtmlWeb>()
                 .AddSingleton<ITenantManager, TenantManager>()
                 .AddSingleton<DefaultConnectorFactory>()
-                .AddTransient<MsSqlQueryConnector>()
+                
                 .AddSingleton<RabbitMqProducer>()
                 .AddSingleton<SingleThreadContext>()
                 .AddTransient<MsSqlMessagePayload>()

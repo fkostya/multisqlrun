@@ -1,5 +1,5 @@
-﻿using appui.models;
-using Microsoft.Data.SqlClient;
+﻿using appui.connectors.Utils;
+using appui.models;
 using Microsoft.Extensions.Logging;
 using System.Data;
 using System.Diagnostics;
@@ -10,42 +10,55 @@ namespace appui.connectors
     {
         const int timeout = 300;
         private readonly ILogger<MsSqlQueryConnector>? logger;
-        private readonly MsSqlConnection? connection;
+        private readonly MsSqlConnection connection;
+        private readonly Func<string, SqlConnectionWrapper> factory;
 
-        public MsSqlQueryConnector(MsSqlConnection? connection, ILogger<MsSqlQueryConnector>? logger)
+        public MsSqlQueryConnector(Func<string, SqlConnectionWrapper> factory, MsSqlConnection connection, ILogger<MsSqlQueryConnector>? logger)
         {
-            this.logger = logger;
+            this.factory = factory;
             this.connection = connection;
+            this.logger = logger;
         }
 
         public async Task<List<Dictionary<string, object>>> Invoke(string? query)
         {
+            var result = new List<Dictionary<string, object>>();
+
+            if (string.IsNullOrEmpty(query) || !connection.IsValid())
+            {
+                return result;
+            }
+
             Stopwatch sw = new();
             sw.Start();
 
-            var result = new List<Dictionary<string, object>>();
             try
             {
-                using (var sqlconnection = new SqlConnection(connection?.GetConnectionString<string>()))
+                using (var sqlconnection = factory.Invoke(this.connection.GetConnectionString<string>()))
                 {
-                    using (var cmd = new SqlCommand(query, sqlconnection) { CommandType = CommandType.Text })
+                    if (sqlconnection == null) throw new ArgumentNullException(nameof(sqlconnection));
+                    using (var cmd = sqlconnection.CreateCommand())
                     {
+                        if (cmd == null)
+                        {
+                            throw new ArgumentNullException("Could not create sql command");
+                        }
+                        cmd.CommandText = query;
+
                         await sqlconnection.OpenAsync();
 
                         using (var reader = await cmd.ExecuteReaderAsync())
                         {
                             DataTable schemaTable = reader.GetSchemaTable();
 
-                            var dic = new Dictionary<string, object>()
-                            {
-                                {"database", connection?.DbDatabase ?? "" }
-                            };
+                            var dic = new Dictionary<string, object>();
+
                             foreach (DataColumn column in schemaTable.Columns)
                             {
                                 dic[column.ColumnName.ToString()] = new();
                             }
 
-                            while (reader.Read())
+                            while (await reader.ReadAsync())
                             {
                                 if (reader.HasRows)
                                 {
@@ -54,10 +67,13 @@ namespace appui.connectors
                                         dic[key] = reader.GetValue(key);
                                     }
 
+                                    dic["database"] = connection?.DbDatabase ?? string.Empty;
+                                    dic["server"] = connection?.DbServer ?? string.Empty;
+
                                     result.Add(dic);
                                 }
+                                reader.Close();
                             }
-                            reader.Close();
                         }
                     }
                 }
