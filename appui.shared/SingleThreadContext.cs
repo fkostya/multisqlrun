@@ -1,5 +1,5 @@
 ﻿using appui.connectors;
-using appui.models;
+using appui.connectors.Utils;
 using appui.models.Interfaces;
 using appui.models.Payloads;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,7 +22,7 @@ namespace appui.shared
         {
             try
             {
-                var connector = new MsSqlQueryConnector((payload as MsSqlMessagePayload).Connection, _serviceProvider.GetService<ILogger<MsSqlQueryConnector>>());
+                var connector = new MsSqlQueryConnector(_serviceProvider.GetService<Func<string, SqlConnectionWrapper>>(), (payload as MsSqlMessagePayload).Connection, _serviceProvider.GetService<ILogger<MsSqlQueryConnector>>());
                 var output = await connector.Invoke(payload.ToString());
 
                 var result = (List<Dictionary<string, object>>)output

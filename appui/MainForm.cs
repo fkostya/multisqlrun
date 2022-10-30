@@ -1,5 +1,6 @@
 ﻿using appui.models;
 using appui.models.Interfaces;
+using appui.models.MsSql;
 using appui.models.Payloads;
 using appui.resourses.Properties;
 using appui.shared.Interfaces;
@@ -154,13 +155,12 @@ namespace appui
                             try
                             {
                                 MsSqlMessagePayload payload = serviceProvider.GetService<MsSqlMessagePayload>();
-                                payload.Connection = new MsSqlConnection
-                                {
-                                    DbDatabase = tenant.Connection.Database,
-                                    DbServer = tenant.Connection.DbServer,
-                                    DbUserName = tenant.Connection.UserName ?? sqlSettings.Credential.UserId,
-                                    DbPassword = tenant.Connection.Password ?? decode(sqlSettings.Credential.Password)
-                                };
+                                payload.Connection = serviceProvider
+                                    .GetService<Func<string, string, string, string, MsSqlConnection>>()
+                                    .Invoke(tenant.Connection.Database,
+                                            tenant.Connection.DbServer,
+                                            tenant.Connection.UserName ?? sqlSettings.Credential.UserId,
+                                            tenant.Connection.Password ?? decode(sqlSettings.Credential.Password));
                                 payload.Query = utx_sqlquery.Text;
                                 payload.StoragePath = utx_outputpath.Text;
                                 this.Logger.LogTrace($"posting message to queue with payload:{payload}");

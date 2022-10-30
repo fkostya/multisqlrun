@@ -1,5 +1,9 @@
-﻿namespace appui.models.RabbitMQ
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace appui.models.RabbitMQ
 {
+    [ExcludeFromCodeCoverage]
+
     public class SaveToCsvFilePayload
     {
     }

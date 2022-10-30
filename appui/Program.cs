@@ -19,6 +19,7 @@ using System.IO;
 using System.Net;
 using System.Windows.Forms;
 using appui.shared.Extensions;
+using appui.connectors.Extensions;
 
 namespace appui
 {
@@ -80,7 +81,8 @@ namespace appui
 
                     return new DFConnector(reader);
                 })
-                .AddSharedServices();
+                .AddSharedServices()
+                .AddConnectorsServices();
         }
     }
 }
