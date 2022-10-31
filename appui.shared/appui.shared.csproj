@@ -23,7 +23,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\appui.connectors\appui.connectors.csproj" />
     <ProjectReference Include="..\appui.models\appui.models.csproj" />
   </ItemGroup>
 

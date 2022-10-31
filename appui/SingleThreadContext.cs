@@ -4,8 +4,12 @@ using appui.models.Interfaces;
 using appui.models.Payloads;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace appui.shared
+namespace appui
 {
     public class SingleThreadContext : IMessageProducer
     {

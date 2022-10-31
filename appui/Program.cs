@@ -1,14 +1,11 @@
-using appui.connectors;
+using appui.connectors.Extensions;
 using appui.models;
 using appui.models.Interfaces;
-using appui.models.Payloads;
 using appui.shared;
+using appui.shared.Extensions;
 using appui.shared.Interfaces;
-using appui.shared.Interfaces.Repositories;
 using appui.shared.Models;
 using appui.shared.RabbitMQ;
-using appui.shared.Repositories;
-using HtmlAgilityPack;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -16,10 +13,7 @@ using NLog.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Net;
 using System.Windows.Forms;
-using appui.shared.Extensions;
-using appui.connectors.Extensions;
 
 namespace appui
 {
@@ -81,6 +75,7 @@ namespace appui
 
                     return new DFConnector(reader);
                 })
+                .AddSingleton<SingleThreadContext>()
                 .AddSharedServices()
                 .AddConnectorsServices();
         }

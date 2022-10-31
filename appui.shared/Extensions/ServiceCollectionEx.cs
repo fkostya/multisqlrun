@@ -1,5 +1,4 @@
-﻿using appui.connectors;
-using appui.models.Payloads;
+﻿using appui.models.Payloads;
 using appui.shared.Interfaces;
 using appui.shared.Interfaces.Repositories;
 using appui.shared.RabbitMQ;
@@ -24,9 +23,7 @@ namespace appui.shared.Extensions
                 .AddSingleton<HtmlWeb>()
                 .AddSingleton<ITenantManager, TenantManager>()
                 .AddSingleton<DefaultConnectorFactory>()
-                
                 .AddSingleton<RabbitMqProducer>()
-                .AddSingleton<SingleThreadContext>()
                 .AddTransient<MsSqlMessagePayload>()
                 .AddTransient<SaveCvsFileMessagePayload>()
                 .AddSingleton<IDirectoryWrapper, DirectoryWrapper>()
