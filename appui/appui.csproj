@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
@@ -11,7 +11,7 @@
     <Company>KF</Company>
     <Product>multi run sql</Product>
     <Copyright>Copyright © 2022</Copyright>
-    <Version>3.1.0</Version>
+    <Version>3.1.1</Version>
     <StartupObject>appui.Program</StartupObject>
     <AssemblyName>$(MSBuildProjectName)-client</AssemblyName>
   </PropertyGroup>
