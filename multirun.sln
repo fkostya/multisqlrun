@@ -28,7 +28,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "appui.models", "appui.model
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "appui.connectors", "appui.connectors\appui.connectors.csproj", "{DC958F29-2F09-48D0-B621-CA2B6DD0EF92}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "appui.resourses", "appui.resourses\appui.resourses.csproj", "{3F162625-372F-4297-AF02-E29A9FC83487}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "appui.resourses", "appui.resourses\appui.resourses.csproj", "{3F162625-372F-4297-AF02-E29A9FC83487}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -50,7 +50,6 @@ namespace appui.shared
                 tenants.Add(new Tenant
                 {
                     Name = cs.Client,
-                    Version = cs.Version,
                     Connection = new TenantConnection
                     {
                         Database = cs.Database,

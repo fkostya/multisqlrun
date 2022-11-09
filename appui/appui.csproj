@@ -12,6 +12,8 @@
     <Product>multi run sql</Product>
     <Copyright>Copyright © 2022</Copyright>
     <Version>3.1.0</Version>
+    <StartupObject>appui.Program</StartupObject>
+    <AssemblyName>$(MSBuildProjectName)-client</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
