@@ -11,6 +11,8 @@ Run sql query across multiple databases and save result in csv file
 
 To open an issue for this project, please visit the [multisqlrun project issue tracker](https://github.com/fkostya/multisqlrun/issues).
 
+![image](https://github.com/fkostya/multisqlrun/blob/master/appui/assets/catalog.svg)
+
 ![image](https://user-images.githubusercontent.com/64334685/192419317-09c501c2-266a-4f82-bc39-7354d23cbf0a.png)
 
 ## Roadmap  
