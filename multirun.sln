@@ -9,6 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "appui.tests", "appui.tests\
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "doc", "doc", "{FD15FD9B-A9CC-4484-B3B4-581ADCB4A48E}"
 	ProjectSection(SolutionItems) = preProject
+		appui\assets\catalog.svg = appui\assets\catalog.svg
 		appui\assets\diagram.drawio = appui\assets\diagram.drawio
 	EndProjectSection
 EndProject
