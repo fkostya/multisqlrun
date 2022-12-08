@@ -51,25 +51,19 @@ namespace appui.connectors
                         {
                             DataTable schemaTable = reader.GetSchemaTable();
 
-                            var dic = new Dictionary<string, object>();
-
-                            foreach (DataColumn column in schemaTable.Columns)
-                            {
-                                dic[column.ColumnName.ToString()] = new();
-                            }
-
                             while (await reader.ReadAsync())
                             {
                                 if (reader.HasRows)
                                 {
-                                    foreach (var key in dic.Keys)
+                                    var dic = new Dictionary<string, object> {
+                                        { "database", connection?.DbDatabase ?? string.Empty},
+                                        { "server", connection?.DbServer ?? string.Empty }
+                                    };
+
+                                    foreach (DataColumn column in schemaTable.Columns)
                                     {
-                                        dic[key] = reader.GetValue(key);
+                                        dic[column.ColumnName.ToString()] = reader.GetValue(column.ColumnName.ToString());
                                     }
-
-                                    dic["database"] = connection?.DbDatabase ?? string.Empty;
-                                    dic["server"] = connection?.DbServer ?? string.Empty;
-
                                     result.Add(dic);
                                 }
                                 reader.Close();

@@ -1,0 +1,9 @@
+{
+  "tasks": [
+    {
+      "name": "test",
+      "command": "dotnet",
+      "args": [ "test"]
+    }
+  ]
+}
