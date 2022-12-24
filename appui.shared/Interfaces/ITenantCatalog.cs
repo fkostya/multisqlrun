@@ -2,13 +2,12 @@
 
 namespace appui.shared.Interfaces
 {
-    public interface ICatalog
+    public interface ITenantCatalog
     {
         public string Name { get; set; }
         public string Type { get; set; }
         public Parser Parse { get; set; }
-        public string ConnectionString { get; set; }
-        public string FilePath { get; set; }
-        public string Url { get; set; }
+        public string Connection { get; set; }
+        public IEnumerable<ITenant> Tenants { get; set; }
     }
 }

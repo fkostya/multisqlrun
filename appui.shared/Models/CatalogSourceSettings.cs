@@ -6,6 +6,6 @@ namespace appui.shared.Models
     [ExcludeFromCodeCoverage]
     public class CatalogSourceSettings
     {
-        public IList<ICatalog> CatalogConnections { get; set; }
+        public IList<ITenantCatalog> CatalogConnections { get; set; }
     }
 }
