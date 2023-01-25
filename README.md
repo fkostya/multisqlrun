@@ -33,7 +33,7 @@ To open an issue for this project, please visit the [multisqlrun project issue t
 - [ ] study DAPR architecture
 - [ ] add custom log folder[nice to have]
 - [ ] bug fixes[technical debt]
-## version 3.0 - active
+## version 3.0 - in development
 - [X] remove logger AppErrorLog
 - [X] refactor code(model\BL) layer to support rabbitmq architecture
 - [ ] run sql query in 'singlethread' mode - WIP
