@@ -4,9 +4,9 @@
 [![cleanup old branches](https://github.com/fkostya/multisqlrun/actions/workflows/housekeeping.yml/badge.svg?branch=master)](https://github.com/fkostya/multisqlrun/actions/workflows/housekeeping.yml)
 
 # prototype
+### [application capability](https://github.com/fkostya/multisqlrun/blob/master/delivery-process-mapping.md)
 <br />
 <br />
-
 Run sql query across multiple databases and save result in csv file
 
 To open an issue for this project, please visit the [multisqlrun project issue tracker](https://github.com/fkostya/multisqlrun/issues).
