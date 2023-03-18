@@ -1,8 +1,10 @@
 ﻿using appui.models;
+using appui.models.HostedEnvironment;
 using appui.models.Interfaces;
 using appui.models.MsSql;
 using appui.models.Payloads;
 using appui.resourses.Properties;
+using appui.shared.HostedEnvironment;
 using appui.shared.Interfaces;
 using appui.shared.Interfaces.Repositories;
 using appui.shared.Models;
@@ -33,6 +35,8 @@ namespace appui
         private readonly IMessageProducer messageProducer;
         private readonly IStorageUtility storeageUtility;
         private readonly IConnectorSettingsRepository connectorSettingsRepository;
+        private readonly ConfigSettingsJson config;
+        private readonly string configFullPath;
 
         private const int SelectedFirstItemIndex = 0;
 
@@ -56,6 +60,14 @@ namespace appui
             this.storeageUtility = fileUtility;
             this.connectorSettingsRepository = connectorSettingsRepository;
 
+            this.configFullPath = serviceProvider.GetService<IHostedEnvironment>().GetConfigFullPath(this.appSetting.JsonConfigFileName).Result;
+            this.config = serviceProvider.GetService<IHostedEnvironment>().GetConfigFromSecureStorage(this.appSetting.JsonConfigFileName).Result;
+
+            this.sqlSettings.Credential = new shared.Models.Credential
+            {
+                UserId = this.config.MasterDbCredential.UserName,
+                Password = this.config.MasterDbCredential.Password
+            };
             Logger.LogInformation($"App started");
         }
 
@@ -305,6 +317,11 @@ namespace appui
         private async void MainForm_Load(object sender, EventArgs e)
         {
             await refreshCatalogList();
+        }
+
+        private void btn_openJsonConfig_Click(object sender, EventArgs e)
+        {
+            Process.Start(appSetting.Explorer, configFullPath);
         }
     }
 }

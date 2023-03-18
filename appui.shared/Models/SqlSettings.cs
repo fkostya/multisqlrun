@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Diagnostics.CodeAnalysis;
 
 namespace appui.shared.Models
 {
@@ -14,6 +9,7 @@ namespace appui.shared.Models
 
         public Credential Credential { get; set; }
     }
+
     [ExcludeFromCodeCoverage]
     public class Credential
     {

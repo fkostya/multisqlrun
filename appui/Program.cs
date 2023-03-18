@@ -3,6 +3,7 @@ using appui.models;
 using appui.models.Interfaces;
 using appui.shared;
 using appui.shared.Extensions;
+using appui.shared.HostedEnvironment;
 using appui.shared.Interfaces;
 using appui.shared.Models;
 using appui.shared.RabbitMQ;
@@ -12,14 +13,17 @@ using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Windows.Forms;
 
 namespace appui
 {
+    [ExcludeFromCodeCoverage]
     static class Program
     {
-        public static IConfiguration Configuration;
+        private static IConfiguration Configuration;
+        private static IServiceProvider ServiceProvider;
 
         /// <summary>
         ///  The main entry point for the application.
@@ -32,6 +36,7 @@ namespace appui
             Application.SetCompatibleTextRenderingDefault(false);
 
             var services = new ServiceCollection();
+            ServiceProvider = services.BuildServiceProvider();
             ConfigureServices(services);
 
             using (ServiceProvider serviceProvider = services.BuildServiceProvider())
@@ -49,7 +54,7 @@ namespace appui
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: false)
                 .Build();
 
-            services
+            _ = services
                 .AddLogging(configure => configure.AddConsole())
                 .AddLogging(configure => configure.AddNLog())
                 .AddTransient<MainForm>()
@@ -77,7 +82,13 @@ namespace appui
                 })
                 .AddSingleton<SingleThreadContext>()
                 .AddSharedServices()
-                .AddConnectorsServices();
+                .AddConnectorsServices()
+                .AddSingleton<CreateSecurityStorageFile>()
+                .AddSetup<MsWindows64>((config) =>
+                {
+                    EnvSetupFactory.RegisterFactory("CreateSecurityStorageFile", config.GetService<CreateSecurityStorageFile>());
+                })
+                .RunSetup();
         }
     }
 }
