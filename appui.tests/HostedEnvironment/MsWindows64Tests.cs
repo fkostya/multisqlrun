@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace appui.tests.HostedEnvironment
 {
-    internal class MsWindows64Tests
+    public class MsWindows64Tests
     {
     }
 }

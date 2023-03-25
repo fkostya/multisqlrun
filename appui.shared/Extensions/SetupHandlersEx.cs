@@ -6,9 +6,9 @@ using System.Diagnostics.CodeAnalysis;
 namespace appui.shared.Extensions
 {
     [ExcludeFromCodeCoverage]
-    public static class SetupEx
+    public static class SetupHandlersEx
     {
-        public static IServiceCollection AddSetup<T>(this IServiceCollection service, Action<IServiceProvider> func)
+        public static IServiceCollection AddSetupHandlers<T>(this IServiceCollection service, Action<IServiceProvider> func)
             where T : IHostedEnvironment
         {
             var provider = service.BuildServiceProvider();

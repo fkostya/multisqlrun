@@ -23,7 +23,6 @@ namespace appui
     static class Program
     {
         private static IConfiguration Configuration;
-        private static IServiceProvider ServiceProvider;
 
         /// <summary>
         ///  The main entry point for the application.
@@ -36,11 +35,11 @@ namespace appui
             Application.SetCompatibleTextRenderingDefault(false);
 
             var services = new ServiceCollection();
-            ServiceProvider = services.BuildServiceProvider();
             ConfigureServices(services);
 
             using (ServiceProvider serviceProvider = services.BuildServiceProvider())
             {
+                _ = serviceProvider.GetService<MsWindowsRunSetup>().RunSetup(services);
                 var form1 = serviceProvider.GetRequiredService<MainForm>();
                 Application.Run(form1);
             }
@@ -84,11 +83,13 @@ namespace appui
                 .AddSharedServices()
                 .AddConnectorsServices()
                 .AddSingleton<CreateSecurityStorageFile>()
-                .AddSetup<MsWindows64>((config) =>
+                .AddSingleton<IEnvSetupFactory, EnvSetupFactory>()
+                .AddSetupHandlers<MsWindows64>((config) =>
                 {
-                    EnvSetupFactory.RegisterFactory("CreateSecurityStorageFile", config.GetService<CreateSecurityStorageFile>());
+                    var factory = config.GetService<IEnvSetupFactory>();
+                    factory.RegisterHandler("CreateSecurityStorageFile", config.GetService<CreateSecurityStorageFile>());
                 })
-                .RunSetup();
+                .AddSingleton<MsWindowsRunSetup>();
         }
     }
 }

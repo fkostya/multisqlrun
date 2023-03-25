@@ -18,8 +18,6 @@ To open an issue for this project, please visit the [multisqlrun project issue t
 ## Roadmap  
 
 ## version 5.0
-- [ ] review design\architecture to make it public
-- [ ] make it public available service
 - [ ] bug fixes[technical debt]
 ## version 4.0
 - [ ] migrate windows app to web .core and react[core func]
@@ -34,36 +32,40 @@ To open an issue for this project, please visit the [multisqlrun project issue t
 - [ ] add custom log folder[nice to have]
 - [ ] bug fixes[technical debt]
 ## version 3.0 - in development
+- [ ] review design\architecture to make repository public
+- [ ] make it public available service
+- [X] move configuratino file under %LOCALAPPDATA%\IsolatedStorage\
+	- [X] add unit test
 - [X] remove logger AppErrorLog
 - [X] refactor code(model\BL) layer to support rabbitmq architecture
 - [ ] run sql query in 'singlethread' mode - WIP
 - [ ] replace sync to AMQP(advanced massage queuing protocol) protocol[core func]:
-- [ ] replace sync to AMQP(async massaging queue protocol) protocol[core func] [how to](https://www.rabbitmq.com/documentation.html):  
-	- [X] add consumer project  
-	- [X] add rabbitmq dependency [how to install](https://medium.com/geekculture/installing-rabbitmq-on-windows-4411f5114a84)  
-	- [X] add rabbitmq producer to project:  
+- [ ] replace sync to AMQP(async massaging queue protocol) protocol[core func] [how to](https://www.rabbitmq.com/documentation.html):
+	- [X] add consumer project
+	- [X] add rabbitmq dependency [how to install](https://medium.com/geekculture/installing-rabbitmq-on-windows-4411f5114a84)
+	- [X] add rabbitmq producer to project:
 	- [ ] impelement simple consumers:
-		- [ ] consumer to process sql query  
-		- [ ] consumer to save output to csv file  
-		- [ ] consumer to write to log file  
-		- [ ] consumer to test that rabbitmq is online(empty consumer)  
-	 - [ ] add connectors:   
-		- [ ] connector to run sql query against ms sql  
-		- [ ] connector to save sql output to csv file  
-		- [ ] connector to write log message  
-		- [ ] empty connector  
+		- [ ] consumer to process sql query
+		- [ ] consumer to save output to csv file
+		- [ ] consumer to write to log file
+		- [ ] consumer to test that rabbitmq is online(empty consumer)
+	 - [ ] add connectors:
+		- [ ] connector to run sql query against ms sql
+		- [ ] connector to save sql output to csv file
+		- [ ] connector to write log message
+		- [ ] empty connector
 - [ ] intergare MediatR [how to tutorial](https://medium.com/aeturnuminc/microservices-using-mediatr-on-net-core-3-1-with-exception-handling-c273a7aa4a70)  
-- [ ] upgrade to core7.0[technical debt]:  
-- [ ] add appsettings(PROD|DEV).json[technical debt]:  
-- [X] Program.cs: move IServiceCollection.Add...() to feed from extension(shared prj)[technical debt]:   
-- [X] separate tenants by version[core func]: [PR 14](https://github.com/fkostya/multisqlrun/pull/14):  
-	- [X] change settings via appconfig  
-	- [X] show tenant names on UI  
-- [X] create a separate file to sql query[core func][PR 11](https://github.com/fkostya/multisqlrun/pull/11):  
-	- [X] create file in shared project  
-	- [X] replace mainform to use new class  
-	- [X] delete old sqlruncommand file  
-	- [X] add unit tests  
+- [ ] upgrade to core7.0[technical debt]:
+- [ ] add appsettings(PROD|DEV).json[technical debt]:
+- [X] Program.cs: move IServiceCollection.Add...() to feed from extension(shared prj)[technical debt]:
+- [X] separate tenants by version[core func]: [PR 14](https://github.com/fkostya/multisqlrun/pull/14):
+	- [X] change settings via appconfig
+	- [X] show tenant names on UI
+- [X] create a separate file to sql query[core func][PR 11](https://github.com/fkostya/multisqlrun/pull/11):
+	- [X] create file in shared project
+	- [X] replace mainform to use new class
+	- [X] delete old sqlruncommand file
+	- [X] add unit tests
 ## version 2.0 - MVP
 - [X] download file with connections
 - [X] convert to List
