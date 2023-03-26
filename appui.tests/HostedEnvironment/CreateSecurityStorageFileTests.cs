@@ -11,7 +11,7 @@ namespace appui.tests.HostedEnvironment
     public class CreateSecurityStorageFileTests
     {
         [Fact]
-        void When_CreatingNewInstance_NewInstanceCreated()
+        public void When_CreatingNewInstance_NewInstanceCreated()
         {
             var optionMock = new Mock<IOptions<AppSettings>>();
             var logger = new Mock<ILogger<CreateSecurityStorageFile>>();
@@ -22,7 +22,7 @@ namespace appui.tests.HostedEnvironment
         }
 
         [Fact]
-        void When_CreatingNewInstanceNullArguments_NewInstanceCreated()
+        public void When_CreatingNewInstanceNullArguments_NewInstanceCreated()
         {
             var mock = new CreateSecurityStorageFile(null, null);
 
@@ -30,7 +30,7 @@ namespace appui.tests.HostedEnvironment
         }
 
         [Fact]
-        void When_CreatingNewInstanceNullArguments_DefaultFileName()
+        public void When_CreatingNewInstanceNullArguments_DefaultFileName()
         {
             var mock = new CreateSecurityStorageFile(null, null);
 
@@ -38,7 +38,7 @@ namespace appui.tests.HostedEnvironment
         }
 
         [Fact]
-        void When_CreatingNewInstanceWithFileName_FileNameFromCtor()
+        public void When_CreatingNewInstanceWithFileName_FileNameFromCtor()
         {
             var optionMock = new Mock<IOptions<AppSettings>>();
             var logger = new Mock<ILogger<CreateSecurityStorageFile>>();
@@ -56,7 +56,7 @@ namespace appui.tests.HostedEnvironment
         }
 
         [Fact]
-        async Task When_ExecuteHostArgumentIsNull_NoException()
+        public async Task When_ExecuteHostArgumentIsNull_NoException()
         {
             var optionMock = new Mock<IOptions<AppSettings>>();
             var logger = new Mock<ILogger<CreateSecurityStorageFile>>();
@@ -66,7 +66,7 @@ namespace appui.tests.HostedEnvironment
         }
 
         [Fact]
-        async Task When_ExecuteHostArgumentIsNotNull_ExecuteOneTimeCalled()
+        public async Task When_ExecuteHostArgumentIsNotNull_ExecuteOneTimeCalled()
         {
             var optionMock = new Mock<IOptions<AppSettings>>();
             var logger = new Mock<ILogger<CreateSecurityStorageFile>>();
@@ -80,7 +80,7 @@ namespace appui.tests.HostedEnvironment
         }
 
         [Fact]
-        async Task When_HostExecuteThrowException_RecordInLogger()
+        public async Task When_HostExecuteThrowException_RecordInLogger()
         {
             var optionMock = new Mock<IOptions<AppSettings>>();
             var logger = new Mock<ILogger<CreateSecurityStorageFile>>();
@@ -94,12 +94,14 @@ namespace appui.tests.HostedEnvironment
             await mock.Execute(hosted.Object);
 
             //https://stackoverflow.com/questions/52707702/how-do-you-mock-ilogger-loginformation/58413842#58413842
+#pragma warning disable CS8620 // Argument cannot be used for parameter due to differences in the nullability of reference types.
             logger.Verify(x => x.Log(
                    It.IsAny<LogLevel>(),
                    It.IsAny<EventId>(),
                    It.IsAny<It.IsAnyType>(),
                    It.IsAny<Exception>(),
                    (Func<It.IsAnyType, Exception, string>)It.IsAny<object>()));
+#pragma warning restore CS8620 // Argument cannot be used for parameter due to differences in the nullability of reference types.
         }
     }
 }

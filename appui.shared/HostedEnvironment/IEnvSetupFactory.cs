@@ -2,7 +2,9 @@
 {
     public interface IEnvSetupFactory
     {
-        void RegisterHandler(string name, IEnvSetupHandler handler);
+        bool RegisterHandler(string name, IEnvSetupHandler handler);
+
+        bool UnregisterHandler(string name);
 
         Dictionary<string, IEnvSetupHandler> GetHandlers();
     }
