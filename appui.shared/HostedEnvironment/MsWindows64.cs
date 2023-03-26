@@ -1,7 +1,7 @@
 ﻿using appui.models.HostedEnvironment;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System.IO.IsolatedStorage;
-using System.Net.Security;
 using System.Reflection;
 using System.Text;
 
@@ -9,9 +9,21 @@ namespace appui.shared.HostedEnvironment
 {
     public class MsWindows64 : IHostedEnvironment
     {
+        private readonly ILogger<MsWindows64> logger;
+
+        public MsWindows64(ILogger<MsWindows64> logger)
+        {
+            this.logger = logger;
+        }
+
         public async Task Execute(object args)
         {
+            if(args == null) { await Task.CompletedTask; return; }
+
             string fileName = (string)args;
+
+            if (string.IsNullOrWhiteSpace(fileName)) { await Task.CompletedTask; return; }
+            if (fileName.Length > 29) { await Task.CompletedTask; return; }
 
             using (IsolatedStorageFile store = IsolatedStorageFile.GetStore(IsolatedStorageScope.User | IsolatedStorageScope.Application, null, null))
             {
