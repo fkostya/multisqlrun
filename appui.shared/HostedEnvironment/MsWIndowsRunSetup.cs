@@ -23,7 +23,7 @@ namespace appui.shared.HostedEnvironment
             {
                 try
                 {
-                    await handler.Execute(_hosted, _serviceProvider);
+                    await handler.Execute(_hosted);
                 }
                 catch
                 {

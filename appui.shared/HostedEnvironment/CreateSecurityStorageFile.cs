@@ -9,23 +9,27 @@ namespace appui.shared.HostedEnvironment
         private readonly string fileName = "config.json";
         private readonly ILogger<CreateSecurityStorageFile> logger;
 
-        public CreateSecurityStorageFile(IOptions<AppSettings> appsetings,  ILogger<CreateSecurityStorageFile> logger)
+        public CreateSecurityStorageFile(IOptions<AppSettings> appsetings, ILogger<CreateSecurityStorageFile> logger)
         {
             this.logger = logger;
-            this.fileName = appsetings.Value.JsonConfigFileName;
+            this.fileName = appsetings?.Value?.JsonConfigFileName ?? fileName;
         }
 
-        public async Task Execute(IHostedEnvironment hosted, IServiceProvider args)
+        public async Task Execute(IHostedEnvironment hosted)
         {
             try
             {
-                await hosted.Execute(fileName);
-                
+                await hosted?.Execute(fileName);
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, ex.Message);
+                logger?.LogError(ex, ex.Message);
             }
+        }
+
+        public string GetConfigFileName()
+        {
+            return fileName;
         }
     }
 }

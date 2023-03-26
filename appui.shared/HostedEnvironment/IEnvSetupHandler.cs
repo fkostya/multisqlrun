@@ -2,6 +2,6 @@
 {
     public interface IEnvSetupHandler
     {
-        public Task Execute(IHostedEnvironment hosted, IServiceProvider args);
+        public Task Execute(IHostedEnvironment hosted);
     }
 }

@@ -90,7 +90,7 @@ namespace appui.tests.HostedEnvironment
 
             _ = mock.RunSetup(serviceCollectionMock.Object);
 
-            handlerMock.Verify(v => v.Execute(hostedMock.Object, serviceProviderMock.Object));
+            handlerMock.Verify(v => v.Execute(hostedMock.Object));
         }
     }
 }
