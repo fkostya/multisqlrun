@@ -11,6 +11,8 @@ namespace appui.shared.Models
         public string Explorer { get; set; }
         public DefaultCatalogConnector DefaultCatalogConnector { get; set; }
         public bool Offline { get; set; }
+        public string JsonConfigFileName { get; set; }
+        public int MaxHandlers { get; set; }
     }
 
     [ExcludeFromCodeCoverage]
