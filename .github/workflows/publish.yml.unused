@@ -10,7 +10,7 @@ jobs:
     strategy:
       matrix:
         configuration: [Release]
-        dotnet: ['6.0.x']
+        dotnet: ['7.0.x']
         os: [windows-latest]
 
     name: publish for ${{ matrix.os }}
