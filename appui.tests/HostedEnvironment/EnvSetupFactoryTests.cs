@@ -164,6 +164,7 @@ namespace appui.tests.HostedEnvironment
             var result = mock.RegisterHandler("two", handlerMock.Object);
 
 #pragma warning disable CS8620 // Argument cannot be used for parameter due to differences in the nullability of reference types.
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
             logger.Verify(
                     m => m.Log(
                             LogLevel.Information,
@@ -172,6 +173,7 @@ namespace appui.tests.HostedEnvironment
                             null,
                             It.IsAny<Func<It.IsAnyType, Exception, string>>()),
                             Times.Once);
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
 #pragma warning restore CS8620 // Argument cannot be used for parameter due to differences in the nullability of reference types.
         }
 
@@ -194,6 +196,7 @@ namespace appui.tests.HostedEnvironment
             var result = mock.RegisterHandler("two", handlerMock.Object);
 
 #pragma warning disable CS8620 // Argument cannot be used for parameter due to differences in the nullability of reference types.
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
             logger.Verify(
                     m => m.Log(
                             LogLevel.Information,
@@ -202,6 +205,7 @@ namespace appui.tests.HostedEnvironment
                             null,
                             It.IsAny<Func<It.IsAnyType, Exception, string>>()),
                             Times.Once);
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
 #pragma warning restore CS8620 // Argument cannot be used for parameter due to differences in the nullability of reference types.
         }
 
@@ -224,6 +228,7 @@ namespace appui.tests.HostedEnvironment
             var result = mock.RegisterHandler("two", handlerMock.Object);
 
 #pragma warning disable CS8620 // Argument cannot be used for parameter due to differences in the nullability of reference types.
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
             logger.Verify(
                     m => m.Log(
                             LogLevel.Information,
@@ -232,6 +237,7 @@ namespace appui.tests.HostedEnvironment
                             null,
                             It.IsAny<Func<It.IsAnyType, Exception, string>>()),
                             Times.Once);
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
 #pragma warning restore CS8620 // Argument cannot be used for parameter due to differences in the nullability of reference types.
         }
     }
