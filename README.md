@@ -32,8 +32,8 @@ To open an issue for this project, please visit the [multisqlrun project issue t
 - [ ] add custom log folder[nice to have]
 - [ ] bug fixes[technical debt]
 ## version 3.0 - in development
-- [ ] review design\architecture to make repository public
-- [ ] make it public available service
+- [X] review design\architecture to make repository public
+- [X] make it public available service
 - [X] move configuratino file under %LOCALAPPDATA%\IsolatedStorage\
 	- [X] add unit test
 - [X] remove logger AppErrorLog
