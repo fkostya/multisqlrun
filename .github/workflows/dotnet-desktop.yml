@@ -72,6 +72,9 @@ jobs:
         dotnet-version: ${{ matrix.dotnet }}
 
     - name: restore dependencies
+      env:
+        GITHUB_PACKAGE_USER_NAME: ${{ github.actor }}
+        GITHUB_PACKAGE_TOKEN: ${{ secrets.RESTORE_ORGANIZATION_PACKAGES }}
       run: dotnet restore
 
     - name: build
