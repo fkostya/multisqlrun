@@ -7,7 +7,7 @@
     <RootNamespace>appui</RootNamespace>
     <ApplicationIcon>assets\AppIcon.ico</ApplicationIcon>
     <PackageId>multi run sql</PackageId>
-    <Authors>Konstantin Froimovich</Authors>
+    <Authors>Kostya F</Authors>
     <Company>KF</Company>
     <Product>multi run sql</Product>
     <Copyright>Copyright © 2022</Copyright>
