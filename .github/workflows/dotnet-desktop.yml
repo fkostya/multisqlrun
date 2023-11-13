@@ -73,7 +73,7 @@ jobs:
 
     - name: restore dependencies
       env:
-        GITHUB_PACKAGE_USER_NAME: ${{ github.actor }}
+        GITHUB_PACKAGE_USER_NAME: ${{ secrets.RESTORE_ORGANIZATION_PACKAGES_EMAIL }}
         GITHUB_PACKAGE_TOKEN: ${{ secrets.RESTORE_ORGANIZATION_PACKAGES }}
       run: dotnet restore
 
