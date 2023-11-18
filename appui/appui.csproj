@@ -10,7 +10,7 @@
     <Authors>Kostya F</Authors>
     <Company>KF</Company>
     <Product>multi run sql</Product>
-    <Copyright>Copyright © 2022</Copyright>
+    <Copyright>Copyright © 2023</Copyright>
     <Version>3.0.1</Version>
     <StartupObject>appui.Program</StartupObject>
     <AssemblyName>$(MSBuildProjectName)-client</AssemblyName>
@@ -38,7 +38,6 @@
 
   <ItemGroup>
     <PackageReference Include="CsvHelper" Version="30.0.1" />
-    <PackageReference Include="data-access-layer" Version="0.0.0-alpha.0.90" />
     <PackageReference Include="fkostya.data-access-layer" Version="0.0.0-alpha.0.102" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.46" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="7.0.4" />
