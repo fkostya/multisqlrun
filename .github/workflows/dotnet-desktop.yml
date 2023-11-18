@@ -71,9 +71,9 @@ jobs:
       with:
         dotnet-version: ${{ matrix.dotnet }}
 
-    - name: register github registry
-      run:
-        dotnet nuget add source --username fkostya --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/fkostya/index.json"
+    # - name: register github registry
+    #   run:
+    #     dotnet nuget add source --username fkostya --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/fkostya/index.json"
     
     - name: restore dependencies
       env:
