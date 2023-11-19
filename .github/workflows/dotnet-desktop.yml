@@ -61,13 +61,13 @@ jobs:
     
     steps:
 
-    - name: preparation
-      run: |
-        echo "::set-env name=BUILD_VER::2.3.$GITHUB_RUN_NUMBER"
-        echo "::set-env name=CONFIG::Release"
-        echo "::set-env name=NUGET_URL::https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
-        # echo "::set-env name=SLN::multirun.sln"
-        # echo "::set-env name=TEST::true"
+    # - name: preparation
+    #   run: |
+    #     echo "::set-env name=BUILD_VER::2.3.$GITHUB_RUN_NUMBER"
+    #     echo "::set-env name=CONFIG::Release"
+    #     echo "::set-env name=NUGET_URL::https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
+    #     # echo "::set-env name=SLN::multirun.sln"
+    #     # echo "::set-env name=TEST::true"
 
     - name: checkout
       uses: actions/checkout@v3
