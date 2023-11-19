@@ -1,7 +1,6 @@
 ﻿using appui.models;
 using appui.models.HostedEnvironment;
 using appui.models.Interfaces;
-using appui.models.MsSql;
 using appui.models.Payloads;
 using appui.resourses.Properties;
 using appui.shared.HostedEnvironment;
@@ -173,6 +172,7 @@ namespace appui
                                             tenant.Connection.DbServer,
                                             tenant.Connection.UserName ?? sqlSettings.Credential.UserId,
                                             tenant.Connection.Password ?? decode(sqlSettings.Credential.Password));
+
                                 payload.Query = utx_sqlquery.Text;
                                 payload.StoragePath = utx_outputpath.Text;
                                 this.Logger.LogTrace($"posting message to queue with payload:{payload}");

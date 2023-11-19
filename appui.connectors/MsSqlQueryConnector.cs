@@ -6,6 +6,7 @@ using System.Diagnostics;
 
 namespace appui.connectors
 {
+    [Obsolete]
     public class MsSqlQueryConnector
     {
         const int timeout = 300;

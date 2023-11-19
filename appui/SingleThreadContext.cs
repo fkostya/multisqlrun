@@ -1,10 +1,13 @@
 ﻿using appui.connectors;
-using appui.connectors.Utils;
 using appui.models.Interfaces;
 using appui.models.Payloads;
+using data_access_layer.Microsoft.SQL;
+using data_access_layer.Microsoft.SQL.Wrappers;
+using data_access_layer.Model;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -26,18 +29,29 @@ namespace appui
         {
             try
             {
-                var connector = new MsSqlQueryConnector(_serviceProvider.GetService<Func<string, SqlConnectionWrapper>>(), (payload as MsSqlMessagePayload).Connection, _serviceProvider.GetService<ILogger<MsSqlQueryConnector>>());
-                var output = await connector.Invoke(payload.ToString());
+                var connection = (payload as MsSqlMessagePayload).Connection;
+
+                MsSqlDataAccessLayer connector = new(
+                                    new MsSqlConnectionWrapper(
+                                        new MsSqlConnectionString(
+                                            connection.DbDatabase,
+                                            connection.DbServer,
+                                            connection.DbDatabase,
+                                            connection.DbUserName,
+                                            connection.DbPassword,
+                                            new Guid().ToString())));
+
+                var output = await connector.RunSqlQueryAsDataSetAsync(payload.Query);
 
                 var result = (List<Dictionary<string, object>>)output
                                         .Select(f =>
                                         {
                                             var list = new List<Tuple<string, string>>();
-                                            foreach (var k in f.Keys)
+                                            foreach (var k in f.Rows)
                                             {
-                                                if (f[k] != null)
+                                                foreach (var item in k)
                                                 {
-                                                    list.Add(new Tuple<string, string>(k, f[k].ToString()));
+                                                    list.Add(new Tuple<string, string>(item.Key, item.Value.ToString()));
                                                 }
                                             }
                                             return list;
