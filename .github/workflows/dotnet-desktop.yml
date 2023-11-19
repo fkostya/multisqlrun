@@ -82,9 +82,7 @@ jobs:
 
     - name: register github registry
       run:
-        dotnet nuget add source --username fkostya \
-            --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text \
-            --name github "https://nuget.pkg.github.com/fkostya/index.json"
+        dotnet nuget add source --username fkostya --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
     
     - name: restore dependencies
       env:
@@ -98,10 +96,7 @@ jobs:
         dotnet publish -c Release -o ./published
         
     - name: test
-      run: dotnet test --no-restore --verbosity normal \
-        -p:CollectCoverage=true 
-        -p:CoverletOutput=TestResults/ \
-        -p:CoverletOutputFormat=opencover
+      run: dotnet test --no-restore --verbosity normal -p:CollectCoverage=true -p:CoverletOutput=TestResults/ -p:CoverletOutputFormat=opencover
 
     # Execute code coverage for unit tests results in the solution
     - name: .Net Code Coverage Badge
