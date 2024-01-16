@@ -9,7 +9,7 @@
 
   <ItemGroup>
     <AssemblyAttribute Include="System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute" />
-    <PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.0" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.3" />
   </ItemGroup>
 
 </Project>
